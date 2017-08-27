@@ -37,14 +37,12 @@ export const GET_FIELD_SUMMARY_DETAILS_URL = 'http://wks51b2228:9080/nebert/ui/r
 export const GET_FIELD_FLAG_INPUT_URL = 'http://wks51b2228:9080/nebert/ui/rcnofieldsmryview/getrcnofldlvlinddtls';
 export const GET_FIELD_NAME_INPUT_URL = 'http://wks51b2228:9080/nebert/ui/rcnofieldnamesmryview/getrcnofldlvlnamedtls';
 export const GET_RECORD_FLAG_INPUT_URL = 'http://wks51b2228:9080/nebert/ui/rcnofldsmryview/getrcnorcdlvlinddtls';
-
-
-/*
-export const GET_RECORD_SUMMARY_DETAILS_URL = 'http://localhost:3000/rcno/getFieldInfo';
-export const GET_FIELD_SUMMARY_DETAILS_URL = 'http://localhost:3000/rcno/getFieldInfo';
-export const GET_FIELD_FLAG_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';
-export const GET_FIELD_NAME_INPUT_URL ='http://localhost:3000/rcno/getFieldInfo';
-export const GET_RECORD_FLAG_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';
 export const GET_LIST_VIEW_SUMMARY_URL = '';
 
-*/
+
+// export const GET_RECORD_SUMMARY_DETAILS_URL = 'http://localhost:3000/rcno/getFieldInfo';
+// export const GET_FIELD_SUMMARY_DETAILS_URL = 'http://localhost:3000/rcno/getFieldInfo';
+// export const GET_FIELD_FLAG_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';
+// export const GET_FIELD_NAME_INPUT_URL ='http://localhost:3000/rcno/getFieldInfo';
+// export const GET_RECORD_FLAG_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';
+// export const GET_LIST_VIEW_SUMMARY_URL = 'http://localhost:3000/save/ListView';

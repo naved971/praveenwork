@@ -125,10 +125,10 @@ const tradingPartnerOptions = [
 // };
 
 const fieldNameOptions = [
-    {value: "onev",lebel: "onel"},
-    {value: "twov",lebel: "twol"},
-    {value: "onev1",lebel: "onel1"},
-    {value: "twov1",lebel: "twol1"}
+    { value: "onev", lebel: "onel" },
+    { value: "twov", lebel: "twol" },
+    { value: "onev1", lebel: "onel1" },
+    { value: "twov1", lebel: "twol1" }
 ];
 
 const summaryTableData = [
@@ -154,58 +154,49 @@ const summaryTableData = [
     }
 ];
 let resultData =
-{"rcnoListViewRes": [
-      {
-      "recordIdentifier": "RCNI170630115000005",
-      "rcnoFirstName": "ERIN",
-      "rcnoLastName": "HILL",
-      "rcnoExchSubId": "0001567297",
-      "rcnoSocSecNum": "770404680",
-      "rcnoContractId": "RCNI17063",
-      "rcnoFFMPolicyId": "H10162144",
-      "overallInd": "M"
-   },
-      {
-      "recordIdentifier": "RCNI170630115000006",
-      "rcnoFirstName": "TOMMY",
-      "rcnoLastName": "PIIRA",
-      "rcnoExchSubId": "0001798469",
-      "rcnoSocSecNum": "594957396",
-      "rcnoContractId": "RCNI17063",
-      "rcnoFFMPolicyId": "H10166177",
-      "overallInd": "M"
-   },
-      {
-      "recordIdentifier": "RCNI170630115000015",
-      "rcnoFirstName": "JACK",
-      "rcnoLastName": "SHANHOLTZ",
-      "rcnoExchSubId": "0002417445",
-      "rcnoSocSecNum": "356940018",
-      "rcnoContractId": "RCNI17063",
-      "rcnoFFMPolicyId": "H10202275",
-      "overallInd": "C"
-   }
-]}
+    {
+        "rcnoListViewRes": [
+            {
+                "recordIdentifier": "RCNI170630115000005",
+                "firstName": "ERIN",
+                "lastName": "HILL",
+                "exchSubId": "0001567297",
+                "socSecNum": "770404680",
+                "contractId": "RCNI17063",
+                "ffmPolicyId": "H10162144",
+                "overallInd": "M"
+            }, {
+                "recordIdentifier": "RCNI170630115000005",
+                "firstName": "ERIN",
+                "lastName": "HILL",
+                "exchSubId": "0001567297",
+                "socSecNum": "770404680",
+                "contractId": "RCNI17063",
+                "ffmPolicyId": "H10162144",
+                "overallInd": "M"
+            }
+        ]
+    }
 
 class ListViewSummaryPage extends Component {
     constructor(props) {
         super(props);
         this.state = this.getInitialState();
-    
-        ['handleSubmit', 'getInputFields','getResultSummary', 'buildUrl'].map(fn => this[fn] = this[fn].bind(this));
+
+        ['handleSubmit', 'getInputFields', 'getResultSummary', 'buildUrl', 'getAvdInputFields'].map(fn => this[fn] = this[fn].bind(this));
         //this.dummy();
     }
-    dummy(){
-            // Dummy Code for Testing;
-            let response = resultData;
-            let data = response.rcnoListViewRes;
-            setTimeout(() => {
-                this.setState({
-                    lastDataReceived: Date.now(),
-                    summaryTableData: data,
-                    
-                });
-            }, 2000);
+    dummy() {
+        // Dummy Code for Testing;
+        let response = resultData;
+        let data = response.rcnoListViewRes;
+        setTimeout(() => {
+            this.setState({
+                lastDataReceived: Date.now(),
+                summaryTableData: data,
+
+            });
+        }, 2000);
     }
     buildUrl(parameters) {
         let url = rcnorcni.GET_FIELD_SUMMARY_DETAILS_URL;
@@ -224,7 +215,12 @@ class ListViewSummaryPage extends Component {
         let url = this.buildUrl(args);
         // Get Field Flags
         fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, {
-            method: 'POST',     body: args
+            method: 'POST', credentials: "same-origin",
+            body: JSON.stringify(args),
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            }
         }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
@@ -268,6 +264,7 @@ class ListViewSummaryPage extends Component {
             defaultTradingPartners,
             summaryTableData: summaryTableData,
             fieldNameOptions: fieldNameOptions,
+            fieldNameAvdCustomOptions: [],
             summaryTable: undefined,
             recordFlagOptions: [],
             fieldFlagOptions: [],
@@ -324,22 +321,46 @@ class ListViewSummaryPage extends Component {
             : undefined;
         if (fieldNameSelected === undefined) {
             fieldNameSelected = '';
-            item
-                .state
-                .fieldNameSelected
-                .forEach((f) => {
+            item.state.fieldNameSelected
+                .forEach((f, i) => {
+                    // fieldNameSelected += f.label + ',';
                     fieldNameSelected += this.state.fieldNameOptions[f].label + ',';
                 })
             fieldNameSelected = fieldNameSelected.slice(0, -1);
         }
-        this.getResultSummary({
-            fromDate: moment(item.state.startDate).format('MM/YYYY'),
-            coverageYear: item.state.covYear,
-            tradingPartnerId: tradSelected,
-            recordFlag: recordFlagSelected,
-            fieldFlag: fieldFlagSelected,
-            fieldName: fieldNameSelected
-        });
+        /*
+                    let fieldAvdNameSelected = item.state.fieldAvdNameSelected.length == this.state.fieldAvdNameSelected.length
+                    ? 'all'
+                    : undefined;
+                if (fieldAvdNameSelected === undefined) {
+                    fieldAvdNameSelected = '';
+                        item.state.fieldAvdNameSelected
+                        .forEach((f,i) => {
+                            fieldAvdNameSelected += f.label + ',';
+                        })
+                        fieldAvdNameSelected = fieldAvdNameSelected.slice(0, -1);
+                }
+        */
+
+
+
+        var obj = {
+            frmDate: moment(item.state.startDate).format('MM/YYYY'),
+            cvgYear: item.state.covYear,
+            tpId: tradSelected,
+            rcdFlag: recordFlagSelected,
+            fldFlag: fieldFlagSelected,
+            fldName: fieldNameSelected,
+
+        }
+        if (item.state.advFields) {
+            obj = Object.assign(obj, item.state.advFields); 
+        }
+        if (item.state.fieldAvdNameSelected != undefined && item.state.fieldAvdNameSelected.length > 0) {
+            obj.fldNmFldVal = item.state.fieldAvdNameSelected;
+
+        }
+        this.getResultSummary(obj);
     }
     render() {
         return (
@@ -409,7 +430,10 @@ class ListViewSummaryPage extends Component {
                                 fieldNameOptions={this.state.fieldNameOptions}
                                 summaryTableData={this.state.summaryTableData}
                                 summaryTable={this.state.summaryTable}
-                                handleSubmit={this.handleSubmit} />
+                                handleSubmit={this.handleSubmit}
+                                fieldNameAvdCustomOptions={this.state.fieldNameAvdCustomOptions}
+                                getAvdInputFields={this.getAvdInputFields}
+                            />
                         </Column>
                     </Row>
                 </Row>
@@ -419,10 +443,34 @@ class ListViewSummaryPage extends Component {
     componentDidMount() {
         this.getInputFields();
     }
+
+    getAvdInputFields(input) {
+        return fetch(rcnorcni.GET_FIELD_NAME_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
+            if (!response.ok) {
+                throw new Error("Bad response from server");
+            }
+            return response.json();
+        }).then((response) => {
+            let data = response.rcnoFieldNameList;
+            data = data.map((d, index) => {
+                return { value: index, label: d }
+            });
+            // const json = [
+            //     { value: 'one', label: 'One' },
+            //     { value: 'two', label: 'Two' }
+            // ]
+            return { options: data };
+
+
+        }).catch((error) => {
+            console.log(error);
+        })
+
+    }
     getInputFields() {
         // Get Field Name
         this.setState({ fieldNameOptions: fieldNameOptions });
-        fetch(rcnorcni.GET_FIELD_NAME_INPUT_URL, { method: 'GET', credentials: "same-origin"  }).then((response) => {
+        fetch(rcnorcni.GET_FIELD_NAME_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
             }
@@ -433,7 +481,7 @@ class ListViewSummaryPage extends Component {
             data = data.map((d, index) => {
                 return { value: index, label: d }
             });
-            this.setState({ fieldNameOptions: data }, () => {
+            this.setState({ fieldNameOptions: data, fieldNameAvdCustomOptions: data }, () => {
                 let fN = response.rcnoFieldNameList;
                 // this.getResultSummary({
                 //     fromDate: this.state.fromDate,
@@ -448,7 +496,7 @@ class ListViewSummaryPage extends Component {
             console.log(error);
         })
         // Get Record Flags
-        fetch(rcnorcni.GET_RECORD_FLAG_INPUT_URL, { method: 'GET', credentials: "same-origin"  }).then((response) => {
+        fetch(rcnorcni.GET_RECORD_FLAG_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
             }
@@ -459,12 +507,13 @@ class ListViewSummaryPage extends Component {
             data = data.map((d, index) => {
                 return { value: index, label: d }
             });
+
             this.setState({ recordFlagOptions: data });
         }).catch((error) => {
             console.log(error);
         })
         // Get Field Flags
-        fetch(rcnorcni.GET_FIELD_FLAG_INPUT_URL, { method: 'GET', credentials: "same-origin"  }).then((response) => {
+        fetch(rcnorcni.GET_FIELD_FLAG_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
             }
@@ -481,7 +530,7 @@ class ListViewSummaryPage extends Component {
         })
 
         // Get SummeryTab data
-        fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, { method: 'POST', credentials: "same-origin"  }).then((response) => {
+        fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, { method: 'POST', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
             }

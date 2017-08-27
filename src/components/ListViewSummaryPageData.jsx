@@ -10,7 +10,7 @@ import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'rc-checkbox/assets/index.css';
 import Checkbox from 'rc-checkbox'
-import Select from 'react-select';
+import Select,{Async}  from 'react-select';
 import 'react-select/dist/react-select.css';
 import MultiSelect from '@khanacademy/react-multi-select';
 import ReactDOM from 'react-dom'
@@ -53,8 +53,11 @@ const styles = {
     padding: '1em'
   }
 };
+let advCustomFiltersRows = [];
+var isSearchable = false;
+var isClearable = false;
 
-
+let advFields = {};
 let initialState = undefined;
 const recordFlagHelpHoverOptions = {
   followCursor: false
@@ -119,6 +122,7 @@ class ListViewSummaryPageData extends Component {
   constructor(props) {
     super(props);
     cxt = this;
+
     this.state = this.getInitialState();
     [
       'getItems',
@@ -132,8 +136,13 @@ class ListViewSummaryPageData extends Component {
       'handleMultiSelectRenderer',
       'handleSubmitButton',
       'handleResetButton',
-      'handleExport'
+      'handleExport',
+      'handleAdvSearch',
+      'handleAvdCustomFilterRow',
+      "addAdvRows",
+      'handleAdvFieldNameChange'
     ].map(fn => this[fn] = this[fn].bind(this));
+    this.addAdvRows();
   }
 
   getInitialState() {
@@ -142,14 +151,18 @@ class ListViewSummaryPageData extends Component {
       activeKey: ['1'],
       // startDate: moment(),
       startDate: moment().subtract(1, 'month'),
+      advStartDate: moment().subtract(1, 'month'),
       covYear: this.props.defaultCovYear,
       tradSelected: this.props.defaultTradingPartners,
       fieldFlagSelected: this.props.defaultFieldFlags,
       recordFlagSelected: this.props.defaultRecordFlags,
       fieldNameSelected: this.props.defaultFieldNames,
       fieldNameOptions: this.props.fieldNameOptions,
+      fieldNameAvdCustomOptions:this.props.fieldNameAvdCustomOptions,
       recordFlagOptions: this.props.recordFlagOptions,
       fieldFlagOptions: this.props.fieldFlagOptions,
+      advCustomFiltersRows:advCustomFiltersRows,
+      fieldAvdNameSelected:[],
       selectRowProp: {
         mode: 'checkbox',
         clickToSelect: true,
@@ -198,6 +211,20 @@ class ListViewSummaryPageData extends Component {
     console.log(val);
     this.setState({ covYear: val.label });
   }
+  handleAdvSearch(e, date) {
+    if (typeof e == "string") {
+      advFields[e] = moment(date).format('MM/YYYY');
+    } else {
+      advFields[e.target.name] = e.target.value;
+    }
+    this.setState({ advFields: advFields });
+
+  }
+  handleAvdCustomFilterRow(row) {
+    
+    this.addAdvRows();
+  }
+
   handleMultiSelectRenderer(selected, options) {
     if (selected.length === 0) {
       return "Select";
@@ -216,10 +243,17 @@ class ListViewSummaryPageData extends Component {
   handleFieldNameChange(selected) {
     this.setState({ fieldNameSelected: selected });
   }
+  handleAdvFieldNameChange(selected) {
+    
+    this.state.fieldAvdNameSelected.push(selected);
+    
+    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
+  }
+
   handleSubmitButton() {
-    debugger;
+
     console.log('handleSubmitButton()');
-    let state = JSON.parse(JSON.stringify(this.state));
+    let state =Object.assign({}, this.state) ; //JSON.parse(JSON.stringify(this.state));
     console.log(state);
     let pass = true;
     let errStr = [];
@@ -278,19 +312,61 @@ class ListViewSummaryPageData extends Component {
       tradSelected: JSON.parse(JSON.stringify(initialState.tradSelected)),
       fieldFlagSelected: JSON.parse(JSON.stringify(initialState.fieldFlagSelected)),
       recordFlagSelected: JSON.parse(JSON.stringify(initialState.recordFlagSelected)),
-      fieldNameSelected: JSON.parse(JSON.stringify(initialState.fieldNameSelected))
+      fieldNameSelected: JSON.parse(JSON.stringify(initialState.fieldNameSelected)),
+      
     }, () => {
       console.log("Resetting State");
       console.log(this.state);
     });
   }
+
+  addAdvRows() {
+
+
+    advCustomFiltersRows.push(
+
+      <Row >
+        <div style={{ "marginLeft": "3%" }} >
+          <Column medium={4}>
+            <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+              Field Name:
+              <Select.Async
+                searchable={isSearchable}
+                clearable={isClearable}
+                onChange={this.handleAdvFieldNameChange} 
+                loadOptions={this.props.getAvdInputFields}
+                
+                />
+            </label>
+          </Column>
+        </div>
+        <Column medium={3}>
+          <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+            Field Value:
+  <input type="text" name="issuerLastName" />
+          </label>
+        </Column>
+        <div style={{ "paddingTop": "22px" }}>
+          <Column medium={3}>
+
+            <label onClick={this.handleAvdCustomFilterRow} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+
+              <i className="fa fa-plus-circle fa-3x" style={{ "cursor": "pointer" }} aria-hidden="true"></i>
+            </label>
+
+          </Column>
+        </div>
+      </Row>
+
+
+    );
+
+    this.forceUpdate();
+  }
   getItems() {
     const items = [];
-    console.log("getitems"); console.log(this.props.fieldNameOptions);
+    //  console.log("getitems"); console.log(this.props.fieldNameOptions);
 
-
-    var isSearchable = false;
-    var isClearable = false;
 
     items.push(
       <Panel header={`List View Search`} key={'0'}>
@@ -310,14 +386,14 @@ class ListViewSummaryPageData extends Component {
                         <label className='formLabel' style={{ "display": "inline", "fontWeight": "bold", "color": "#3498db" }}>
                           File Run Month/Year:*
                                 <DatePicker
-                                ref='fileRunDPicker'
+                            ref='fileRunDPicker'
                             selected={this.state.startDate}
                             onChange={this.handleDateChange}
                             dateFormat="MM/YYYY"
                             showMonthDropdown
                             showYearDropdown
                             scrollableYearDropdown
-                           />
+                          />
                           <span className="error date-picker-error">{this.state.errStr[0]}</span>
                         </label>
                       </Column>
@@ -422,28 +498,28 @@ class ListViewSummaryPageData extends Component {
                       <Column medium={4}>
                         <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                           Issuer First Name:
-                  <input type="text" name="issuerFirstName" />
+                  <input type="text" name="advIsrFstNm" onChange={this.handleAdvSearch} />
                         </label>
                       </Column>
                     </div>
                     <Column medium={4}>
                       <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer Last Name:
-                  <input type="text" name="issuerLastName" />
+                  <input type="text" name="advIsrLstNm" onChange={this.handleAdvSearch} />
                       </label>
                     </Column>
                     <Column medium={3}>
                       <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer DOB:
                             <DatePicker
-                            ref='fileRunDPickerIssuerDOB'
-                            selected={this.state.startDate}
-                            onChange={this.handleDateChange}
-                            dateFormat="MM/YYYY"
-                            placeholderText="MM/YYYY"
-                            showMonthDropdown
-                            showYearDropdown
-                            scrollableYearDropdown />
+                          name="advIsrDob"
+                          selected={this.state.advStartDate}
+                          onChange={this.handleAdvSearch.bind(this, 'advIsrDob', this.state.advStartDate)}
+                          dateFormat="MM/YYYY"
+                          placeholderText="MM/YYYY"
+                          showMonthDropdown
+                          showYearDropdown
+                          scrollableYearDropdown />
 
 
                       </label>
@@ -455,7 +531,7 @@ class ListViewSummaryPageData extends Component {
                         <label className="formLabel"
                           style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                           Issuer Ex Sub ID:
-                  <input type="text" name="issuerExSubId" />
+                  <input type="text" name="advIsrExchSubId" onChange={this.handleAdvSearch} />
                         </label>
                       </Column>
                     </div>
@@ -463,14 +539,14 @@ class ListViewSummaryPageData extends Component {
                       <label className="formLabel"
                         style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer FFM Policy ID:
-                  <input type="text" name="issuerFfmPolicyId" />
+                  <input type="text" name="advIsrPlcyId" onChange={this.handleAdvSearch} />
                       </label>
                     </Column>
                     <Column medium={3}>
                       <label className="formLabel"
-                        style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-                        Issuer Record Trace Number:
-                  <input type="text" name="issuerRecordTraceNumber" />
+                        style={{ "display": "inline", "fontWeight": "500", "color": "#3498db", "width": "101%" }}>
+                        Issuer Record Trace <span>Number:</span>
+                        <input type="text" name="advIsrRcTcNum" onChange={this.handleAdvSearch} />
                       </label>
                     </Column>
                   </Row>
@@ -480,37 +556,31 @@ class ListViewSummaryPageData extends Component {
               </label>
                     <br />
                   </Row>
-                  <Row>
-                    <div style={{ "marginLeft": "3%" }} >
-                      <Column medium={4}>
-                        <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-                          Field Name:
-                                <Select
-                            searchable={isSearchable}
-                            clearable={isClearable}
-                            name="advancefieldname"
-                            value="one"
-                            options={this.props.fieldNameOptions}
-                            onChange={this.handleFieldNameChange} />
-                        </label>
-                      </Column>
-                    </div>
-                    <Column medium={3}>
-                      <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-                        Field Value:
-                  <input type="text" name="issuerLastName" />
-                      </label>
-                    </Column>
-                    <div style={{ "paddingTop": "22px" }}>
-                      <Column medium={3}>
-                        <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                  {/*----ADVANCE ROW ------*/}
 
-                          <i className="fa fa-plus-circle fa-3x" style={{ "cursor": "pointer" }} aria-hidden="true"></i>
-                        </label>
+                  {
 
-                      </Column>
-                    </div>
-                  </Row>
+
+                  advCustomFiltersRows
+                      .map((h) => {
+                        return (
+                          h
+                        )
+                      })
+                  }
+                  {/* <Row>
+             <Column medium={3}>   Field Name:
+                <Select
+            searchable={isSearchable}
+            clearable={isClearable}
+            name="advancefieldname"
+            value="one"
+            options={this.props.fieldNameOptions}
+            onChange={this.handleAdvFieldNameChange} />
+            </Column>
+            
+               </Row> */}
+
                   <Row>
                     <div className="modal-footer">
                       <div style={{ "display": "inline", "float": "right", "paddingRight": "0em", "paddingTop": "2em", "marginRight": "20px" }}>
@@ -597,14 +667,17 @@ class ListViewSummaryPageData extends Component {
             scrollTop={'Top'}
             ref='table'
             selectRow={this.state.selectRowProp}
-            options={this.state.tableOptions}>
+            options={this.state.tableOptions}
+            pagination={ true } 
+
+            >
             <TableHeaderColumn dataField='recordIdentifier'>recordIdentifier</TableHeaderColumn>
-            <TableHeaderColumn dataField='rcnoFirstName'>rcnoFirstName</TableHeaderColumn>
-            <TableHeaderColumn dataField='rcnoLastName'>rcnoLastName</TableHeaderColumn>
-            <TableHeaderColumn dataField='rcnoExchSubId'>rcnoExchSubId</TableHeaderColumn>
-            <TableHeaderColumn dataField='rcnoSocSecNum'>rcnoSocSecNum</TableHeaderColumn>
-            <TableHeaderColumn dataField='rcnoContractId' isKey={true}>rcnoContractId</TableHeaderColumn>
-            <TableHeaderColumn dataField='rcnoFFMPolicyId'>rcnoFFMPolicyId</TableHeaderColumn>
+            <TableHeaderColumn dataField='firstName'>rcnoFirstName</TableHeaderColumn>
+            <TableHeaderColumn dataField='lastName'>rcnoLastName</TableHeaderColumn>
+            <TableHeaderColumn dataField='exchSubId'>rcnoExchSubId</TableHeaderColumn>
+            <TableHeaderColumn dataField='socSecNum'>rcnoSocSecNum</TableHeaderColumn>
+            <TableHeaderColumn dataField='contractId' isKey={true}>rcnoContractId</TableHeaderColumn>
+            <TableHeaderColumn dataField='ffmPolicyId'>rcnoFFMPolicyId</TableHeaderColumn>
             <TableHeaderColumn dataField='overallInd'>overallInd</TableHeaderColumn>
           </BootstrapTable>
           <br />
@@ -663,9 +736,10 @@ class ListViewSummaryPageData extends Component {
         </div>
       </div>
     );
+  
   }
+
   componentWillReceiveProps(nextProps) {
-    debugger;
     console.log("props"); console.log(this.state.fieldNameOptions); console.log(this.props.fieldNameOptions)
     if (this.state.fieldNameOptions.length == 0 && nextProps.fieldNameOptions.length > 0) {
       this.setState({ fieldNameOptions: nextProps.fieldNameOptions });
@@ -676,23 +750,26 @@ class ListViewSummaryPageData extends Component {
     if (this.state.fieldFlagOptions.length == 0 && nextProps.fieldFlagOptions.length > 0) {
       this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions });
     }
+        this.setState({ fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions });
     
 
-    
+   // this.setState({ fieldNameOptions: nextProps.fieldNameOptions })
+
 
     if (this.state.lastDataReceived < nextProps.lastDataReceived) {
       if (nextProps.summaryTableData == undefined || Object.keys(nextProps.summaryTableData).length === 0) {
         console.log("No Table Data");
-        this.setState({showSpinner: false, showTable: false, lastDataReceived: nextProps.lastDataReceived})
+        this.setState({ showSpinner: false, showTable: false, lastDataReceived: nextProps.lastDataReceived })
       } else {
 
 
         this.setState({
           showSpinner: false,
           showTable: true,
-          lastDataReceived: nextProps.lastDataReceived
+          lastDataReceived: nextProps.lastDataReceived,
+          summaryTableData: nextProps.summaryTableData
         });
-      
+
         /*
         let tableData = nextProps.summaryTable;
         let tableHeaders = tableData.headerSet;
@@ -718,10 +795,10 @@ class ListViewSummaryPageData extends Component {
         })
       
       */
+      }
     }
   }
-}
-  
+
   componentDidMount() {
     console.log("componentDidMount()");
     if (initialState === undefined) {
