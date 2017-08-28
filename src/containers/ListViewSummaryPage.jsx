@@ -343,7 +343,7 @@ class ListViewSummaryPage extends Component {
         */
 
 
-
+debugger;
         var obj = {
             frmDate: moment(item.state.startDate).format('MM/YYYY'),
             cvgYear: item.state.covYear,
@@ -356,10 +356,15 @@ class ListViewSummaryPage extends Component {
         if (item.state.advFields) {
             obj = Object.assign(obj, item.state.advFields); 
         }
-        if (item.state.fieldAvdNameSelected != undefined && item.state.fieldAvdNameSelected.length > 0) {
-            obj.fldNmFldVal = item.state.fieldAvdNameSelected;
 
+        if (item.state.fieldAvdNameSelected != undefined && item.state.fieldAvdNameSelected.length > 0) {
+            //obj.fldNmFldVal = item.state.fieldAvdNameSelected;
+            obj.fldNmFldVal= item.state.fieldAvdNameSelected.map(function(value,index){
+                    return { fieldName: value.label, fieldValue:value.fieldValue}
+                
+                })
         }
+        debugger;
         this.getResultSummary(obj);
     }
     render() {
@@ -483,14 +488,14 @@ class ListViewSummaryPage extends Component {
             });
             this.setState({ fieldNameOptions: data, fieldNameAvdCustomOptions: data }, () => {
                 let fN = response.rcnoFieldNameList;
-                // this.getResultSummary({
-                //     fromDate: this.state.fromDate,
-                //     coverageYear: this.state.covYear,
-                //     tradingPartnerId: 'all',
-                //     recordFlag: 'E,P,N',
-                //     fieldFlag: 'I,L,J,K',
-                //     fieldName: fN[0] + ',' + fN[1] + ',' + fN[2] + ',' + fN[3] + ',' + fN[4]
-                // })
+                this.getResultSummary({
+                    fromDate: this.state.fromDate,
+                    coverageYear: this.state.covYear,
+                    tradingPartnerId: 'all',
+                    recordFlag: 'E,P,N',
+                    fieldFlag: 'I,L,J,K',
+                    fieldName: fN[0] + ',' + fN[1] + ',' + fN[2] + ',' + fN[3] + ',' + fN[4]
+                })
             });
         }).catch((error) => {
             console.log(error);

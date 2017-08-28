@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Row, Column, Grid, Button } from 'react-foundation'
@@ -151,7 +152,7 @@ class ListViewSummaryPageData extends Component {
       activeKey: ['1'],
       // startDate: moment(),
       startDate: moment().subtract(1, 'month'),
-      advStartDate: moment().subtract(1, 'month'),
+      advStartDate: moment(),
       covYear: this.props.defaultCovYear,
       tradSelected: this.props.defaultTradingPartners,
       fieldFlagSelected: this.props.defaultFieldFlags,
@@ -220,9 +221,22 @@ class ListViewSummaryPageData extends Component {
     this.setState({ advFields: advFields });
 
   }
-  handleAvdCustomFilterRow(row) {
+  handleAvdCustomFilterRow(inputFields,currentIndex, e) {
+debugger;
+    var fieldValue = document.getElementById(inputFields).value;
+   
+    //this.state.fieldAvdNameSelected[currentIndex].fieldValue = fieldValue;
     
+    debugger;
     this.addAdvRows();
+  }
+  handleAdvFieldNameChange(selected) {
+    // debugger;
+    // var fieldValue = document.getElementById(inputFieldName).value;
+    // this.state.fieldAvdNameSelected.push({fieldName:fieldName, fieldValue:fieldValue });
+    this.state.fieldAvdNameSelected.push(selected);
+  //  var avdArra= new Array(selected);
+    this.setState({ fieldAvdNameSelected:this.state.fieldAvdNameSelected });
   }
 
   handleMultiSelectRenderer(selected, options) {
@@ -243,15 +257,8 @@ class ListViewSummaryPageData extends Component {
   handleFieldNameChange(selected) {
     this.setState({ fieldNameSelected: selected });
   }
-  handleAdvFieldNameChange(selected) {
-    
-    this.state.fieldAvdNameSelected.push(selected);
-    
-    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-  }
 
   handleSubmitButton() {
-
     console.log('handleSubmitButton()');
     let state =Object.assign({}, this.state) ; //JSON.parse(JSON.stringify(this.state));
     console.log(state);
@@ -305,6 +312,8 @@ class ListViewSummaryPageData extends Component {
   }
   handleResetButton() {
     console.log(initialState);
+    advCustomFiltersRows.length=1;
+    
     this.setState({
       // startDate: moment(),
       startDate: moment().subtract(1, 'month'),
@@ -313,23 +322,53 @@ class ListViewSummaryPageData extends Component {
       fieldFlagSelected: JSON.parse(JSON.stringify(initialState.fieldFlagSelected)),
       recordFlagSelected: JSON.parse(JSON.stringify(initialState.recordFlagSelected)),
       fieldNameSelected: JSON.parse(JSON.stringify(initialState.fieldNameSelected)),
+      advIsrFstNm:"",
+      advIsrLstNm:"",
+      advIsrExchSubId:"",
+      advIsrExchSubId:"",
+      advIsrPlcyId:"",
+      advIsrRcTcNum:"",
       
     }, () => {
       console.log("Resetting State");
       console.log(this.state);
     });
+    document.getElementById('issuerLastName0').value="";
+    //advCustomFiltersRows =[];
+   // addAdvRows();
+
+
   }
 
   addAdvRows() {
+    debugger;
+    var currentIndex =( advCustomFiltersRows.length);
+   
+    if(currentIndex<5){
+      /*
+    var cIndex = currentIndex == 0 ? currentIndex:currentIndex -1
+      var currentRef = 'advCustomerIndex_' + (cIndex  );
+
+      var obj  = {
+      }
+      obj[currentRef] = false;
+      this.state[currentRef] = false;
+      this.setState(obj);
 
 
-    advCustomFiltersRows.push(
+
+     
+*/
+
+   var inputFieldName= "issuerLastName"  + currentIndex;
+   
+      advCustomFiltersRows.push(
 
       <Row >
         <div style={{ "marginLeft": "3%" }} >
           <Column medium={4}>
             <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-              Field Name:
+              Field Name: 
               <Select.Async
                 searchable={isSearchable}
                 clearable={isClearable}
@@ -343,15 +382,15 @@ class ListViewSummaryPageData extends Component {
         <Column medium={3}>
           <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
             Field Value:
-  <input type="text" name="issuerLastName" />
+           <input type="text" id={inputFieldName} name={inputFieldName} value={this.state[inputFieldName]} />
           </label>
         </Column>
         <div style={{ "paddingTop": "22px" }}>
           <Column medium={3}>
 
-            <label onClick={this.handleAvdCustomFilterRow} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+            <label onClick={this.handleAvdCustomFilterRow.bind(this,inputFieldName,currentIndex)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
 
-              <i className="fa fa-plus-circle fa-3x" style={{ "cursor": "pointer" }} aria-hidden="true"></i>
+              <i className='fa fa-plus-circle fa-3x'   style={{ "cursor": "pointer" }} aria-hidden="true"></i>
             </label>
 
           </Column>
@@ -360,8 +399,12 @@ class ListViewSummaryPageData extends Component {
 
 
     );
-
+    
+      
+    
+      //{ [currentRef] :false}
     this.forceUpdate();
+  }
   }
   getItems() {
     const items = [];
@@ -498,29 +541,35 @@ class ListViewSummaryPageData extends Component {
                       <Column medium={4}>
                         <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                           Issuer First Name:
-                  <input type="text" name="advIsrFstNm" onChange={this.handleAdvSearch} />
+                  <input type="text" name="advIsrFstNm" value={this.state.advIsrFstNm} onChange={this.handleAdvSearch} />
                         </label>
                       </Column>
                     </div>
                     <Column medium={4}>
                       <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer Last Name:
-                  <input type="text" name="advIsrLstNm" onChange={this.handleAdvSearch} />
+                  <input type="text" name="advIsrLstNm" value={this.state.advIsrLstNm} onChange={this.handleAdvSearch} />
                       </label>
                     </Column>
                     <Column medium={3}>
                       <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer DOB:
-                            <DatePicker
+                            {/* <DatePicker
                           name="advIsrDob"
                           selected={this.state.advStartDate}
                           onChange={this.handleAdvSearch.bind(this, 'advIsrDob', this.state.advStartDate)}
-                          dateFormat="MM/YYYY"
-                          placeholderText="MM/YYYY"
-                          showMonthDropdown
+                          dateFormat="MM/DD/YYYY"
+                          placeholderText="MM/DD/YYYY"
                           showYearDropdown
+                          scrollableYearDropdown /> */}
+                          <DatePicker
+                          name="advIsrDob"
+                          selected={this.state.advStartDate}
+                          
+                          dateFormat="MM/DD/YYYY"
+                          placeholderText="MM/DD/YYYY"
+                          
                           scrollableYearDropdown />
-
 
                       </label>
                     </Column>
@@ -531,7 +580,7 @@ class ListViewSummaryPageData extends Component {
                         <label className="formLabel"
                           style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                           Issuer Ex Sub ID:
-                  <input type="text" name="advIsrExchSubId" onChange={this.handleAdvSearch} />
+                  <input type="text" name="advIsrExchSubId" value={this.state.advIsrExchSubId} onChange={this.handleAdvSearch} />
                         </label>
                       </Column>
                     </div>
@@ -539,14 +588,14 @@ class ListViewSummaryPageData extends Component {
                       <label className="formLabel"
                         style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer FFM Policy ID:
-                  <input type="text" name="advIsrPlcyId" onChange={this.handleAdvSearch} />
+                  <input type="text" name="advIsrPlcyId" value={this.state.advIsrPlcyId}  onChange={this.handleAdvSearch} />
                       </label>
                     </Column>
                     <Column medium={3}>
                       <label className="formLabel"
                         style={{ "display": "inline", "fontWeight": "500", "color": "#3498db", "width": "101%" }}>
                         Issuer Record Trace <span>Number:</span>
-                        <input type="text" name="advIsrRcTcNum" onChange={this.handleAdvSearch} />
+                        <input type="text" name="advIsrRcTcNum" value={this.state.advIsrRcTcNum}  onChange={this.handleAdvSearch} />
                       </label>
                     </Column>
                   </Row>
@@ -568,18 +617,7 @@ class ListViewSummaryPageData extends Component {
                         )
                       })
                   }
-                  {/* <Row>
-             <Column medium={3}>   Field Name:
-                <Select
-            searchable={isSearchable}
-            clearable={isClearable}
-            name="advancefieldname"
-            value="one"
-            options={this.props.fieldNameOptions}
-            onChange={this.handleAdvFieldNameChange} />
-            </Column>
-            
-               </Row> */}
+                
 
                   <Row>
                     <div className="modal-footer">
