@@ -494,12 +494,12 @@ class ListViewSummaryPage extends Component {
             this.setState({ fieldNameOptions: data, fieldNameAvdCustomOptions: data }, () => {
                 let fN = response.rcnoFieldNameList;
                 this.getResultSummary({
-                    fromDate: this.state.fromDate,
-                    coverageYear: this.state.covYear,
-                    tradingPartnerId: 'all',
-                    recordFlag: 'E,P,N',
-                    fieldFlag: 'I,L,J,K',
-                    fieldName: fN[0] + ',' + fN[1] + ',' + fN[2] + ',' + fN[3] + ',' + fN[4]
+                    frmDate: this.state.fromDate,
+                    cvgYear: this.state.covYear,
+                    tpId: 'all',
+                    rcdFlag: 'E,P,N',
+                    fldFlag: 'I,L,J,K',
+                    fldName: fN[0] + ',' + fN[1] + ',' + fN[2] + ',' + fN[3] + ',' + fN[4]
                 })
             });
         }).catch((error) => {
