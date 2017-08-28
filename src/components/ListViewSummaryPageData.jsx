@@ -141,7 +141,9 @@ class ListViewSummaryPageData extends Component {
       'handleAdvSearch',
       'handleAvdCustomFilterRow',
       "addAdvRows",
-      'handleAdvFieldNameChange'
+      'handleAdvFieldNameChange',
+      'handleAvdCustomFilterRowData'
+
     ].map(fn => this[fn] = this[fn].bind(this));
     this.addAdvRows();
   }
@@ -221,18 +223,21 @@ class ListViewSummaryPageData extends Component {
     this.setState({ advFields: advFields });
 
   }
-  handleAvdCustomFilterRow(inputFields,currentIndex,isAddRow, e) {
+
+    handleAvdCustomFilterRowData(inputFields,currentIndex, e) {
     var fieldValue = document.getElementById(inputFields).value;
 
     //this.state.fieldAvdNameSelected[currentIndex].fieldValue = fieldValue;
     this.state.fieldAvdNameSelected[currentIndex].fieldValue = fieldValue
     this.setState( {fieldAvdNameSelected :  this.state.fieldAvdNameSelected });
-        if(isAddRow){
+
+}
+  handleAvdCustomFilterRow(inputFields,currentIndex, e) {
+
     this.addAdvRows();
-    }
+
   }
   handleAdvFieldNameChange(selected) {
-    // debugger;
     // var fieldValue = document.getElementById(inputFieldName).value;
     // this.state.fieldAvdNameSelected.push({fieldName:fieldName, fieldValue:fieldValue });
     this.state.fieldAvdNameSelected.push(selected);
@@ -260,6 +265,7 @@ class ListViewSummaryPageData extends Component {
   }
 
   handleSubmitButton() {
+    debugger;
     console.log('handleSubmitButton()');
     let state =Object.assign({}, this.state) ; //JSON.parse(JSON.stringify(this.state));
     console.log(state);
@@ -326,7 +332,6 @@ class ListViewSummaryPageData extends Component {
       advIsrFstNm:"",
       advIsrLstNm:"",
       advIsrExchSubId:"",
-      advIsrExchSubId:"",
       advIsrPlcyId:"",
       advIsrRcTcNum:"",
 
@@ -382,7 +387,7 @@ class ListViewSummaryPageData extends Component {
         <Column medium={3}>
           <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
             Field Value:
-           <input type="text" id={inputFieldName} name={inputFieldName} value={this.state[inputFieldName]}  onChange={this.handleAvdCustomFilterRow.bind(this,inputFieldName,currentIndex,false)}  />
+           <input type="text" id={inputFieldName} name={inputFieldName} value={this.state[inputFieldName]}  onChange={this.handleAvdCustomFilterRowData.bind(this,inputFieldName,currentIndex,false)}  />
           </label>
         </Column>
         <div style={{ "paddingTop": "22px" }}>
