@@ -265,7 +265,6 @@ class ListViewSummaryPageData extends Component {
   }
 
   handleSubmitButton() {
-    debugger;
     console.log('handleSubmitButton()');
     let state =Object.assign({}, this.state) ; //JSON.parse(JSON.stringify(this.state));
     console.log(state);

@@ -462,7 +462,7 @@ class ListViewSummaryPage extends Component {
                 return { value: index, label: d }
             });
             */
-debugger;
+
             
             
             for(var key in data){
