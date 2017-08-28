@@ -343,7 +343,6 @@ class ListViewSummaryPage extends Component {
         */
 
 
-debugger;
         var obj = {
             frmDate: moment(item.state.startDate).format('MM/YYYY'),
             cvgYear: item.state.covYear,
@@ -354,17 +353,16 @@ debugger;
 
         }
         if (item.state.advFields) {
-            obj = Object.assign(obj, item.state.advFields); 
+            obj = Object.assign(obj, item.state.advFields);
         }
 
         if (item.state.fieldAvdNameSelected != undefined && item.state.fieldAvdNameSelected.length > 0) {
             //obj.fldNmFldVal = item.state.fieldAvdNameSelected;
             obj.fldNmFldVal= item.state.fieldAvdNameSelected.map(function(value,index){
                     return { fieldName: value.label, fieldValue:value.fieldValue}
-                
+
                 })
         }
-        debugger;
         this.getResultSummary(obj);
     }
     render() {

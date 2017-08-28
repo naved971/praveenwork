@@ -221,14 +221,15 @@ class ListViewSummaryPageData extends Component {
     this.setState({ advFields: advFields });
 
   }
-  handleAvdCustomFilterRow(inputFields,currentIndex, e) {
-debugger;
+  handleAvdCustomFilterRow(inputFields,currentIndex,isAddRow, e) {
     var fieldValue = document.getElementById(inputFields).value;
-   
+
     //this.state.fieldAvdNameSelected[currentIndex].fieldValue = fieldValue;
-    
-    debugger;
+    this.state.fieldAvdNameSelected[currentIndex].fieldValue = fieldValue
+    this.setState( {fieldAvdNameSelected :  this.state.fieldAvdNameSelected });
+        if(isAddRow){
     this.addAdvRows();
+    }
   }
   handleAdvFieldNameChange(selected) {
     // debugger;
@@ -313,7 +314,7 @@ debugger;
   handleResetButton() {
     console.log(initialState);
     advCustomFiltersRows.length=1;
-    
+
     this.setState({
       // startDate: moment(),
       startDate: moment().subtract(1, 'month'),
@@ -328,7 +329,7 @@ debugger;
       advIsrExchSubId:"",
       advIsrPlcyId:"",
       advIsrRcTcNum:"",
-      
+
     }, () => {
       console.log("Resetting State");
       console.log(this.state);
@@ -341,9 +342,8 @@ debugger;
   }
 
   addAdvRows() {
-    debugger;
     var currentIndex =( advCustomFiltersRows.length);
-   
+
     if(currentIndex<5){
       /*
     var cIndex = currentIndex == 0 ? currentIndex:currentIndex -1
@@ -357,24 +357,24 @@ debugger;
 
 
 
-     
+
 */
 
    var inputFieldName= "issuerLastName"  + currentIndex;
-   
+
       advCustomFiltersRows.push(
 
       <Row >
         <div style={{ "marginLeft": "3%" }} >
           <Column medium={4}>
             <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-              Field Name: 
+              Field Name:
               <Select.Async
                 searchable={isSearchable}
                 clearable={isClearable}
-                onChange={this.handleAdvFieldNameChange} 
+                onChange={this.handleAdvFieldNameChange}
                 loadOptions={this.props.getAvdInputFields}
-                
+
                 />
             </label>
           </Column>
@@ -382,13 +382,13 @@ debugger;
         <Column medium={3}>
           <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
             Field Value:
-           <input type="text" id={inputFieldName} name={inputFieldName} value={this.state[inputFieldName]} />
+           <input type="text" id={inputFieldName} name={inputFieldName} value={this.state[inputFieldName]}  onChange={this.handleAvdCustomFilterRow.bind(this,inputFieldName,currentIndex,false)}  />
           </label>
         </Column>
         <div style={{ "paddingTop": "22px" }}>
           <Column medium={3}>
 
-            <label onClick={this.handleAvdCustomFilterRow.bind(this,inputFieldName,currentIndex)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+            <label onClick={this.handleAvdCustomFilterRow.bind(this,inputFieldName,currentIndex,true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
 
               <i className='fa fa-plus-circle fa-3x'   style={{ "cursor": "pointer" }} aria-hidden="true"></i>
             </label>
@@ -399,9 +399,9 @@ debugger;
 
 
     );
-    
-      
-    
+
+
+
       //{ [currentRef] :false}
     this.forceUpdate();
   }
@@ -565,10 +565,10 @@ debugger;
                           <DatePicker
                           name="advIsrDob"
                           selected={this.state.advStartDate}
-                          
+
                           dateFormat="MM/DD/YYYY"
                           placeholderText="MM/DD/YYYY"
-                          
+
                           scrollableYearDropdown />
 
                       </label>
@@ -617,7 +617,7 @@ debugger;
                         )
                       })
                   }
-                
+
 
                   <Row>
                     <div className="modal-footer">
@@ -706,7 +706,7 @@ debugger;
             ref='table'
             selectRow={this.state.selectRowProp}
             options={this.state.tableOptions}
-            pagination={ true } 
+            pagination={ true }
 
             >
             <TableHeaderColumn dataField='recordIdentifier'>recordIdentifier</TableHeaderColumn>
@@ -774,7 +774,7 @@ debugger;
         </div>
       </div>
     );
-  
+
   }
 
   componentWillReceiveProps(nextProps) {
@@ -789,7 +789,7 @@ debugger;
       this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions });
     }
         this.setState({ fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions });
-    
+
 
    // this.setState({ fieldNameOptions: nextProps.fieldNameOptions })
 
@@ -831,7 +831,7 @@ debugger;
         }, () => {
           this.setState({tableHeaders, summaryTableData})
         })
-      
+
       */
       }
     }

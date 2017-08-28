@@ -171,7 +171,6 @@ class FieldSummaryDetailPageData extends Component {
     this.setState({ fieldNameSelected: selected });
   }
   handleSubmitButton() {
-    debugger
     console.log('handleSubmitButton()');
     let state = JSON.parse(JSON.stringify(this.state));
     console.log(state);
