@@ -448,21 +448,28 @@ class ListViewSummaryPage extends Component {
     }
 
     getAvdInputFields(input) {
+        let customerAdvFiels = [];
+
         return fetch(rcnorcni.GET_FIELD_NAME_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
             }
             return response.json();
         }).then((response) => {
-            let data = response.rcnoFieldNameList;
+            let data = response.fieldNameMap;
+            /*   
             data = data.map((d, index) => {
                 return { value: index, label: d }
             });
-            // const json = [
-            //     { value: 'one', label: 'One' },
-            //     { value: 'two', label: 'Two' }
-            // ]
-            return { options: data };
+            */
+debugger;
+            
+            
+            for(var key in data){
+                customerAdvFiels.push({ value: key, label: data[key]  } )
+            
+            }
+            return { options: customerAdvFiels };
 
 
         }).catch((error) => {
