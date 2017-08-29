@@ -56,7 +56,7 @@ const styles = {
 };
 let advCustomFiltersRows = [];
 var isSearchable = false;
-var isClearable = false;
+var isClearable = true;
 
 let advFields = {};
 let initialState = undefined;
@@ -142,30 +142,52 @@ class ListViewSummaryPageData extends Component {
       'handleAvdCustomFilterRow',
       "addAdvRows",
       'handleAdvFieldNameChange',
-      'handleAvdCustomFilterRowData'
+      'handleAvdCustomFilterRowData',
+      'handleSelectedTab'
 
     ].map(fn => this[fn] = this[fn].bind(this));
     this.addAdvRows();
   }
 
   getInitialState() {
-    return {
+    let selectedTab = { currentIndex: 0, TabName: "RCNO" };
+    let TabName = selectedTab.TabName;
+
+    let initialState= {
       accordion: true,
       activeKey: ['1'],
       // startDate: moment(),
-      startDate: moment().subtract(1, 'month'),
-      advStartDate: moment(),
-      covYear: this.props.defaultCovYear,
-      tradSelected: this.props.defaultTradingPartners,
-      fieldFlagSelected: this.props.defaultFieldFlags,
-      recordFlagSelected: this.props.defaultRecordFlags,
-      fieldNameSelected: this.props.defaultFieldNames,
+      startDate:{[TabName] : moment().subtract(1, 'month')} 
+      ,
+      advStartDate:{ [TabName]:{advIsrDob: moment()} } ,
+      //{ [selectedTab.TabName]:moment() },
+      covYear:{ [TabName]:   this.props.defaultCovYear  },
+      tradSelected:{
+        [selectedTab.TabName]:  this.props.defaultTradingPartners
+      },
+      fieldFlagSelected: {
+        [selectedTab.TabName]:  this.props.defaultFieldFlags
+      },
+     
+      recordFlagSelected:{
+        [selectedTab.TabName]:  this.props.defaultRecordFlags
+      },
+      fieldNameSelected:{
+        [selectedTab.TabName]:  this.props.defaultFieldNames
+        
+      },
       fieldNameOptions: this.props.fieldNameOptions,
-      fieldNameAvdCustomOptions:this.props.fieldNameAvdCustomOptions,
+      fieldNameAvdCustomOptions: this.props.fieldNameAvdCustomOptions,
       recordFlagOptions: this.props.recordFlagOptions,
       fieldFlagOptions: this.props.fieldFlagOptions,
-      advCustomFiltersRows:advCustomFiltersRows,
-      fieldAvdNameSelected:[],
+      advCustomFiltersRows: advCustomFiltersRows,
+      fieldAvdNameSelected: {
+        [selectedTab.TabName]: []
+      },
+      selectedTab: selectedTab,
+      advFields: {
+        [selectedTab.TabName]: {}
+      },
       selectRowProp: {
         mode: 'checkbox',
         clickToSelect: true,
@@ -181,12 +203,17 @@ class ListViewSummaryPageData extends Component {
       lastDataReceived: this.props.lastDataReceived,
       errStr: []
     };
+
+    return initialState;
   }
   onChange(activeKey) {
     this.setState({ activeKey });
   }
   handleDateChange(date) {
-    this.setState({ startDate: date });
+    let TabName = this.state.selectedTab.TabName;
+
+    this.state.startDate[TabName]= date; //={ [TabName]:selected} ;
+    this.setState({ startDate:  this.state.startDate });
   }
   onExportToCSV() {
     const selectedRows = cxt.refs.table.state.selectedRowKeys;
@@ -208,41 +235,71 @@ class ListViewSummaryPageData extends Component {
       .handleExportCSV();
   }
   handleTradPartChange(selected) {
-    this.setState({ tradSelected: selected });
+    
+    this.state.tradSelected[this.state.selectedTab.TabName]= selected;
+    this.setState({ tradSelected:   this.state.tradSelected });
   }
   handleCovYearChange(val) {
-    console.log(val);
-    this.setState({ covYear: val.label });
+    let TabName = this.state.selectedTab.TabName;
+        this.state.covYear[TabName] = val.label;
+    this.setState({ covYear:  this.state.covYear });
   }
   handleAdvSearch(e, date) {
+
     if (typeof e == "string") {
-      advFields[e] = moment(date).format('MM/YYYY');
+      this.state.advFields[this.state.selectedTab.TabName][e] = moment(date).format('YYYY');
     } else {
-      advFields[e.target.name] = e.target.value;
+      ///advFields[this.state.selectedTab.TabName] ={};
+      this.state.advFields[this.state.selectedTab.TabName][e.target.name] = e.target.value;
     }
-    this.setState({ advFields: advFields });
+    this.setState({ advFields: this.state.advFields });
 
   }
-
-    handleAvdCustomFilterRowData(inputFields,currentIndex, e) {
+  handleDOBChange(e,date){
+    let Tabname = this.state.selectedTab.TabName;
+      this.state.advFields[this.state.selectedTab.TabName][e] = moment(date).format('YYYY/MM/DD');
+      var Obj = { advFields: this.state.advFields };
+      if(Tabname=="RCNO"){
+        Obj.RCNO_DOB = this.state.advFields[this.state.selectedTab.TabName][e];
+      } 
+       if(Tabname=="RCNI"){
+        Obj.RCNI_DOB = this.state.advFields[this.state.selectedTab.TabName][e];
+      }
+      this.setState(Obj);
+      this.forceUpdate();
+      }
+  handleAvdCustomFilterRowData(inputFields, currentIndex, e) {
     var fieldValue = document.getElementById(inputFields).value;
-
     //this.state.fieldAvdNameSelected[currentIndex].fieldValue = fieldValue;
-    this.state.fieldAvdNameSelected[currentIndex].fieldValue = fieldValue
-    this.setState( {fieldAvdNameSelected :  this.state.fieldAvdNameSelected });
+    if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]== undefined){
+      this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex] ={fieldValue: fieldValue};
+    }
+    else{
+      this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex].fieldValue = fieldValue
+    }
 
-}
-  handleAvdCustomFilterRow(inputFields,currentIndex, e) {
+    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
+
+  }
+  handleAvdCustomFilterRow(inputFields, currentIndex, e) {
 
     this.addAdvRows();
 
   }
-  handleAdvFieldNameChange(selected) {
+  handleAdvFieldNameChange(inputFields, currentIndex,selected) {
     // var fieldValue = document.getElementById(inputFieldName).value;
     // this.state.fieldAvdNameSelected.push({fieldName:fieldName, fieldValue:fieldValue });
-    this.state.fieldAvdNameSelected.push(selected);
-  //  var avdArra= new Array(selected);
-    this.setState({ fieldAvdNameSelected:this.state.fieldAvdNameSelected });
+    if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]){
+          this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]=Object.assign(selected,this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]);
+    }
+    else{
+      this.state.fieldAvdNameSelected[this.state.selectedTab.TabName].push(selected);
+    }
+
+
+
+    //  var avdArra= new Array(selected);
+    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
   }
 
   handleMultiSelectRenderer(selected, options) {
@@ -255,60 +312,118 @@ class ListViewSummaryPageData extends Component {
     return `Selected (${selected.length})`;
   }
   handleFieldFlagChange(selected) {
-    this.setState({ fieldFlagSelected: selected });
+    this.state.fieldFlagSelected[this.state.selectedTab.TabName]= selected;
+    
+    this.setState({ fieldFlagSelected: this.state.fieldFlagSelected });
   }
   handleRecordFlagChange(selected) {
-    this.setState({ recordFlagSelected: selected });
+    this.state.recordFlagSelected[this.state.selectedTab.TabName]= selected;
+    this.setState({ recordFlagSelected:  this.state.recordFlagSelected });
   }
   handleFieldNameChange(selected) {
-    this.setState({ fieldNameSelected: selected });
+    this.state.fieldNameSelected[this.state.selectedTab.TabName]= selected;
+    this.setState({ fieldNameSelected:  this.state.fieldNameSelected });
+  }
+
+  handleSelectedTab(selectedTab) {
+
+
+    if (this.state.advStartDate[selectedTab.TabName] == undefined) {
+      this.state.advStartDate[selectedTab.TabName] = { advFfmDob: moment() };
+      this.setState({ advStartDate: this.state.advStartDate });
+    }
+
+    if (this.state.advFields[selectedTab.TabName] == undefined) {
+      this.state.advFields[selectedTab.TabName] = {};
+      this.setState({ advFields: this.state.advFields });
+    }
+    if (this.state.fieldAvdNameSelected[selectedTab.TabName] == undefined) {
+      
+      this.state.fieldAvdNameSelected[selectedTab.TabName] = [];
+      this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
+    }
+
+    if (this.state.tradSelected[selectedTab.TabName] == undefined) {
+      this.state.tradSelected[selectedTab.TabName] =  this.props.defaultTradingPartners;
+      this.setState({ tradSelected: this.state.tradSelected });
+    }
+    if (this.state.fieldFlagSelected[selectedTab.TabName] == undefined) {
+      this.state.fieldFlagSelected[selectedTab.TabName] =this.props.defaultFieldFlags;
+      this.setState({ fieldFlagSelected: this.state.fieldFlagSelected });
+    }
+    if (this.state.recordFlagSelected[selectedTab.TabName] == undefined) {
+      this.state.recordFlagSelected[selectedTab.TabName] =this.props.defaultRecordFlags;
+      this.setState({ recordFlagSelected: this.state.recordFlagSelected });
+    }
+    if (this.state.fieldNameSelected[selectedTab.TabName] == undefined) {
+      this.state.fieldNameSelected[selectedTab.TabName] =this.props.defaultFieldNames;
+      this.setState({ fieldNameSelected: this.state.fieldNameSelected });
+    }
+
+    if (this.state.startDate[selectedTab.TabName] == undefined) {
+      this.state.startDate[selectedTab.TabName] = moment().subtract(1, 'month');
+      this.setState({ startDate: this.state.startDate });
+    }
+
+    if (this.state.covYear[selectedTab.TabName] == undefined) {
+      this.state.covYear[selectedTab.TabName] =this.props.defaultCovYear;
+      this.setState({ covYear: this.state.covYear });
+    }
+    this.setState({ selectedTab: selectedTab });
   }
 
   handleSubmitButton() {
+    let currentTabName = this.state.selectedTab.TabName;
+    
     console.log('handleSubmitButton()');
-    let state =Object.assign({}, this.state) ; //JSON.parse(JSON.stringify(this.state));
+    let state = Object.assign({}, this.state); //JSON.parse(JSON.stringify(this.state));
     console.log(state);
-    let pass = true;
-    let errStr = [];
+    let pass= {
+      [currentTabName]:true
+    }
+    let errStr ={
+      [currentTabName]:[]
+      
+    } ;
     // validate covYear
-    if (!state.covYear || parseInt(state.covYear) !== state.covYear || String(state.covYear).indexOf('.') !== -1) {
-      pass = false;
-      errStr[4] = "Field Required";
+    if (!state.covYear[currentTabName] || parseInt(state.covYear[currentTabName]) !== state.covYear[currentTabName] || String(state.covYear[currentTabName]).indexOf('.') !== -1) {
+      pass[currentTabName] = false;
+      errStr[currentTabName][4] = "Field Required";
     }
     // validate moment object
     const startDate = this.refs.fileRunDPicker.refs.input.defaultValue;
     if (!startDate || startDate.length !== 7) {
-      pass = false;
-      errStr[0] = "Field Required";
+      pass[currentTabName] = false;
+      errStr[currentTabName][0] = "Field Required";
     }
     else {
       let range = moment(startDate, 'MM/YYYY').add(6, 'month');
       if (!moment(range).isSameOrAfter(moment())) {
-        pass = false;
-        errStr[0] = "Error : Date more than 6 months old";
+        pass[currentTabName] = false;
+        errStr[currentTabName][0] = "Error : Date more than 6 months old";
       }
     }
     // validate trad partners
-    if (!state.tradSelected || state.tradSelected.length < 1) {
-      pass = false;
-      errStr[1] = "Field Required";
+    if (!state.tradSelected[currentTabName] || state.tradSelected[currentTabName].length < 1) {
+      pass[currentTabName] = false;
+      errStr[currentTabName][1] = "Field Required";
     }
     // validate record flags
-    if (!state.recordFlagSelected || state.recordFlagSelected.length < 1) {
-      pass = false;
-      errStr[3] = "Field Required";
+    if (!state.recordFlagSelected[currentTabName] || state.recordFlagSelected[currentTabName].length < 1) {
+      pass[currentTabName]= false;
+      errStr[currentTabName][3] = "Field Required";
     }
     // validate field flags
-    if (!state.fieldFlagSelected || state.fieldFlagSelected.length < 1) {
-      pass = false;
-      errStr[2] = "Field Required";
+    if (!state.fieldFlagSelected[currentTabName] || state.fieldFlagSelected[currentTabName].length < 1) {
+      pass[currentTabName] = false;
+      errStr[currentTabName][2] = "Field Required";
     }
     // validate record flags
-    if (!state.fieldNameSelected || state.fieldNameSelected.length < 1) {
-      pass = false;
-      errStr[5] = "Field Required";
+    if (!state.fieldNameSelected[currentTabName] || state.fieldNameSelected[currentTabName].length < 1) {
+      pass[currentTabName] = false;
+      errStr[currentTabName][5] = "Field Required";
     }
-    if (pass) {
+    if (pass[currentTabName]) {
       this
         .props
         .handleSubmit({ state })
@@ -318,37 +433,44 @@ class ListViewSummaryPageData extends Component {
   }
   handleResetButton() {
     console.log(initialState);
-    advCustomFiltersRows.length=1;
-
-    this.setState({
+    advCustomFiltersRows.length = 1;
+    var resetFields = {
       // startDate: moment(),
       startDate: moment().subtract(1, 'month'),
       covYear: JSON.parse(JSON.stringify(initialState.covYear)),
       tradSelected: JSON.parse(JSON.stringify(initialState.tradSelected)),
       fieldFlagSelected: JSON.parse(JSON.stringify(initialState.fieldFlagSelected)),
       recordFlagSelected: JSON.parse(JSON.stringify(initialState.recordFlagSelected)),
-      fieldNameSelected: JSON.parse(JSON.stringify(initialState.fieldNameSelected)),
-      advIsrFstNm:"",
-      advIsrLstNm:"",
-      advIsrExchSubId:"",
-      advIsrPlcyId:"",
-      advIsrRcTcNum:"",
+      fieldNameSelected: JSON.parse(JSON.stringify(initialState.fieldNameSelected))
+    }
 
-    }, () => {
-      console.log("Resetting State");
-      console.log(this.state);
-    });
-    document.getElementById('issuerLastName0').value="";
+    var currentTabFields = this.state.advFields[item.state.selectedTab.TabName];
+
+
+    for (var key in currentTabFields) {
+      if (p.hasOwnProperty(key) && typeof  typeof p[key] == "string") {
+        p[key]="";
+        // console.log(key + " -> " + p[key]);
+      }
+    }
+
+
+    resetFields = Object.assign(resetFields, currentTabFields);
+
+              this.setState(resetFields, () => {
+                console.log("Resetting State");
+                console.log(this.state);
+              });
+    document.getElementById('issuerLastName0').value = "";
     //advCustomFiltersRows =[];
-   // addAdvRows();
+    // addAdvRows();
 
 
   }
 
   addAdvRows() {
-    var currentIndex =( advCustomFiltersRows.length);
-
-    if(currentIndex<5){
+    var currentIndex = (advCustomFiltersRows.length);
+    if (currentIndex < 5) {
       /*
     var cIndex = currentIndex == 0 ? currentIndex:currentIndex -1
       var currentRef = 'advCustomerIndex_' + (cIndex  );
@@ -364,51 +486,51 @@ class ListViewSummaryPageData extends Component {
 
 */
 
-   var inputFieldName= "issuerLastName"  + currentIndex;
+      var inputFieldName = "issuerLastName" + currentIndex;
 
       advCustomFiltersRows.push(
 
-      <Row >
-        <div style={{ "marginLeft": "3%" }} >
-          <Column medium={4}>
-            <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-              Field Name:
+        <Row >
+          <div style={{ "marginLeft": "3%" }} >
+            <Column medium={4}>
+              <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                Field Name:
               <Select.Async
-                searchable={isSearchable}
-                clearable={isClearable}
-                onChange={this.handleAdvFieldNameChange}
-                loadOptions={this.props.getAvdInputFields}
+                  searchable={isSearchable}
+                  clearable={isClearable}
+                  onChange={this.handleAdvFieldNameChange.bind(this, inputFieldName, currentIndex)}
+                  loadOptions={this.props.getAvdInputFields}
 
                 />
-            </label>
-          </Column>
-        </div>
-        <Column medium={3}>
-          <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-            Field Value:
-           <input type="text" id={inputFieldName} name={inputFieldName} value={this.state[inputFieldName]}  onChange={this.handleAvdCustomFilterRowData.bind(this,inputFieldName,currentIndex,false)}  />
-          </label>
-        </Column>
-        <div style={{ "paddingTop": "22px" }}>
+              </label>
+            </Column>
+          </div>
           <Column medium={3}>
-
-            <label onClick={this.handleAvdCustomFilterRow.bind(this,inputFieldName,currentIndex,true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-
-              <i className='fa fa-plus-circle fa-3x'   style={{ "cursor": "pointer" }} aria-hidden="true"></i>
+            <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+              Field Value:
+           <input type="text" id={inputFieldName} name={inputFieldName} value={this.state[inputFieldName]} onChange={this.handleAvdCustomFilterRowData.bind(this, inputFieldName, currentIndex, false)} />
             </label>
-
           </Column>
-        </div>
-      </Row>
+          <div style={{ "paddingTop": "22px" }}>
+            <Column medium={3}>
+
+              <label onClick={this.handleAvdCustomFilterRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+
+                <i className='fa fa-plus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
+              </label>
+
+            </Column>
+          </div>
+        </Row>
 
 
-    );
+      );
 
 
 
       //{ [currentRef] :false}
-    this.forceUpdate();
-  }
+      this.forceUpdate();
+    }
   }
   getItems() {
     const items = [];
@@ -421,8 +543,8 @@ class ListViewSummaryPageData extends Component {
           <div>
             <Tabs activeLinkStyle={styles.activeLinkStyle} visibleTabStyle={styles.visibleTabStyle} style={styles.tabs}>
               <div style={styles.links}>
-                <TabLink to="tab1" default style={styles.tabLink}>RCNO</TabLink>
-                <TabLink to="tab2" style={styles.tabLink}>RCNI</TabLink>
+                <TabLink to="tab1" default style={styles.tabLink} onClick={this.handleSelectedTab.bind(this, { currentIndex: 0, TabName: "RCNO" })}>RCNO</TabLink>
+                <TabLink to="tab2" style={styles.tabLink} onClick={this.handleSelectedTab.bind(this, { currentIndex: 1, TabName: "RCNI" })} >RCNI</TabLink>
               </div>
 
               <div style={styles.content}>
@@ -434,7 +556,7 @@ class ListViewSummaryPageData extends Component {
                           File Run Month/Year:*
                                 <DatePicker
                             ref='fileRunDPicker'
-                            selected={this.state.startDate}
+                            selected={this.state.startDate[this.state.selectedTab.TabName]}
                             onChange={this.handleDateChange}
                             dateFormat="MM/YYYY"
                             showMonthDropdown
@@ -451,7 +573,7 @@ class ListViewSummaryPageData extends Component {
                             <MultiSelect
                           options={this.props.tradingPartnerOptions}
                           onSelectedChanged={this.handleTradPartChange}
-                          selected={this.state.tradSelected}
+                          selected={this.state.tradSelected[this.state.selectedTab.TabName]}
                           valueRenderer={this.handleMultiSelectRenderer}
                           selectAllLabel={"All"} />
                         <span className="error">{this.state.errStr[1]}</span>
@@ -475,7 +597,7 @@ class ListViewSummaryPageData extends Component {
                              <MultiSelect
                           options={this.props.fieldFlagOptions}
                           onSelectedChanged={this.handleFieldFlagChange}
-                          selected={this.state.fieldFlagSelected}
+                          selected={this.state.fieldFlagSelected[this.state.selectedTab.TabName]}
                           valueRenderer={this.handleMultiSelectRenderer}
                           selectAllLabel={"All"} />
                         <span className="error">{this.state.errStr[2]}</span>
@@ -499,7 +621,7 @@ class ListViewSummaryPageData extends Component {
                              <MultiSelect
                           options={this.props.recordFlagOptions}
                           onSelectedChanged={this.handleRecordFlagChange}
-                          selected={this.state.recordFlagSelected}
+                          selected={this.state.recordFlagSelected[this.state.selectedTab.TabName]}
                           valueRenderer={this.handleMultiSelectRenderer}
                           selectAllLabel={"All"} />
                         <span className="error">{this.state.errStr[3]}</span>
@@ -512,7 +634,7 @@ class ListViewSummaryPageData extends Component {
                         <label className='formLabel' style={{ "display": "inline", "fontWeight": "bold", "color": "#3498db" }}>
                           Coverage Year:*
                            <Select
-                            value={this.state.covYear}
+                            value={this.state.covYear[this.state.selectedTab.TabName]}
                             options={this.props.covYearOptions}
                             onChange={this.handleCovYearChange} />
                           <span className="error">{this.state.errStr[4]}</span>
@@ -525,7 +647,7 @@ class ListViewSummaryPageData extends Component {
                           <MultiSelect
                           options={this.props.fieldNameOptions}
                           onSelectedChanged={this.handleFieldNameChange}
-                          selected={this.state.fieldNameSelected}
+                          selected={this.state.fieldNameSelected[this.state.selectedTab.TabName]}
                           valueRenderer={this.handleMultiSelectRenderer}
                           selectAllLabel={"All"} />
                         <span className="error">{this.state.errStr[5]}</span>
@@ -566,13 +688,14 @@ class ListViewSummaryPageData extends Component {
                           placeholderText="MM/DD/YYYY"
                           showYearDropdown
                           scrollableYearDropdown /> */}
-                          <DatePicker
+                        <DatePicker
                           name="advIsrDob"
-                          selected={this.state.advStartDate}
+                          selected={this.state.advStartDate[this.state.selectedTab.TabName]['advIsrDob']}
+                          onChange={this.handleDOBChange.bind(this,"advIsrDob")}
+                          value={this.state.RCNO_DOB}
 
-                          dateFormat="MM/DD/YYYY"
-                          placeholderText="MM/DD/YYYY"
-
+                          dateFormat="YYYY/MM/DD"
+                          placeholderText="YYYY/MM/DD"
                           scrollableYearDropdown />
 
                       </label>
@@ -592,14 +715,14 @@ class ListViewSummaryPageData extends Component {
                       <label className="formLabel"
                         style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer FFM Policy ID:
-                  <input type="text" name="advIsrPlcyId" value={this.state.advIsrPlcyId}  onChange={this.handleAdvSearch} />
+                  <input type="text" name="advIsrPlcyId" value={this.state.advIsrPlcyId} onChange={this.handleAdvSearch} />
                       </label>
                     </Column>
                     <Column medium={3}>
                       <label className="formLabel"
                         style={{ "display": "inline", "fontWeight": "500", "color": "#3498db", "width": "101%" }}>
                         Issuer Record Trace <span>Number:</span>
-                        <input type="text" name="advIsrRcTcNum" value={this.state.advIsrRcTcNum}  onChange={this.handleAdvSearch} />
+                        <input type="text" name="advIsrRcTcNum" value={this.state.advIsrRcTcNum} onChange={this.handleAdvSearch} />
                       </label>
                     </Column>
                   </Row>
@@ -614,7 +737,7 @@ class ListViewSummaryPageData extends Component {
                   {
 
 
-                  advCustomFiltersRows
+                    advCustomFiltersRows
                       .map((h) => {
                         return (
                           h
@@ -638,24 +761,176 @@ class ListViewSummaryPageData extends Component {
                     <div className="vh150"></div>
                   </Row>
                 </TabContent>
-                <TabContent for="tab2">
-                  <h2>Tab2 content for List View</h2>
-                  <div>¯\_(ツ)_/¯</div>
+                {/*---------------- TAB2 -------------------*/}
+
+                <TabContent style={styles.tabContent} for="tab2">
+                  <Row className='display'>
+                    <div style={{ "marginLeft": "3%" }} >
+                      <Column medium={3}>
+                        <div style={{
+                          "fontFamily": "Verdana, Arial, sans-serif",
+                          "fontSize": "0.8rem",
+                          "display": "inline",
+                          "fontWeight": "bold",
+                          "color": "#3498db"
+                        }}>
+                          File Run Month/Year:*
+                                            <DatePicker
+                            ref='fileRunDPickerTab2'
+                            selected={this.state.startDate[this.state.selectedTab.TabName]}
+                            onChange={this.handleDateChange}
+                            dateFormat="MM/YYYY"
+                            showMonthDropdown
+                            showYearDropdown
+                            scrollableYearDropdown />
+                          <span className="error date-picker-error">{this.state.errStr[0]}</span>
+                        </div>
+                      </Column>
+                    </div>
+                    <Column medium={3} className="multi-select">
+                      <label className='formLabel' style={{ "display": "inline", "fontWeight": "bold", "color": "#3498db" }}>
+                        Trading Partner ID:*
+                                         <MultiSelect
+                          options={this.props.tradingPartnerOptions}
+                          onSelectedChanged={this.handleTradPartChange}
+                          selected={this.state.tradSelected[this.state.selectedTab.TabName]}
+                          valueRenderer={this.handleMultiSelectRenderer}
+                          selectAllLabel={"All"} />
+                        <span className="error">{this.state.errStr[1]}</span>
+                      </label>
+                    </Column>
+                    <div style={{ "marginLeft": "2%" }} >
+                      <Column medium={3} className='coverage-year'>
+                        <label className='formLabel' style={{ "display": "inline", "fontWeight": "bold", "color": "#3498db" }}>
+                          Coverage Year:*
+                                             <Select
+                            value={this.state.covYear[this.state.selectedTab.TabName]}
+                            options={this.props.covYearOptions}
+                            onChange={this.handleCovYearChange} />
+                          <span className="error">{this.state.errStr[4]}</span>
+                        </label>
+                      </Column>
+                    </div>
+                  </Row>
+                  <Row>
+                    <br />
+                    <br />
+                    <label className='formLabel' style={{ "display": "inline", "fontWeight": "bold", "color": "#3498db", "fontSize": "1.0rem", "paddingLeft": "20px" }}>
+                      Advanced Search
+                                </label>
+                    <br />
+                  </Row>
+                  <Row>
+                    <div style={{ "marginLeft": "3%" }} >
+                      <Column medium={4}>
+                        <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                          First Name:
+          <input type="text" name="advFfmFstNm" value={this.state.advFfmFstNm} onChange={this.handleAdvSearch} placeholder="First Name" />
+                        </label>
+                      </Column>
+                    </div>
+                    <Column medium={4}>
+                      <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                        Last Name:
+          <input type="text" name="advFfmLstNm" value={this.state.advFfmLstNm} onChange={this.handleAdvSearch} placeholder="Last Name" />
+                      </label>
+                    </Column>
+                    <Column medium={3}>
+                      <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                      Issuer DOB:
+                      
+                     <DatePicker
+                          ref='fileRunDPickerIssuerDOB'
+                          name="advFfmDob"
+                          selected={this.state.advStartDate[this.state.selectedTab.TabName]['advFfmDob']}
+                          value={this.state.RCNI_DOB}
+                          onChange={this.handleDOBChange.bind(this,"advFfmDob")}
+                          dateFormat="YYYY/MM/DD"
+                          placeholderText="YYYY/MM/DD"
+                          showMonthDropdown
+                          showYearDropdown
+                          scrollableYearDropdown />
+                      </label>
+                    </Column>
+                  </Row>
+                  <Row>
+                    <div style={{ "marginLeft": "3%" }} >
+                      <Column medium={4}>
+                        <label className="formLabel"
+                          style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                          Issuer Ex Subscriber Id:
+          <input type="text" name="advFfmIsurExchSubId" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Ex Subscriber Id" />
+                        </label>
+                      </Column>
+                    </div>
+                    <Column medium={4}>
+                      <label className="formLabel"
+                        style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                        Issuer Assigned Ex Policy ID:
+          <input type="text" name="advFfmExchPlcyId" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Ex Policy ID" />
+                      </label>
+                    </Column>
+                    <Column medium={3}>
+                      <label className="formLabel"
+                        style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                        Issuer Record Trace Number:
+          <input type="text" name="advFfmAscnRcTcNum" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Record Trace Number" />
+                      </label>
+                    </Column>
+                  </Row>
+                  <Row>
+                    <label className='formLabel' style={{ "display": "inline", "fontWeight": "bold", "color": "#3498db", "fontSize": "1.0rem", "paddingLeft": "20px" }}>
+                      Advanced Custom Filter
+      </label>
+                    <br />
+                  </Row>
+                  <Row>
+                    <div style={{ "marginLeft": "3%" }} >
+                      <Column medium={4} className="rcno-feild-name">
+                        <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                          Field Name:
+
+                              <Select.Async
+                            searchable={isSearchable}
+                            clearable={isClearable}
+                            onChange={this.handleAdvFieldNameChange.bind(this, 'issuerLastNameRCNI0', 0)}
+                            loadOptions={this.props.getAvdInputFields}
+
+                          />
+                        </label>
+                      </Column>
+                    </div>
+                    <Column medium={3}>
+                      <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                        Field Value:
+                        <input type="text" placeholder="Field Value" id="advancefieldvalue" name="advancefieldvalue" value={this.state.advancefieldvalue} onChange={this.handleAvdCustomFilterRowData.bind(this, "advancefieldvalue", 0, false)} />
+                      </label>
+                    </Column>
+                  </Row>
+                  <Row>
+                    <div className="modal-footer">
+                      <div style={{ "display": "inline", "float": "right", "paddingRight": "0em", "paddingTop": "2em", "marginRight": "20px" }}>
+                        <button className='button primary  btn-lg btn-color formButton' type="button" onClick={this.handleResetButton}> Reset </button>
+                      </div>
+                      <div style={{ "display": "inline", "float": "right", "paddingRight": "1em", "paddingTop": "2em" }}>
+                        <button className='button primary  btn-lg btn-color formButton' type="button" style={{ "backgroundColor": "green" }} onClick={this.handleSubmitButton}> Submit </button>
+                      </div>
+                    </div>
+                  </Row>
+                  <Row>
+                    <br />
+                    <div className="vh40"></div>
+                  </Row>
                 </TabContent>
+
+
+                {/*---------------- TAB 2 -------------------*/}
+
               </div>
             </Tabs>
           </div>
         </Row>
-        {/* <Row>
-          <div className="vh200"></div>
-          <Column medium={3} offsetOnMedium={9}>
-            <Button color={Colors.PRIMARY} onClick={this.handleResetButton} isHollow>Reset</Button>
-            &nbsp; &nbsp;
-            <Button color={Colors.SUCCESS} onClick={this.handleSubmitButton}>Submit</Button>
-          </Column>
-          <br/>
-          <div className="vh150"></div>
-        </Row> */}
+
       </Panel>
     );
     items.push(
@@ -710,9 +985,9 @@ class ListViewSummaryPageData extends Component {
             ref='table'
             selectRow={this.state.selectRowProp}
             options={this.state.tableOptions}
-            pagination={ true }
+            pagination={true}
 
-            >
+          >
             <TableHeaderColumn dataField='recordIdentifier'>recordIdentifier</TableHeaderColumn>
             <TableHeaderColumn dataField='firstName'>rcnoFirstName</TableHeaderColumn>
             <TableHeaderColumn dataField='lastName'>rcnoLastName</TableHeaderColumn>
@@ -792,10 +1067,10 @@ class ListViewSummaryPageData extends Component {
     if (this.state.fieldFlagOptions.length == 0 && nextProps.fieldFlagOptions.length > 0) {
       this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions });
     }
-        this.setState({ fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions });
+    this.setState({ fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions });
 
 
-   // this.setState({ fieldNameOptions: nextProps.fieldNameOptions })
+    // this.setState({ fieldNameOptions: nextProps.fieldNameOptions })
 
 
     if (this.state.lastDataReceived < nextProps.lastDataReceived) {

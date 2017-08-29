@@ -276,52 +276,54 @@ class ListViewSummaryPage extends Component {
 
     }
     handleSubmit(item) {
+        let currentTabName = item.state.selectedTab.TabName;
+        
         console.dir(item);
-        let tradSelected = item.state.tradSelected.length == tradingPartnerOptions.length
+        let tradSelected = item.state.tradSelected[currentTabName].length == tradingPartnerOptions.length
             ? 'all'
             : undefined;
         if (tradSelected === undefined) {
             tradSelected = '';
             item
                 .state
-                .tradSelected
+                .tradSelected[currentTabName]
                 .forEach((t) => {
                     tradSelected += tradingPartnerOptions[t].id + ',';
                 })
             tradSelected = tradSelected.slice(0, -1);
         }
-        let fieldFlagSelected = item.state.fieldFlagSelected.length == this.state.fieldFlagOptions.length
+        let fieldFlagSelected = item.state.fieldFlagSelected[currentTabName].length == this.state.fieldFlagOptions.length
             ? 'all'
             : undefined;
         if (fieldFlagSelected === undefined) {
             fieldFlagSelected = '';
             item
                 .state
-                .fieldFlagSelected
+                .fieldFlagSelected[currentTabName]
                 .forEach((f) => {
                     fieldFlagSelected += this.state.fieldFlagOptions[f].label + ',';
                 })
             fieldFlagSelected = fieldFlagSelected.slice(0, -1);
         }
-        let recordFlagSelected = item.state.recordFlagSelected.length == this.state.recordFlagOptions.length
+        let recordFlagSelected = item.state.recordFlagSelected[currentTabName].length == this.state.recordFlagOptions.length
             ? 'all'
             : undefined;
         if (recordFlagSelected === undefined) {
             recordFlagSelected = '';
             item
                 .state
-                .recordFlagSelected
+                .recordFlagSelected[currentTabName]
                 .forEach((f) => {
                     recordFlagSelected += this.state.recordFlagOptions[f].label + ',';
                 })
             recordFlagSelected = recordFlagSelected.slice(0, -1);
         }
-        let fieldNameSelected = item.state.fieldNameSelected.length == this.state.fieldNameOptions.length
+        let fieldNameSelected = item.state.fieldNameSelected[currentTabName].length == this.state.fieldNameOptions.length
             ? 'all'
             : undefined;
         if (fieldNameSelected === undefined) {
             fieldNameSelected = '';
-            item.state.fieldNameSelected
+            item.state.fieldNameSelected[currentTabName]
                 .forEach((f, i) => {
                     // fieldNameSelected += f.label + ',';
                     fieldNameSelected += this.state.fieldNameOptions[f].label + ',';
@@ -344,29 +346,29 @@ class ListViewSummaryPage extends Component {
 
 
         var obj = {
-            frmDate: moment(item.state.startDate).format('MM/YYYY'),
-            cvgYear: item.state.covYear,
+            frmDate: moment(item.state.startDate[currentTabName]).format('MM/YYYY'),
+            cvgYear: item.state.covYear[currentTabName],
             tpId: tradSelected,
             rcdFlag: recordFlagSelected,
             fldFlag: fieldFlagSelected,
             fldName: fieldNameSelected,
 
         }
-        if (item.state.advFields) {
-            obj = Object.assign(obj, item.state.advFields);
+        if (item.state.advFields[currentTabName]) {
+            obj = Object.assign(obj, item.state.advFields[currentTabName]);
         }
 
-        if (item.state.fieldAvdNameSelected != undefined && item.state.fieldAvdNameSelected.length > 0) {
+        if (item.state.fieldAvdNameSelected[currentTabName] != undefined && item.state.fieldAvdNameSelected[currentTabName].length > 0) {
             //obj.fldNmFldVal = item.state.fieldAvdNameSelected;
-            obj.fldNmFldVal= item.state.fieldAvdNameSelected.map(function(value,index){
-                    return { fieldName: value.label, fieldValue:value.fieldValue}
+            obj.fldNmFldVal = item.state.fieldAvdNameSelected[currentTabName].map(function (value, index) {
+                return { fieldName: value.label, fieldValue: value.fieldValue }
 
-                })
+            })
         }
         this.getResultSummary(obj);
     }
     render() {
-        return (
+                return (
             <App>
                 <Row style={{
                     "maxWidth": "78rem"
@@ -463,11 +465,11 @@ class ListViewSummaryPage extends Component {
             });
             */
 
-            
-            
-            for(var key in data){
-                customerAdvFiels.push({ value: key, label: data[key]  } )
-            
+
+
+            for (var key in data) {
+                customerAdvFiels.push({ value: key, label: data[key] })
+
             }
             return { options: customerAdvFiels };
 
