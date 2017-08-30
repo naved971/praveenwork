@@ -156,13 +156,13 @@ class ListViewSummaryPageData extends Component {
     let TabName = selectedTab.TabName;
     advCustomFiltersRows = {
       [TabName]: []
-      
+
     }
     let initialState= {
       accordion: true,
       activeKey: ['1'],
       // startDate: moment(),
-      startDate:{[TabName] : moment().subtract(1, 'month')} 
+      startDate:{[TabName] : moment().subtract(1, 'month')}
       ,
       advStartDate:{ [TabName]:{advIsrDob: "" } } ,
       //{ [selectedTab.TabName]:moment() },
@@ -173,13 +173,13 @@ class ListViewSummaryPageData extends Component {
       fieldFlagSelected: {
         [selectedTab.TabName]:  this.props.defaultFieldFlags
       },
-     
+
       recordFlagSelected:{
         [selectedTab.TabName]:  this.props.defaultRecordFlags
       },
       fieldNameSelected:{
         [selectedTab.TabName]:  this.props.defaultFieldNames
-        
+
       },
       fieldNameOptions: this.props.fieldNameOptions,
       fieldNameAvdCustomOptions: this.props.fieldNameAvdCustomOptions,
@@ -240,7 +240,7 @@ class ListViewSummaryPageData extends Component {
       .handleExportCSV();
   }
   handleTradPartChange(selected) {
-    
+
     this.state.tradSelected[this.state.selectedTab.TabName]= selected;
     this.setState({ tradSelected:   this.state.tradSelected });
   }
@@ -266,7 +266,7 @@ class ListViewSummaryPageData extends Component {
       var Obj = { advFields: this.state.advFields };
       if(Tabname=="RCNO"){
         Obj.RCNO_DOB = this.state.advFields[this.state.selectedTab.TabName][e];
-      } 
+      }
        if(Tabname=="RCNI"){
         Obj.RCNI_DOB = this.state.advFields[this.state.selectedTab.TabName][e];
       }
@@ -274,17 +274,22 @@ class ListViewSummaryPageData extends Component {
       this.forceUpdate();
       }
   handleAvdCustomFilterRowData(inputFields, currentIndex, e) {
+    debugger;
     var fieldValue = document.getElementById(inputFields).value;
     //this.state.fieldAvdNameSelected[currentIndex].fieldValue = fieldValue;
-    if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]== undefined){
-      this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex] ={fieldValue: fieldValue};
+    if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFields]== undefined){
+      this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex] ={
+        [inputFields]:fieldValue,
+        fieldValue: fieldValue
+      };
     }
     else{
       this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex].fieldValue = fieldValue
     }
+   //this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFields] = fieldValue;
 
-    this.setState({ [inputFields]:inputFields, fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-
+      this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
+      this.forceUpdate();
   }
   handleAvdCustomFilterAddRow(inputFields, currentIndex, e) {
     this.addAdvRows();
@@ -321,7 +326,7 @@ class ListViewSummaryPageData extends Component {
   }
   handleFieldFlagChange(selected) {
     this.state.fieldFlagSelected[this.state.selectedTab.TabName]= selected;
-    
+
     this.setState({ fieldFlagSelected: this.state.fieldFlagSelected });
   }
   handleRecordFlagChange(selected) {
@@ -335,12 +340,12 @@ class ListViewSummaryPageData extends Component {
 
   handleSelectedTab(selectedTab) {
 
-    
+
 
       if (advCustomFiltersRows[selectedTab.TabName] == undefined) {
         advCustomFiltersRows[selectedTab.TabName]=[];
         this.setState({ advCustomFiltersRows: advCustomFiltersRows });
-        setTimeout(()=>this.addAdvRows());        
+        setTimeout(()=>this.addAdvRows());
       }
 
 
@@ -354,11 +359,17 @@ class ListViewSummaryPageData extends Component {
       this.state.advFields[selectedTab.TabName] = {};
       this.setState({ advFields: this.state.advFields });
     }
+    debugger;
+
+
     if (this.state.fieldAvdNameSelected[selectedTab.TabName] == undefined) {
-      
+
       this.state.fieldAvdNameSelected[selectedTab.TabName] = [];
       this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
     }
+    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
+
+
 
     if (this.state.tradSelected[selectedTab.TabName] == undefined) {
       this.state.tradSelected[selectedTab.TabName] =  this.props.defaultTradingPartners;
@@ -388,12 +399,12 @@ class ListViewSummaryPageData extends Component {
     }
     this.setState({ selectedTab: selectedTab });
     this.forceUpdate();
-    
+
   }
 
   handleSubmitButton() {
     let currentTabName = this.state.selectedTab.TabName;
-    
+
     console.log('handleSubmitButton()');
     let state = Object.assign({}, this.state); //JSON.parse(JSON.stringify(this.state));
     console.log(state);
@@ -402,7 +413,7 @@ class ListViewSummaryPageData extends Component {
     }
     let errStr ={
       [currentTabName]:[]
-      
+
     } ;
     // validate covYear
     if (!state.covYear[currentTabName] || parseInt(state.covYear[currentTabName]) !== state.covYear[currentTabName] || String(state.covYear[currentTabName]).indexOf('.') !== -1) {
@@ -466,9 +477,9 @@ class ListViewSummaryPageData extends Component {
     }
 
     var currentTabFields = this.state.advFields[this.state.selectedTab.TabName];
-   
+
     currentTabFields[TabName+ "_DOB"] = this.state[TabName+ "_DOB"];
-    
+
 
     for (var key in currentTabFields) {
       if (currentTabFields.hasOwnProperty(key) &&  typeof currentTabFields[key] == "string") {
@@ -477,10 +488,10 @@ class ListViewSummaryPageData extends Component {
       }
     }
 
-     
+
     resetFields = Object.assign(resetFields, currentTabFields);
-    
-    
+
+
 
               this.setState(resetFields, () => {
                 console.log("Resetting State");
@@ -498,11 +509,11 @@ class ListViewSummaryPageData extends Component {
     let removeSelected = advCustomFiltersRows[TabName][currentIndex];
     let idxCurrent = advCustomFiltersRows[TabName].indexOf(removeSelected);
 
-    
+
     advCustomFiltersRows[TabName].splice(idxCurrent,1);
-    
+
     this.forceUpdate();
-    
+
   }
   addAdvRows() {
     let TabName = this.state.selectedTab.TabName;
@@ -524,17 +535,23 @@ class ListViewSummaryPageData extends Component {
 */
 
       var inputFieldName = "advCustomerFilterFields" + "_"+ TabName + currentIndex ;
+
+
+
+      this.state.fieldAvdNameSelected[TabName][currentIndex]={ [inputFieldName] : undefined };
+      this.setState({fieldAvdNameSelected: this.state.fieldAvdNameSelected});
+
       var faMinusCircle = null;
       if(advCustomFiltersRows[TabName].length>0){
-        faMinusCircle =( 
-        <label onClick={this.handleAvdCustomFilterRemoveRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" ,"margin-left": "10"}}>
-        
+        faMinusCircle =(
+        <label onClick={this.handleAvdCustomFilterRemoveRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" ,"marginLeft": "10px"}}>
+
                         <i className='fa fa-minus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
                       </label>)
       }
       advCustomFiltersRows[TabName].push(
 
-        <Row >
+      ( <Row >
           <div style={{ "marginLeft": "3%" }} >
             <Column medium={4}>
               <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
@@ -543,7 +560,7 @@ class ListViewSummaryPageData extends Component {
                   searchable={isSearchable}
                   clearable={isClearable}
                   onChange={this.handleAdvFieldNameChange.bind(this, inputFieldName, currentIndex)}
-                  loadOptions={this.props.getAvdInputFields}
+                  loadOptions={this.props.getAvdInputFields.bind(this,this.state.selectedTab.TabName)}
 
                 />
               </label>
@@ -552,7 +569,7 @@ class ListViewSummaryPageData extends Component {
           <Column medium={3}>
             <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
               Field Value:
-           <input type="text" id={inputFieldName} name={inputFieldName} value={this.state.IndianC} onChange={this.handleAvdCustomFilterRowData.bind(this, inputFieldName, currentIndex, false)} />
+           <input type="text"  id={inputFieldName} name={inputFieldName} value={ this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFieldName]} onChange={this.handleAvdCustomFilterRowData.bind(this, inputFieldName, currentIndex, false)} />
             </label>
           </Column>
           <div style={{ "paddingTop": "22px" }}>
@@ -563,7 +580,7 @@ class ListViewSummaryPageData extends Component {
                 <i className='fa fa-plus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
               </label>
 
-          
+
 
 
               {
@@ -575,7 +592,8 @@ class ListViewSummaryPageData extends Component {
         </Row>
 
 
-      );
+       )
+        );
 
 
 
@@ -889,7 +907,7 @@ class ListViewSummaryPageData extends Component {
                     <Column medium={3}>
                       <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                       Issuer DOB:
-                      
+
                      <DatePicker
                           ref='fileRunDPickerIssuerDOB'
                           name="advFfmDob"

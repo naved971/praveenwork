@@ -214,7 +214,9 @@ class ListViewSummaryPage extends Component {
     getResultSummary(args) {
         let url = this.buildUrl(args);
         // Get Field Flags
-        fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, {
+        let urlService = args.currentTabName=="RCNO" ?rcnorcni.GET_LIST_VIEW_SUMMARY_URL :rcnorcni.GET_LIST_VIEW_SUMMARY_URL;
+        args.currentTabName = undefined;
+        fetch(urlService, {
             method: 'POST', credentials: "same-origin",
             body: JSON.stringify(args),
             headers: {
@@ -277,7 +279,7 @@ class ListViewSummaryPage extends Component {
     }
     handleSubmit(item) {
         let currentTabName = item.state.selectedTab.TabName;
-        
+
         console.dir(item);
         let tradSelected = item.state.tradSelected[currentTabName].length == tradingPartnerOptions.length
             ? 'all'
@@ -352,6 +354,7 @@ class ListViewSummaryPage extends Component {
             rcdFlag: recordFlagSelected,
             fldFlag: fieldFlagSelected,
             fldName: fieldNameSelected,
+            currentTabName:currentTabName
 
         }
         if (item.state.advFields[currentTabName]) {
@@ -449,17 +452,17 @@ debugger;
         this.getInputFields();
     }
 
-    getAvdInputFields(input) {
+    getAvdInputFields(tabName) {
         let customerAdvFiels = [];
-
-        return fetch(rcnorcni.GET_FIELD_NAME_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
+        let url = tabName=="RCNO" ?rcnorcni.GET_FIELD_NAME_INPUT_URL :rcnorcni.GET_FIELD_NAME_INPUT_URL;
+        return fetch(url, { method: 'GET', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
             }
             return response.json();
         }).then((response) => {
             let data = response.fieldNameMap;
-            /*   
+            /*
             data = data.map((d, index) => {
                 return { value: index, label: d }
             });
