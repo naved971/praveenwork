@@ -186,6 +186,9 @@ class ListViewSummaryPageData extends Component {
       recordFlagOptions: this.props.recordFlagOptions,
       fieldFlagOptions: this.props.fieldFlagOptions,
       advCustomFiltersRows: advCustomFiltersRows,
+      fieldAvdNameSelectedShows:{
+            [selectedTab.TabName]:{}
+      },
       fieldAvdNameSelected: {
         [selectedTab.TabName]: []
       },
@@ -222,8 +225,8 @@ class ListViewSummaryPageData extends Component {
   }
   onExportToCSV() {
     const selectedRows = cxt.refs.table.state.selectedRowKeys;
-    console.log(selectedRows);
-    console.log(cxt.state.summaryTable);
+    //console.log(selectedRows);
+    //console.log(cxt.state.summaryTable);
     return cxt
       .state
       .summaryTable
@@ -271,13 +274,19 @@ class ListViewSummaryPageData extends Component {
         Obj.RCNI_DOB = this.state.advFields[this.state.selectedTab.TabName][e];
       }
       this.setState(Obj);
-      this.forceUpdate();
+      //this.forceUpdate();
       }
   handleAvdCustomFilterRowData(inputFields, currentIndex, e) {
-    debugger;
-    var fieldValue = document.getElementById(inputFields).value;
+    var fieldValue =e.target.value;  //document.getElementById(inputFields).value;
     //this.state.fieldAvdNameSelected[currentIndex].fieldValue = fieldValue;
+      if(this.state.fieldAvdNameSelectedShows[this.state.selectedTab.TabName][inputFields]== undefined){
+          this.state.fieldAvdNameSelectedShows[this.state.selectedTab.TabName]=   {[inputFields]:fieldValue};
+      }else{
+          this.state.fieldAvdNameSelectedShows[this.state.selectedTab.TabName][inputFields]=fieldValue;
+      }
+
     if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFields]== undefined){
+
       this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex] ={
         [inputFields]:fieldValue,
         fieldValue: fieldValue
@@ -285,11 +294,14 @@ class ListViewSummaryPageData extends Component {
     }
     else{
       this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex].fieldValue = fieldValue
+      this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFields] = fieldValue;
     }
-   //this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFields] = fieldValue;
 
-      this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-      this.forceUpdate();
+
+    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected, fieldAvdNameSelectedShows: this.state.fieldAvdNameSelectedShows });
+      // this.forceUpdate(()=>{
+
+      // });
   }
   handleAvdCustomFilterAddRow(inputFields, currentIndex, e) {
     this.addAdvRows();
@@ -299,10 +311,10 @@ class ListViewSummaryPageData extends Component {
     this.removeAdvRows(inputFields, currentIndex);
   }
   handleAdvFieldNameChange(inputFields, currentIndex,selected) {
-    debugger;
+
     // var fieldValue = document.getElementById(inputFieldName).value;
     // this.state.fieldAvdNameSelected.push({fieldName:fieldName, fieldValue:fieldValue });
-    if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]){
+    if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFields]){
           this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]=Object.assign(selected,this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]);
     }
     else{
@@ -345,7 +357,9 @@ class ListViewSummaryPageData extends Component {
       if (advCustomFiltersRows[selectedTab.TabName] == undefined) {
         advCustomFiltersRows[selectedTab.TabName]=[];
         this.setState({ advCustomFiltersRows: advCustomFiltersRows });
-        setTimeout(()=>this.addAdvRows());
+        setTimeout(()=>{
+          this.addAdvRows(selectedTab.TabName);
+        });
       }
 
 
@@ -359,17 +373,20 @@ class ListViewSummaryPageData extends Component {
       this.state.advFields[selectedTab.TabName] = {};
       this.setState({ advFields: this.state.advFields });
     }
-    debugger;
-
-
     if (this.state.fieldAvdNameSelected[selectedTab.TabName] == undefined) {
 
       this.state.fieldAvdNameSelected[selectedTab.TabName] = [];
-      this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
+      //this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
+
+
+              this.setState(this.state.fieldAvdNameSelected[selectedTab.TabName] , () => {
+                console.log("fieldAvdNameSelected State");
+                console.log(this.state.fieldAvdNameSelected[selectedTab.TabName]);
+              });
+
+
+
     }
-    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-
-
 
     if (this.state.tradSelected[selectedTab.TabName] == undefined) {
       this.state.tradSelected[selectedTab.TabName] =  this.props.defaultTradingPartners;
@@ -397,8 +414,8 @@ class ListViewSummaryPageData extends Component {
       this.state.covYear[selectedTab.TabName] =this.props.defaultCovYear;
       this.setState({ covYear: this.state.covYear });
     }
+    //this.forceUpdate(()=>{    });
     this.setState({ selectedTab: selectedTab });
-    this.forceUpdate();
 
   }
 
@@ -407,7 +424,7 @@ class ListViewSummaryPageData extends Component {
 
     console.log('handleSubmitButton()');
     let state = Object.assign({}, this.state); //JSON.parse(JSON.stringify(this.state));
-    console.log(state);
+
     let pass= {
       [currentTabName]:true
     }
@@ -462,8 +479,8 @@ class ListViewSummaryPageData extends Component {
     this.setState({ errStr });
   }
   handleResetButton() {
-    console.log(initialState);
-    debugger;
+//    console.log(initialState);
+
     let TabName = this.state.selectedTab.TabName;
     advCustomFiltersRows[this.state.selectedTab.TabName].length = 1;
     var resetFields = {
@@ -515,8 +532,8 @@ class ListViewSummaryPageData extends Component {
     this.forceUpdate();
 
   }
-  addAdvRows() {
-    let TabName = this.state.selectedTab.TabName;
+  addAdvRows(tabName) {
+    let TabName = tabName || this.state.selectedTab.TabName;
     var currentIndex = (advCustomFiltersRows[TabName].length);
     if (currentIndex < 5) {
       /*
@@ -537,17 +554,19 @@ class ListViewSummaryPageData extends Component {
       var inputFieldName = "advCustomerFilterFields" + "_"+ TabName + currentIndex ;
 
 
+      this.state.fieldAvdNameSelectedShows[TabName]={ [inputFieldName] : null};
 
-      this.state.fieldAvdNameSelected[TabName][currentIndex]={ [inputFieldName] : undefined };
+      this.state.fieldAvdNameSelected[TabName][currentIndex]={ [inputFieldName] : null };
       this.setState({fieldAvdNameSelected: this.state.fieldAvdNameSelected});
 
       var faMinusCircle = null;
       if(advCustomFiltersRows[TabName].length>0){
         faMinusCircle =(
-        <label onClick={this.handleAvdCustomFilterRemoveRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" ,"marginLeft": "10px"}}>
+                            <label onClick={this.handleAvdCustomFilterRemoveRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" ,"marginLeft": "10px"}}>
 
-                        <i className='fa fa-minus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
-                      </label>)
+                            <i className='fa fa-minus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
+                            </label>
+                      )
       }
       advCustomFiltersRows[TabName].push(
 
@@ -569,7 +588,10 @@ class ListViewSummaryPageData extends Component {
           <Column medium={3}>
             <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
               Field Value:
-           <input type="text"  id={inputFieldName} name={inputFieldName} value={ this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFieldName]} onChange={this.handleAvdCustomFilterRowData.bind(this, inputFieldName, currentIndex, false)} />
+              {/*({
+                 JSON.stringify(this.state.fieldAvdNameSelectedShows[this.state.selectedTab.TabName])
+                  })*/}
+           <input type="text" id={inputFieldName} name={inputFieldName} value={ this.state.fieldAvdNameSelectedShows[this.state.selectedTab.TabName][inputFieldName]} onChange={(e)=>this.handleAvdCustomFilterRowData(inputFieldName, currentIndex, e)} />
             </label>
           </Column>
           <div style={{ "paddingTop": "22px" }}>
@@ -893,7 +915,7 @@ class ListViewSummaryPageData extends Component {
                     <div style={{ "marginLeft": "3%" }} >
                       <Column medium={4}>
                         <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-                          First Name:
+                          First Name:({this.state.advFfmFstNm}})
           <input type="text" name="advFfmFstNm" value={this.state.advFfmFstNm} onChange={this.handleAdvSearch} placeholder="First Name" />
                         </label>
                       </Column>
@@ -1142,7 +1164,7 @@ class ListViewSummaryPageData extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("props"); console.log(this.state.fieldNameOptions); console.log(this.props.fieldNameOptions)
+    //console.log("props"); console.log(this.state.fieldNameOptions); console.log(this.props.fieldNameOptions)
     if (this.state.fieldNameOptions.length == 0 && nextProps.fieldNameOptions.length > 0) {
       this.setState({ fieldNameOptions: nextProps.fieldNameOptions });
     }
@@ -1211,8 +1233,8 @@ class ListViewSummaryPageData extends Component {
         recordFlagSelected: JSON.parse(JSON.stringify(this.state.recordFlagSelected)),
         fieldNameSelected: JSON.parse(JSON.stringify(this.state.fieldNameSelected))
       };
-      console.log(initialState);
-      console.log(this.state);
+      //console.log(initialState);
+      //console.log(this.state);
     }
   }
 }
