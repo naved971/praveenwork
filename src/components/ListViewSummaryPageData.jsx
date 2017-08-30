@@ -54,7 +54,7 @@ const styles = {
     padding: '1em'
   }
 };
-let advCustomFiltersRows = [];
+let advCustomFiltersRows = {};
 var isSearchable = false;
 var isClearable = true;
 
@@ -139,11 +139,13 @@ class ListViewSummaryPageData extends Component {
       'handleResetButton',
       'handleExport',
       'handleAdvSearch',
-      'handleAvdCustomFilterRow',
+      'handleAvdCustomFilterAddRow',
       "addAdvRows",
       'handleAdvFieldNameChange',
       'handleAvdCustomFilterRowData',
-      'handleSelectedTab'
+      'handleSelectedTab',
+      "handleAvdCustomFilterRemoveRow",
+      "removeAdvRows"
 
     ].map(fn => this[fn] = this[fn].bind(this));
     this.addAdvRows();
@@ -152,7 +154,10 @@ class ListViewSummaryPageData extends Component {
   getInitialState() {
     let selectedTab = { currentIndex: 0, TabName: "RCNO" };
     let TabName = selectedTab.TabName;
-
+    advCustomFiltersRows = {
+      [TabName]: []
+      
+    }
     let initialState= {
       accordion: true,
       activeKey: ['1'],
@@ -281,10 +286,15 @@ class ListViewSummaryPageData extends Component {
     this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
 
   }
-  handleAvdCustomFilterRow(inputFields, currentIndex, e) {
-
+  handleAvdCustomFilterAddRow(inputFields, currentIndex, e) {
+debugger;
     this.addAdvRows();
 
+  }
+  handleAvdCustomFilterRemoveRow(inputFields, currentIndex, e) {
+    debugger;
+    this.removeAdvRows(inputFields, currentIndex);
+    
   }
   handleAdvFieldNameChange(inputFields, currentIndex,selected) {
     // var fieldValue = document.getElementById(inputFieldName).value;
@@ -326,6 +336,18 @@ class ListViewSummaryPageData extends Component {
   }
 
   handleSelectedTab(selectedTab) {
+
+    
+
+      if (advCustomFiltersRows[selectedTab.TabName] == undefined) {
+        advCustomFiltersRows[selectedTab.TabName]=[];
+        debugger;
+        this.setState({ advCustomFiltersRows: advCustomFiltersRows });
+        setTimeout(()=>this.addAdvRows());        
+        
+        
+      }
+
 
 
     if (this.state.advStartDate[selectedTab.TabName] == undefined) {
@@ -433,7 +455,7 @@ class ListViewSummaryPageData extends Component {
   }
   handleResetButton() {
     console.log(initialState);
-    advCustomFiltersRows.length = 1;
+    advCustomFiltersRows[this.state.selectedTab.TabName].length = 1;
     var resetFields = {
       // startDate: moment(),
       startDate: moment().subtract(1, 'month'),
@@ -467,9 +489,17 @@ class ListViewSummaryPageData extends Component {
 
 
   }
-
+  removeAdvRows(inputFields, currentIndex){
+    let TabName = this.state.selectedTab.TabName;
+    advCustomFiltersRows[TabName].splice(currentIndex,1);
+    
+    debugger;
+    this.forceUpdate();
+    
+  }
   addAdvRows() {
-    var currentIndex = (advCustomFiltersRows.length);
+    let TabName = this.state.selectedTab.TabName;
+    var currentIndex = (advCustomFiltersRows[TabName].length);
     if (currentIndex < 5) {
       /*
     var cIndex = currentIndex == 0 ? currentIndex:currentIndex -1
@@ -486,9 +516,16 @@ class ListViewSummaryPageData extends Component {
 
 */
 
-      var inputFieldName = "issuerLastName" + currentIndex;
-
-      advCustomFiltersRows.push(
+      var inputFieldName = "issuerLastName" + currentIndex + TabName;
+      var faMinusCircle = null;
+      if(advCustomFiltersRows[TabName].length>0){
+        faMinusCircle =( 
+        <label onClick={this.handleAvdCustomFilterRemoveRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" ,"margin-left": "10px;"}}>
+        
+                        <i className='fa fa-minus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
+                      </label>)
+      }
+      advCustomFiltersRows[TabName].push(
 
         <Row >
           <div style={{ "marginLeft": "3%" }} >
@@ -514,10 +551,17 @@ class ListViewSummaryPageData extends Component {
           <div style={{ "paddingTop": "22px" }}>
             <Column medium={3}>
 
-              <label onClick={this.handleAvdCustomFilterRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+              <label onClick={this.handleAvdCustomFilterAddRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
 
                 <i className='fa fa-plus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
               </label>
+
+          
+
+
+              {
+                faMinusCircle
+              }
 
             </Column>
           </div>
@@ -737,7 +781,7 @@ class ListViewSummaryPageData extends Component {
                   {
 
 
-                    advCustomFiltersRows
+                    advCustomFiltersRows[this.state.selectedTab.TabName]
                       .map((h) => {
                         return (
                           h
@@ -884,7 +928,7 @@ class ListViewSummaryPageData extends Component {
       </label>
                     <br />
                   </Row>
-                  <Row>
+                  {/* <Row>
                     <div style={{ "marginLeft": "3%" }} >
                       <Column medium={4} className="rcno-feild-name">
                         <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
@@ -906,7 +950,23 @@ class ListViewSummaryPageData extends Component {
                         <input type="text" placeholder="Field Value" id="advancefieldvalue" name="advancefieldvalue" value={this.state.advancefieldvalue} onChange={this.handleAvdCustomFilterRowData.bind(this, "advancefieldvalue", 0, false)} />
                       </label>
                     </Column>
-                  </Row>
+                  </Row> */}
+
+                    {/*----ADVANCE ROW ------*/}
+
+                    {
+
+
+                    advCustomFiltersRows[this.state.selectedTab.TabName]
+                      .map((h) => {
+                        return (
+                          h
+                        )
+                      })
+                  }
+
+
+
                   <Row>
                     <div className="modal-footer">
                       <div style={{ "display": "inline", "float": "right", "paddingRight": "0em", "paddingTop": "2em", "marginRight": "20px" }}>
