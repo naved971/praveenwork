@@ -164,7 +164,7 @@ class ListViewSummaryPageData extends Component {
       // startDate: moment(),
       startDate:{[TabName] : moment().subtract(1, 'month')} 
       ,
-      advStartDate:{ [TabName]:{advIsrDob: moment()} } ,
+      advStartDate:{ [TabName]:{advIsrDob: "" } } ,
       //{ [selectedTab.TabName]:moment() },
       covYear:{ [TabName]:   this.props.defaultCovYear  },
       tradSelected:{
@@ -283,20 +283,18 @@ class ListViewSummaryPageData extends Component {
       this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex].fieldValue = fieldValue
     }
 
-    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
+    this.setState({ [inputFields]:inputFields, fieldAvdNameSelected: this.state.fieldAvdNameSelected });
 
   }
   handleAvdCustomFilterAddRow(inputFields, currentIndex, e) {
-debugger;
     this.addAdvRows();
 
   }
   handleAvdCustomFilterRemoveRow(inputFields, currentIndex, e) {
-    debugger;
     this.removeAdvRows(inputFields, currentIndex);
-    
   }
   handleAdvFieldNameChange(inputFields, currentIndex,selected) {
+    debugger;
     // var fieldValue = document.getElementById(inputFieldName).value;
     // this.state.fieldAvdNameSelected.push({fieldName:fieldName, fieldValue:fieldValue });
     if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]){
@@ -341,17 +339,14 @@ debugger;
 
       if (advCustomFiltersRows[selectedTab.TabName] == undefined) {
         advCustomFiltersRows[selectedTab.TabName]=[];
-        debugger;
         this.setState({ advCustomFiltersRows: advCustomFiltersRows });
         setTimeout(()=>this.addAdvRows());        
-        
-        
       }
 
 
 
     if (this.state.advStartDate[selectedTab.TabName] == undefined) {
-      this.state.advStartDate[selectedTab.TabName] = { advFfmDob: moment() };
+      this.state.advStartDate[selectedTab.TabName] = { advFfmDob:""};
       this.setState({ advStartDate: this.state.advStartDate });
     }
 
@@ -392,6 +387,8 @@ debugger;
       this.setState({ covYear: this.state.covYear });
     }
     this.setState({ selectedTab: selectedTab });
+    this.forceUpdate();
+    
   }
 
   handleSubmitButton() {
@@ -455,10 +452,12 @@ debugger;
   }
   handleResetButton() {
     console.log(initialState);
+    debugger;
+    let TabName = this.state.selectedTab.TabName;
     advCustomFiltersRows[this.state.selectedTab.TabName].length = 1;
     var resetFields = {
       // startDate: moment(),
-      startDate: moment().subtract(1, 'month'),
+      startDate:{[TabName] : moment().subtract(1, 'month')} ,
       covYear: JSON.parse(JSON.stringify(initialState.covYear)),
       tradSelected: JSON.parse(JSON.stringify(initialState.tradSelected)),
       fieldFlagSelected: JSON.parse(JSON.stringify(initialState.fieldFlagSelected)),
@@ -466,24 +465,29 @@ debugger;
       fieldNameSelected: JSON.parse(JSON.stringify(initialState.fieldNameSelected))
     }
 
-    var currentTabFields = this.state.advFields[item.state.selectedTab.TabName];
-
+    var currentTabFields = this.state.advFields[this.state.selectedTab.TabName];
+   
+    currentTabFields[TabName+ "_DOB"] = this.state[TabName+ "_DOB"];
+    
 
     for (var key in currentTabFields) {
-      if (p.hasOwnProperty(key) && typeof  typeof p[key] == "string") {
-        p[key]="";
+      if (currentTabFields.hasOwnProperty(key) &&  typeof currentTabFields[key] == "string") {
+        currentTabFields[key]="";
         // console.log(key + " -> " + p[key]);
       }
     }
 
-
+     
     resetFields = Object.assign(resetFields, currentTabFields);
+    
+    
 
               this.setState(resetFields, () => {
                 console.log("Resetting State");
                 console.log(this.state);
               });
-    document.getElementById('issuerLastName0').value = "";
+  let filterId =  "advCustomerFilterFields" + "_"+ TabName + "0";
+    document.getElementById(filterId).value = "";
     //advCustomFiltersRows =[];
     // addAdvRows();
 
@@ -491,9 +495,12 @@ debugger;
   }
   removeAdvRows(inputFields, currentIndex){
     let TabName = this.state.selectedTab.TabName;
-    advCustomFiltersRows[TabName].splice(currentIndex,1);
+    let removeSelected = advCustomFiltersRows[TabName][currentIndex];
+    let idxCurrent = advCustomFiltersRows[TabName].indexOf(removeSelected);
+
     
-    debugger;
+    advCustomFiltersRows[TabName].splice(idxCurrent,1);
+    
     this.forceUpdate();
     
   }
@@ -516,11 +523,11 @@ debugger;
 
 */
 
-      var inputFieldName = "issuerLastName" + currentIndex + TabName;
+      var inputFieldName = "advCustomerFilterFields" + "_"+ TabName + currentIndex ;
       var faMinusCircle = null;
       if(advCustomFiltersRows[TabName].length>0){
         faMinusCircle =( 
-        <label onClick={this.handleAvdCustomFilterRemoveRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" ,"margin-left": "10px;"}}>
+        <label onClick={this.handleAvdCustomFilterRemoveRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" ,"margin-left": "10"}}>
         
                         <i className='fa fa-minus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
                       </label>)
@@ -545,7 +552,7 @@ debugger;
           <Column medium={3}>
             <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
               Field Value:
-           <input type="text" id={inputFieldName} name={inputFieldName} value={this.state[inputFieldName]} onChange={this.handleAvdCustomFilterRowData.bind(this, inputFieldName, currentIndex, false)} />
+           <input type="text" id={inputFieldName} name={inputFieldName} value={this.state.IndianC} onChange={this.handleAvdCustomFilterRowData.bind(this, inputFieldName, currentIndex, false)} />
             </label>
           </Column>
           <div style={{ "paddingTop": "22px" }}>

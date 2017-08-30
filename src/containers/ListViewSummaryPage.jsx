@@ -357,7 +357,7 @@ class ListViewSummaryPage extends Component {
         if (item.state.advFields[currentTabName]) {
             obj = Object.assign(obj, item.state.advFields[currentTabName]);
         }
-
+debugger;
         if (item.state.fieldAvdNameSelected[currentTabName] != undefined && item.state.fieldAvdNameSelected[currentTabName].length > 0) {
             //obj.fldNmFldVal = item.state.fieldAvdNameSelected;
             obj.fldNmFldVal = item.state.fieldAvdNameSelected[currentTabName].map(function (value, index) {
