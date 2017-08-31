@@ -346,7 +346,7 @@ class ListViewSummaryPage extends Component {
                 }
         */
 
-
+debugger;
         var obj = {
             frmDate: moment(item.state.startDate[currentTabName]).format('MM/YYYY'),
             cvgYear: item.state.covYear[currentTabName],
@@ -357,7 +357,7 @@ class ListViewSummaryPage extends Component {
             currentTabName:currentTabName
 
         }
-        if (item.state.advFields[currentTabName]) {
+        if (item.state.advFields[currentTabName] && Object.keys(item.state.advFields[currentTabName]).length>0) {
             obj = Object.assign(obj, item.state.advFields[currentTabName]);
         }
         if (item.state.fieldAvdNameSelected[currentTabName] != undefined && item.state.fieldAvdNameSelected[currentTabName].length > 0) {
