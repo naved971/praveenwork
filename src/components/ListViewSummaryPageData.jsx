@@ -189,7 +189,7 @@ class ListViewSummaryPageData extends Component {
       },
 
       fieldAvdNameSelected: {
-        [selectedTab.TabName]:{ value: [ { field:{}, fieldValue:"" } ], count: 1}
+        [selectedTab.TabName]:{ value: [ { field:{ label:"", value:""} , fieldValue:"" } ], count: 1}
       },
       selectedTab: selectedTab,
       advFields: {
@@ -511,7 +511,7 @@ class ListViewSummaryPageData extends Component {
     }
 
 
-    this.state.fieldAvdNameSelected[TabName] = { value: [ { field:{}, fieldValue:"" } ], count: 1};
+    this.state.fieldAvdNameSelected[TabName] = { value: [ { field:{ label:"", value:""} , fieldValue:"" } ], count: 1};
 
     this.state.advFields[TabName] = {};
     this.setState({
@@ -542,7 +542,7 @@ class ListViewSummaryPageData extends Component {
 
 
         if(this.state.fieldAvdNameSelected[TabName].value[i] == undefined){
-          this.state.fieldAvdNameSelected[TabName].value[i]={ field:{}, fieldValue:"" }
+          this.state.fieldAvdNameSelected[TabName].value[i]={ field:{ label:"", value:""} , fieldValue:"" }
         }
 
 
