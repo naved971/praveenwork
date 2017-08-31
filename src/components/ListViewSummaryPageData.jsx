@@ -577,6 +577,7 @@ class ListViewSummaryPageData extends Component {
               <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                 Field Name:
               <Select.Async
+                  value={this.state.fieldAvdNameSelected[TabName].value[i].field.value}
                   searchable={isSearchable}
                   clearable={isClearable}
                   onChange={  (e)=>this.handleAdvFieldNameChange(inputFieldName, i,e)}
