@@ -147,7 +147,8 @@ class ListViewSummaryPageData extends Component {
       'handleAvdCustomFilterRowData',
       'handleSelectedTab',
       "handleAvdCustomFilterRemoveRow",
-      "removeAdvRows"
+      "removeAdvRows",
+      "handleChange", "addClick", "removeClick"
 
     ].map(fn => this[fn] = this[fn].bind(this));
     //this.addAdvRows();
@@ -185,9 +186,9 @@ class ListViewSummaryPageData extends Component {
       fieldFlagOptions: this.props.fieldFlagOptions,
       advCustomFiltersRows:  {
         [TabName]: []
-  
+
       },
-    
+
       fieldAvdNameSelected: {
         [selectedTab.TabName]:{value: [], count: 1}
       },
@@ -222,14 +223,33 @@ class ListViewSummaryPageData extends Component {
     this.state.startDate[TabName]= date; //={ [TabName]:selected} ;
     this.setState({ startDate:  this.state.startDate });
   }
-  
+
   handleChange(i, event) {
     let TabName = this.state.selectedTab.TabName;
+debugger;
+    //let value = this.state.fieldAvdNameSelected[TabName].value.slice();
+   // value[i] = event.target.value;
 
-    let value = this.state.fieldAvdNameSelected[TabName].value.slice();
-    value[i] = event.target.value;
-    this.setState({ fieldAvdNameSelected : value});
+    this.state.fieldAvdNameSelected[TabName].value[i]= event.target.value;
+
+    this.setState({fieldAvdNameSelected: this.state.fieldAvdNameSelected});
  }
+
+
+  addClick(){
+        let TabName = this.state.selectedTab.TabName;
+    this.state.fieldAvdNameSelected[TabName].count= this.state.fieldAvdNameSelected[TabName].count+1
+    this.setState({fieldAvdNameSelected: this.state.fieldAvdNameSelected});
+  }
+  removeClick(i){
+        let TabName = this.state.selectedTab.TabName;
+
+      // let value =  this.state.fieldAvdNameSelected[TabName].value.slice();
+
+          this.state.fieldAvdNameSelected[TabName].value.splice(i,1)
+          this.state.fieldAvdNameSelected[TabName].count= this.state.fieldAvdNameSelected[TabName].count - 1,
+          this.setState({fieldAvdNameSelected: this.state.fieldAvdNameSelected})
+    }
 
 
 
@@ -287,7 +307,7 @@ class ListViewSummaryPageData extends Component {
       //this.forceUpdate();
       }
   handleAvdCustomFilterRowData(inputFields, currentIndex, e) {
-    var fieldValue =e.target.value;  
+    var fieldValue =e.target.value;
 
     if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFields]== undefined){
 
@@ -359,9 +379,7 @@ class ListViewSummaryPageData extends Component {
       if (this.state.advCustomFiltersRows[selectedTab.TabName] == undefined) {
         this.state.advCustomFiltersRows[selectedTab.TabName]=[];
         this.setState({ advCustomFiltersRows: this.state.advCustomFiltersRows });
-        setTimeout(()=>{
-          this.addAdvRows(selectedTab.TabName);
-        });
+
       }
 
 
@@ -377,14 +395,13 @@ class ListViewSummaryPageData extends Component {
     }
     if (this.state.fieldAvdNameSelected[selectedTab.TabName] == undefined) {
 
-      this.state.fieldAvdNameSelected[selectedTab.TabName] = [];
+      this.state.fieldAvdNameSelected[selectedTab.TabName] ={value: [], count: 1};
+      this.setState({fieldAvdNameSelected:this.state.fieldAvdNameSelected });
       //this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
     }
-        this.setState({fieldAvdNameSelected:this.state.fieldAvdNameSelected });
 
 
 
- 
 
     if (this.state.tradSelected[selectedTab.TabName] == undefined) {
       this.state.tradSelected[selectedTab.TabName] =  this.props.defaultTradingPartners;
@@ -491,35 +508,35 @@ class ListViewSummaryPageData extends Component {
       fieldNameSelected: JSON.parse(JSON.stringify(initialState.fieldNameSelected))
     }
 
-    
-    
-    
+
+
+
     this.refs.advIsrRcTcNum.value="";
     this.refs.advIsrPlcyId.value="";
     this.refs.advIsrExchSubId.value="";
     this.refs.advIsrExchSubId.value="";
     this.refs.advIsrFstNm.value="";
     this.refs.advIsrLstNm.value="";
-    debugger;
+
     this.refs.advIsrDob.refs.input.value =""
     if(TabName == "RCNO"){
-      this.setState({ RCNO_DOB: null , 
-      
+      this.setState({ RCNO_DOB: null ,
+
         advCustomerFilterFields_RCNO0:null,
         advCustomerFilterFields_RCNO1:null,
         advCustomerFilterFields_RCNO2:null,
         advCustomerFilterFields_RCNO3:null,
         advCustomerFilterFields_RCNO4:null
-      
-      
-      
-      
+
+
+
+
       });
     }
     this.state.fieldAvdNameSelected[TabName] =[];
     this.state.advFields[TabName] = {};
     this.setState({
-      
+
       advFields:this.state.advFields, fieldAvdNameSelected:     this.state.fieldAvdNameSelected ,advCustomFiltersRows:this.state.advCustomFiltersRows });
 
               this.setState(resetFields, () => {
@@ -529,58 +546,60 @@ class ListViewSummaryPageData extends Component {
   let filterId =  "advCustomerFilterFields" + "_"+ TabName + "0";
     document.getElementById(filterId).value = "";
     //advCustomFiltersRows =[];
-    // addAdvRows();  
+
 
 
   }
   removeAdvRows(inputFields, currentIndex){
-    
-    debugger; 
+
+    debugger;
     let TabName = this.state.selectedTab.TabName;
-    var newData =Object.assign({}, this.state.advCustomFiltersRows) 
+    var newData =Object.assign({}, this.state.advCustomFiltersRows)
 
     var removeIndex = _.findIndex(newData[TabName], { 'currentIndex': currentIndex });
-    
+
 
 
     newData[TabName].splice(removeIndex, 1); //remove element
-    
-    
+
+
 
    // let removeSelected = this.state.advCustomFiltersRows[TabName][currentIndex-1];
     //let idxCurrent = this.state.advCustomFiltersRows[TabName].indexOf(removeSelected);
     //this.state.advCustomFiltersRows[TabName].splice(idxCurrent,1);
 
 
-    
+
     this.state.advCustomFiltersRows  =newData;
 
     newData[TabName] = newData[TabName].filter((value, i) => {
-      
+
      return value.currentIndex !== removeIndex;
-    
+
     });
-debugger;
+
 
 var obj = { [ inputFields]: undefined }
-      
+
     this.setState(obj);
 
      this.setState(this.state);
-  
 
-  //update(   this.state.advCustomFiltersRows, {$splice: [[removeIndex, 1]]}   ) 
+
+  //update(   this.state.advCustomFiltersRows, {$splice: [[removeIndex, 1]]}   )
   }
   addAdvRows() {
+
     let uiItems = [];
 
     let TabName = this.state.selectedTab.TabName;
-    
+
     for(let i = 0; i < this.state.fieldAvdNameSelected[TabName].count; i++){
               uiItems.push(
               <div key={i}>
-                  <input type="text" value={this.state.value[i] || ''} onChange={this.handleChange.bind(this,i)} />
+                  <input type="text" value={this.state.fieldAvdNameSelected[TabName].value[i] || ''} onChange={(e)=>this.handleChange(i,e)} />
                   <input type='button' value='remove' onClick={this.removeClick.bind(this,i)}/>
+           <input type='button' value='add more' onClick={this.addClick.bind(this)}/>
               </div>
            )
     }
@@ -590,6 +609,7 @@ var obj = { [ inputFields]: undefined }
   getItems() {
     const items = [];
     //  console.log("getitems"); console.log(this.props.fieldNameOptions);
+
 
 
     items.push(
@@ -789,22 +809,12 @@ var obj = { [ inputFields]: undefined }
                   </Row>
                   {/*----ADVANCE ROW ------*/}
 
-                  {
-                    this.addAdvRows()
-                    /*
-                    this.state.advCustomFiltersRows[this.state.selectedTab.TabName]
-                      .map((h) => {
-                        return (
-                          <div >
-                            <span>
-                              {h.currentFieldKey}
-                               {h.currentIndex}</span>
-                              
-                             { h.Rendered }
-                            </div>
-                        )
-                      })*/
-                  }
+{
+
+  this.addAdvRows()
+}
+
+
 
 
                   <Row>
@@ -971,16 +981,10 @@ var obj = { [ inputFields]: undefined }
 
                     {/*----ADVANCE ROW ------*/}
 
+
                     {
-
-
-                    this.state.advCustomFiltersRows[this.state.selectedTab.TabName]
-                      .map((h) => {
-                        return (
-                            h.Rendered
-                        )
-                      })
-                  }
+                              this.addAdvRows()
+                    }
 
 
 
@@ -1126,6 +1130,7 @@ var obj = { [ inputFields]: undefined }
             onChange={this.onChange}
             activeKey={this.state.activeKey}>
             {this.getItems()}
+
           </Collapse>
         </div>
       </div>
