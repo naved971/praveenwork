@@ -346,17 +346,23 @@ class ListViewSummaryPage extends Component {
                 }
         */
 
-
+        
         var obj = {
             frmDate: moment(item.state.startDate[currentTabName]).format('MM/YYYY'),
             cvgYear: item.state.covYear[currentTabName],
             tpId: tradSelected,
-            rcdFlag: recordFlagSelected,
-            fldFlag: fieldFlagSelected,
-            fldName: fieldNameSelected,
             currentTabName:currentTabName
-
         }
+      
+          if(currentTabName == "RCNO"){
+
+            obj.rcdFlag=recordFlagSelected;
+            obj.fldFlag= fieldFlagSelected;
+            obj.fldName=fieldNameSelected;
+          }
+            
+
+
         if (item.state.advFields[currentTabName] && Object.keys(item.state.advFields[currentTabName]).length>0) {
             obj = Object.assign(obj, item.state.advFields[currentTabName]);
         }

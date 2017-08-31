@@ -303,7 +303,6 @@ class ListViewSummaryPageData extends Component {
   
 
   handleAdvFieldNameChange(inputFields, i,selected={ label:"", value:""}) {
-debugger;
     let TabName = this.state.selectedTab.TabName;
       if(this.state.fieldAvdNameSelected[TabName].value[i] == undefined){
           this.state.fieldAvdNameSelected[TabName].value[i]={ field:selected, fieldValue:"" }
