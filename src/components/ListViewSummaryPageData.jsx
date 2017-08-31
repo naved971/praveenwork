@@ -120,7 +120,7 @@ function trClassFormat(row, rIndex) {
     ? 'grand-total-highlight'
     : '';
 }
-
+//https://jsfiddle.net/mayankshukla5031/qq7qv8es/
 class ListViewSummaryPageData extends Component {
   constructor(props) {
     super(props);
@@ -159,7 +159,7 @@ class ListViewSummaryPageData extends Component {
     let initialState= {
       accordion: true,
       activeKey: ['1'],
-      // startDate: moment(),
+            // startDate: moment(),
       startDate:{[TabName] : moment().subtract(1, 'month')}
       ,
       advStartDate:{ [TabName]:{advIsrDob: "" } } ,
@@ -187,11 +187,9 @@ class ListViewSummaryPageData extends Component {
         [TabName]: []
   
       },
-      fieldAvdNameSelectedShows:{
-            [selectedTab.TabName]:{}
-      },
+    
       fieldAvdNameSelected: {
-        [selectedTab.TabName]: []
+        [selectedTab.TabName]:{value: [], count: 1}
       },
       selectedTab: selectedTab,
       advFields: {
@@ -224,6 +222,17 @@ class ListViewSummaryPageData extends Component {
     this.state.startDate[TabName]= date; //={ [TabName]:selected} ;
     this.setState({ startDate:  this.state.startDate });
   }
+  
+  handleChange(i, event) {
+    let TabName = this.state.selectedTab.TabName;
+
+    let value = this.state.fieldAvdNameSelected[TabName].value.slice();
+    value[i] = event.target.value;
+    this.setState({ fieldAvdNameSelected : value});
+ }
+
+
+
   onExportToCSV() {
     const selectedRows = cxt.refs.table.state.selectedRowKeys;
     //console.log(selectedRows);
@@ -562,114 +571,21 @@ var obj = { [ inputFields]: undefined }
 
   //update(   this.state.advCustomFiltersRows, {$splice: [[removeIndex, 1]]}   ) 
   }
-  addAdvRows(tabName) {
-    let TabName = tabName || this.state.selectedTab.TabName;
-    let currentIndex = (this.state.advCustomFiltersRows[TabName].length);
-    let currentLength = this.state.advCustomFiltersRows[TabName].length;
-    if (currentIndex < 5) {
+  addAdvRows() {
+    let uiItems = [];
 
-
-      var inputFieldName = "advCustomerFilterFields" + "_"+ TabName + currentIndex ;
-
-
-     // this.state.fieldAvdNameSelectedShows[TabName]={ [inputFieldName] : null};
-
-      this.state.fieldAvdNameSelected[TabName][currentIndex]={ [inputFieldName] : null };
-      this.setState({fieldAvdNameSelected: this.state.fieldAvdNameSelected});
-
-      let faMinusCircle = null;
-      let faPlusCircle = null;
-
-      
-      if(currentLength<5){
-        faPlusCircle =(
-          <label  onClick={this.handleAvdCustomFilterAddRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-
-                <i className='fa fa-plus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
-              </label>
-              
-            
-            )
-      }
-
-
-      if(currentLength>0){
-        faMinusCircle =(
-                            <label onClick={this.handleAvdCustomFilterRemoveRow.bind(this, inputFieldName, currentIndex, true)} className="formLabel" style={ { "display": "inline", "fontWeight": "500", "color": "#3498db" ,"marginLeft": "10px"}}>
-
-                            <i className='fa fa-minus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
-                            </label>
-                      )
-      }
-
-
-
-
-
-      this.state.advCustomFiltersRows[TabName].push(
-{
-    currentFieldKey : inputFieldName,
-    currentIndex: currentIndex,
-    Rendered:   ( <Row >
-          <div style={{ "marginLeft": "3%" }} >
-            <Column medium={4}>
-              <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-                Field Name:
-              <Select.Async
-                  searchable={isSearchable}
-                  clearable={isClearable}
-                  onChange={this.handleAdvFieldNameChange.bind(this, inputFieldName, currentIndex)}
-                  loadOptions={this.props.getAvdInputFields.bind(this,this.state.selectedTab.TabName)}
-
-                />
-              </label>
-            </Column>
-          </div>
-          <Column medium={3}>
-            <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-              Field Value:
-              {/*({
-                 JSON.stringify(this.state.fieldAvdNameSelectedShows[this.state.selectedTab.TabName])
-                  })*/}
-           <input type="text" ref={inputFieldName} id={inputFieldName} name={inputFieldName} value={ this.state[inputFieldName]} onChange={(e)=>this.handleAvdCustomFilterRowData(inputFieldName, currentIndex, e)} />
-            </label>
-          </Column>
-          <div style={{ "paddingTop": "22px" }}>
-            <Column medium={3}>
-
-              
-
-              {faPlusCircle}
-              {faMinusCircle}
-
-           {/*  <label  onClick={(e)=> this.handleAvdCustomFilterAddRow( inputFieldName, currentIndex,e)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-            
-                            <i className='fa fa-plus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
-           </label>
-
-
-            <label onClick={(e)=>this.handleAvdCustomFilterRemoveRow(inputFieldName, currentIndex,e)} className="formLabel" style={ { "display": "inline", "fontWeight": "500", "color": "#3498db" ,"marginLeft":currentLength==5 ?"0px": "10px"}}>
-
-            <i className='fa fa-minus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
-            </label> */}
-
-            </Column>
-          </div>
-        </Row>
-
-
-       )
-      }
-  
-);
-
-
-      //{ [currentRef] :false}
-      //this.forceUpdate();
-      this.setState({ advCustomFiltersRows :this.state.advCustomFiltersRows})
+    let TabName = this.state.selectedTab.TabName;
+    
+    for(let i = 0; i < this.state.fieldAvdNameSelected[TabName].count; i++){
+              uiItems.push(
+              <div key={i}>
+                  <input type="text" value={this.state.value[i] || ''} onChange={this.handleChange.bind(this,i)} />
+                  <input type='button' value='remove' onClick={this.removeClick.bind(this,i)}/>
+              </div>
+           )
     }
+    return uiItems || null;
 
-    return this.state.advCustomFiltersRows[TabName];
   }
   getItems() {
     const items = [];
