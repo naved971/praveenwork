@@ -143,7 +143,7 @@ class ListViewSummaryPageData extends Component {
       'handleAdvSearch',
       "addAdvRows",
       'handleAdvFieldNameChange',
-      'handleAvdCustomFilterRowData',
+      
       'handleSelectedTab',
 
 
@@ -299,34 +299,16 @@ class ListViewSummaryPageData extends Component {
       this.setState(Obj);
 
       }
-  handleAvdCustomFilterRowData(inputFields, currentIndex, e) {
-    var fieldValue =e.target.value;
+  
+  
 
-    if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFields]== undefined){
-
-      this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex] ={
-        [inputFields]:fieldValue,
-        fieldValue: fieldValue
-      };
-    }
-    else{
-      this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex].fieldValue = fieldValue
-      this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFields] = fieldValue;
-    }
-
-
-    this.setState({ [inputFields]:fieldValue, fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-
-  }
-
-
-  handleAdvFieldNameChange(inputFields, i,selected) {
-
+  handleAdvFieldNameChange(inputFields, i,selected={ label:"", value:""}) {
+debugger;
     let TabName = this.state.selectedTab.TabName;
       if(this.state.fieldAvdNameSelected[TabName].value[i] == undefined){
           this.state.fieldAvdNameSelected[TabName].value[i]={ field:selected, fieldValue:"" }
       }else{
-        this.state.fieldAvdNameSelected[TabName].value[i].field= selected;
+        this.state.fieldAvdNameSelected[TabName].value[i].field= selected ;
       }
 
 
@@ -580,7 +562,7 @@ class ListViewSummaryPageData extends Component {
                   value={this.state.fieldAvdNameSelected[TabName].value[i].field.value}
                   searchable={isSearchable}
                   clearable={isClearable}
-                  onChange={  (e)=>this.handleAdvFieldNameChange(inputFieldName, i,e)}
+                  onChange={  (e)=>this.handleAdvFieldNameChange(inputFieldName, i,e === null ? undefined : e)}
                   loadOptions={this.props.getAvdInputFields.bind(this,this.state.selectedTab.TabName)}
 
                 />
