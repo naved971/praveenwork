@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash'
-import update from 'react-addons-update'; // ES6
+
 
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -141,13 +141,12 @@ class ListViewSummaryPageData extends Component {
       'handleResetButton',
       'handleExport',
       'handleAdvSearch',
-      'handleAvdCustomFilterAddRow',
       "addAdvRows",
       'handleAdvFieldNameChange',
       'handleAvdCustomFilterRowData',
       'handleSelectedTab',
-      "handleAvdCustomFilterRemoveRow",
-      "removeAdvRows",
+
+
       "handleChange", "addClick", "removeClick"
 
     ].map(fn => this[fn] = this[fn].bind(this));
@@ -190,7 +189,7 @@ class ListViewSummaryPageData extends Component {
       },
 
       fieldAvdNameSelected: {
-        [selectedTab.TabName]:{value: [], count: 1}
+        [selectedTab.TabName]:{ value: [ { field:{}, fieldValue:"" } ], count: 1}
       },
       selectedTab: selectedTab,
       advFields: {
@@ -225,13 +224,9 @@ class ListViewSummaryPageData extends Component {
   }
 
   handleChange(i, event) {
+
     let TabName = this.state.selectedTab.TabName;
-debugger;
-    //let value = this.state.fieldAvdNameSelected[TabName].value.slice();
-   // value[i] = event.target.value;
-
-    this.state.fieldAvdNameSelected[TabName].value[i]= event.target.value;
-
+    this.state.fieldAvdNameSelected[TabName].value[i].fieldValue = event.target.value;
     this.setState({fieldAvdNameSelected: this.state.fieldAvdNameSelected});
  }
 
@@ -243,8 +238,6 @@ debugger;
   }
   removeClick(i){
         let TabName = this.state.selectedTab.TabName;
-
-      // let value =  this.state.fieldAvdNameSelected[TabName].value.slice();
 
           this.state.fieldAvdNameSelected[TabName].value.splice(i,1)
           this.state.fieldAvdNameSelected[TabName].count= this.state.fieldAvdNameSelected[TabName].count - 1,
@@ -304,7 +297,7 @@ debugger;
         Obj.RCNI_DOB = this.state.advFields[this.state.selectedTab.TabName][e];
       }
       this.setState(Obj);
-      //this.forceUpdate();
+
       }
   handleAvdCustomFilterRowData(inputFields, currentIndex, e) {
     var fieldValue =e.target.value;
@@ -323,30 +316,21 @@ debugger;
 
 
     this.setState({ [inputFields]:fieldValue, fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-      // this.forceUpdate(()=>{
-
-      // });
-  }
-  handleAvdCustomFilterAddRow(inputFields, currentIndex, e) {
-    this.addAdvRows();
 
   }
-  handleAvdCustomFilterRemoveRow(inputFields, currentIndex, e) {
-    this.removeAdvRows(inputFields, currentIndex);
-  }
-  handleAdvFieldNameChange(inputFields, currentIndex,selected) {
-    // var fieldValue = document.getElementById(inputFieldName).value;
-    // this.state.fieldAvdNameSelected.push({fieldName:fieldName, fieldValue:fieldValue });
-    if(this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex][inputFields]){
-          this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]=Object.assign(selected,this.state.fieldAvdNameSelected[this.state.selectedTab.TabName][currentIndex]);
-    }
-    else{
-      this.state.fieldAvdNameSelected[this.state.selectedTab.TabName].push(selected);
-    }
+
+
+  handleAdvFieldNameChange(inputFields, i,selected) {
+
+    let TabName = this.state.selectedTab.TabName;
+      if(this.state.fieldAvdNameSelected[TabName].value[i] == undefined){
+          this.state.fieldAvdNameSelected[TabName].value[i]={ field:selected, fieldValue:"" }
+      }else{
+        this.state.fieldAvdNameSelected[TabName].value[i].field= selected;
+      }
 
 
 
-    //  var avdArra= new Array(selected);
     this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
   }
 
@@ -375,7 +359,6 @@ debugger;
 
   handleSelectedTab(selectedTab) {
 
-
       if (this.state.advCustomFiltersRows[selectedTab.TabName] == undefined) {
         this.state.advCustomFiltersRows[selectedTab.TabName]=[];
         this.setState({ advCustomFiltersRows: this.state.advCustomFiltersRows });
@@ -395,7 +378,7 @@ debugger;
     }
     if (this.state.fieldAvdNameSelected[selectedTab.TabName] == undefined) {
 
-      this.state.fieldAvdNameSelected[selectedTab.TabName] ={value: [], count: 1};
+      this.state.fieldAvdNameSelected[selectedTab.TabName] ={ value: [ { field:{}, fieldValue:"" } ], count: 1};
       this.setState({fieldAvdNameSelected:this.state.fieldAvdNameSelected });
       //this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
     }
@@ -429,7 +412,7 @@ debugger;
       this.state.covYear[selectedTab.TabName] =this.props.defaultCovYear;
       this.setState({ covYear: this.state.covYear });
     }
-    //this.forceUpdate(()=>{    });
+
     this.setState({ selectedTab: selectedTab });
 
   }
@@ -494,124 +477,154 @@ debugger;
     this.setState({ errStr });
   }
   handleResetButton() {
-//    console.log(initialState);
 
     let TabName = this.state.selectedTab.TabName;
     this.state.advCustomFiltersRows[this.state.selectedTab.TabName].length = 1;
+
     var resetFields = {
-      // startDate: moment(),
       startDate:{[TabName] : moment().subtract(1, 'month')} ,
-      covYear: JSON.parse(JSON.stringify(initialState.covYear)),
-      tradSelected: JSON.parse(JSON.stringify(initialState.tradSelected)),
-      fieldFlagSelected: JSON.parse(JSON.stringify(initialState.fieldFlagSelected)),
-      recordFlagSelected: JSON.parse(JSON.stringify(initialState.recordFlagSelected)),
-      fieldNameSelected: JSON.parse(JSON.stringify(initialState.fieldNameSelected))
+      covYear: {[TabName] : JSON.parse(JSON.stringify(initialState.covYear   )) } ,
+      tradSelected: {[TabName] :  JSON.parse(JSON.stringify(initialState.tradSelected))}
     }
 
-
-
-
-    this.refs.advIsrRcTcNum.value="";
-    this.refs.advIsrPlcyId.value="";
-    this.refs.advIsrExchSubId.value="";
-    this.refs.advIsrExchSubId.value="";
-    this.refs.advIsrFstNm.value="";
-    this.refs.advIsrLstNm.value="";
-
-    this.refs.advIsrDob.refs.input.value =""
     if(TabName == "RCNO"){
-      this.setState({ RCNO_DOB: null ,
+      resetFields.fieldFlagSelected= {[TabName] : JSON.parse(JSON.stringify(initialState.fieldFlagSelected)) } ;
+      resetFields.recordFlagSelected= {[TabName] :  JSON.parse(JSON.stringify(initialState.recordFlagSelected)) };
+      resetFields.fieldNameSelected={[TabName] :  JSON.parse(JSON.stringify(initialState.fieldNameSelected)) };
+          this.refs.advIsrRcTcNum.value="";
+          this.refs.advIsrPlcyId.value="";
+          this.refs.advIsrExchSubId.value="";
+          this.refs.advIsrExchSubId.value="";
+          this.refs.advIsrFstNm.value="";
+          this.refs.advIsrLstNm.value="";
+          this.refs.advIsrDob.refs.input.value =""
+          this.setState({ RCNO_DOB: null });
 
-        advCustomerFilterFields_RCNO0:null,
-        advCustomerFilterFields_RCNO1:null,
-        advCustomerFilterFields_RCNO2:null,
-        advCustomerFilterFields_RCNO3:null,
-        advCustomerFilterFields_RCNO4:null
-
-
-
-
-      });
+    }else if( TabName== "RCNI"){
+          this.refs.advFfmFstNm.value="";
+          this.refs.advFfmLstNm.value="";
+          this.refs.advFfmIsurExchSubId.value="";
+          this.refs.advFfmExchPlcyId.value="";
+          this.refs.advFfmAscnRcTcNum.value="";
+          this.refs.advFfmDob.refs.input.value =""
+          this.setState({ RCNI_DOB: null });
     }
-    this.state.fieldAvdNameSelected[TabName] =[];
+
+
+    this.state.fieldAvdNameSelected[TabName] = { value: [ { field:{}, fieldValue:"" } ], count: 1};
+
     this.state.advFields[TabName] = {};
     this.setState({
 
-      advFields:this.state.advFields, fieldAvdNameSelected:     this.state.fieldAvdNameSelected ,advCustomFiltersRows:this.state.advCustomFiltersRows });
+      advFields:this.state.advFields, fieldAvdNameSelected:this.state.fieldAvdNameSelected ,advCustomFiltersRows:this.state.advCustomFiltersRows });
 
               this.setState(resetFields, () => {
                 console.log("Resetting State");
                 console.log(this.state);
               });
-  let filterId =  "advCustomerFilterFields" + "_"+ TabName + "0";
-    document.getElementById(filterId).value = "";
-    //advCustomFiltersRows =[];
-
-
 
   }
-  removeAdvRows(inputFields, currentIndex){
 
-    debugger;
-    let TabName = this.state.selectedTab.TabName;
-    var newData =Object.assign({}, this.state.advCustomFiltersRows)
-
-    var removeIndex = _.findIndex(newData[TabName], { 'currentIndex': currentIndex });
-
-
-
-    newData[TabName].splice(removeIndex, 1); //remove element
-
-
-
-   // let removeSelected = this.state.advCustomFiltersRows[TabName][currentIndex-1];
-    //let idxCurrent = this.state.advCustomFiltersRows[TabName].indexOf(removeSelected);
-    //this.state.advCustomFiltersRows[TabName].splice(idxCurrent,1);
-
-
-
-    this.state.advCustomFiltersRows  =newData;
-
-    newData[TabName] = newData[TabName].filter((value, i) => {
-
-     return value.currentIndex !== removeIndex;
-
-    });
-
-
-var obj = { [ inputFields]: undefined }
-
-    this.setState(obj);
-
-     this.setState(this.state);
-
-
-  //update(   this.state.advCustomFiltersRows, {$splice: [[removeIndex, 1]]}   )
-  }
   addAdvRows() {
 
     let uiItems = [];
 
     let TabName = this.state.selectedTab.TabName;
+    let faMinusCircle = null;
+    let faPlusCircle = null;
+
+
 
     for(let i = 0; i < this.state.fieldAvdNameSelected[TabName].count; i++){
-              uiItems.push(
+
+
+        if(i==5) break;
+
+
+        if(this.state.fieldAvdNameSelected[TabName].value[i] == undefined){
+          this.state.fieldAvdNameSelected[TabName].value[i]={ field:{}, fieldValue:"" }
+        }
+
+
+
+        let inputFieldName = "advCustomerFilterFields" + "_"+ TabName  + "_"+  i ;
+        if(i==4){
+            faPlusCircle = null;
+        }else{
+        faPlusCircle =(<label  onClick={this.addClick.bind(this)} className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                <i className='fa fa-plus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
+              </label> )
+        }
+
+
+         if(i>0){
+              faMinusCircle =(
+                <label  onClick={this.removeClick.bind(this,i)} className="formLabel" style={ { "display": "inline", "fontWeight": "500", "color": "#3498db" ,"marginLeft":i==4 ? undefined: "10px"}}>
+
+                <i className='fa fa-minus-circle fa-3x' style={{ "cursor": "pointer" }} aria-hidden="true"></i>
+                </label>
+              )
+         }
+
+
+
+        uiItems.push(
+
               <div key={i}>
-                  <input type="text" value={this.state.fieldAvdNameSelected[TabName].value[i] || ''} onChange={(e)=>this.handleChange(i,e)} />
-                  <input type='button' value='remove' onClick={this.removeClick.bind(this,i)}/>
-           <input type='button' value='add more' onClick={this.addClick.bind(this)}/>
+<Row >
+          <div style={{ "marginLeft": "3%" }} >
+            <Column medium={4}>
+              <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+                Field Name:
+              <Select.Async
+                  searchable={isSearchable}
+                  clearable={isClearable}
+                  onChange={  (e)=>this.handleAdvFieldNameChange(inputFieldName, i,e)}
+                  loadOptions={this.props.getAvdInputFields.bind(this,this.state.selectedTab.TabName)}
+
+                />
+              </label>
+            </Column>
+          </div>
+          <Column medium={3}>
+            <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
+              Field Value:
+
+
+            <input type="text" ref={inputFieldName} value={this.state.fieldAvdNameSelected[TabName].value[i].fieldValue || ''} onChange={(e)=>this.handleChange(i,e)} />
+
+
+            </label>
+          </Column>
+          <div style={{ "paddingTop": "22px" }}>
+            <Column medium={3}>
+
+
+
+              {faPlusCircle}
+              {faMinusCircle}
+
+
+
+            </Column>
+          </div>
+        </Row>
+
+
+
               </div>
-           )
+
+
+        )
+
+
+
     }
     return uiItems || null;
 
   }
   getItems() {
     const items = [];
-    //  console.log("getitems"); console.log(this.props.fieldNameOptions);
-
-
-
     items.push(
       <Panel header={`List View Search`} key={'0'}>
         <Row>
@@ -895,15 +908,15 @@ var obj = { [ inputFields]: undefined }
                     <div style={{ "marginLeft": "3%" }} >
                       <Column medium={4}>
                         <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-                          First Name:({this.state.advFfmFstNm}})
-          <input type="text" name="advFfmFstNm" value={this.state.advFfmFstNm} onChange={this.handleAdvSearch} placeholder="First Name" />
+                          First Name:
+          <input type="text" ref="advFfmFstNm" name="advFfmFstNm" value={this.state.advFfmFstNm} onChange={this.handleAdvSearch} placeholder="First Name" />
                         </label>
                       </Column>
                     </div>
                     <Column medium={4}>
                       <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Last Name:
-          <input type="text" name="advFfmLstNm" value={this.state.advFfmLstNm} onChange={this.handleAdvSearch} placeholder="Last Name" />
+          <input type="text" ref="advFfmLstNm" name="advFfmLstNm" value={this.state.advFfmLstNm} onChange={this.handleAdvSearch} placeholder="Last Name" />
                       </label>
                     </Column>
                     <Column medium={3}>
@@ -911,7 +924,7 @@ var obj = { [ inputFields]: undefined }
                       Issuer DOB:
 
                      <DatePicker
-                          ref='fileRunDPickerIssuerDOB'
+                          ref='advFfmDob'
                           name="advFfmDob"
                           selected={this.state.advStartDate[this.state.selectedTab.TabName]['advFfmDob']}
                           value={this.state.RCNI_DOB}
@@ -930,7 +943,7 @@ var obj = { [ inputFields]: undefined }
                         <label className="formLabel"
                           style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                           Issuer Ex Subscriber Id:
-          <input type="text" name="advFfmIsurExchSubId" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Ex Subscriber Id" />
+          <input type="text" ref="advFfmIsurExchSubId" name="advFfmIsurExchSubId" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Ex Subscriber Id" />
                         </label>
                       </Column>
                     </div>
@@ -938,14 +951,14 @@ var obj = { [ inputFields]: undefined }
                       <label className="formLabel"
                         style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer Assigned Ex Policy ID:
-          <input type="text" name="advFfmExchPlcyId" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Ex Policy ID" />
+          <input type="text" ref="advFfmExchPlcyId" name="advFfmExchPlcyId" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Ex Policy ID" />
                       </label>
                     </Column>
                     <Column medium={3}>
                       <label className="formLabel"
                         style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer Record Trace Number:
-          <input type="text" name="advFfmAscnRcTcNum" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Record Trace Number" />
+          <input type="text" ref="advFfmAscnRcTcNum" name="advFfmAscnRcTcNum" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Record Trace Number" />
                       </label>
                     </Column>
                   </Row>
@@ -955,29 +968,7 @@ var obj = { [ inputFields]: undefined }
       </label>
                     <br />
                   </Row>
-                  {/* <Row>
-                    <div style={{ "marginLeft": "3%" }} >
-                      <Column medium={4} className="rcno-feild-name">
-                        <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-                          Field Name:
 
-                              <Select.Async
-                            searchable={isSearchable}
-                            clearable={isClearable}
-                            onChange={this.handleAdvFieldNameChange.bind(this, 'issuerLastNameRCNI0', 0)}
-                            loadOptions={this.props.getAvdInputFields}
-
-                          />
-                        </label>
-                      </Column>
-                    </div>
-                    <Column medium={3}>
-                      <label className="formLabel" style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
-                        Field Value:
-                        <input type="text" placeholder="Field Value" id="advancefieldvalue" name="advancefieldvalue" value={this.state.advancefieldvalue} onChange={this.handleAvdCustomFilterRowData.bind(this, "advancefieldvalue", 0, false)} />
-                      </label>
-                    </Column>
-                  </Row> */}
 
                     {/*----ADVANCE ROW ------*/}
 
@@ -1014,6 +1005,7 @@ var obj = { [ inputFields]: undefined }
 
       </Panel>
     );
+
     items.push(
       <Panel header={`Search Result `} key={'1'}>
         <div className={'display-' + !this.state.showTable}
@@ -1027,36 +1019,7 @@ var obj = { [ inputFields]: undefined }
         </div>
         <div className={'display-' + this.state.showTable}>
           <br /><br />
-          {/* <BootstrapTable
-            data={this.state.summaryTableData}
-            height='300'
-            scrollTop={'Top'}
-            ref='table'
-            bordered={true}
-            selectRow={this.state.selectRowProp}
-            options={this.state.tableOptions}
-            headerStyle={{ background: '#d3ded3' }}>
-            <TableHeaderColumn
-              width={'150'}
-              dataField='flag'
-              isKey={true}
-              sortFunc={flagSortFunc}
-              dataSort={true}>Flag  <i className="fa fa-sort" aria-hidden="true"></i></TableHeaderColumn>
-            {this
-              .state
-              .tableHeaders
-              .map((h) => {
-                return (
-                  <TableHeaderColumn
-                    dataField={h}
-                    dataFormat={emptyDataFormatter}
-                    width={'150'}
-                    sortFunc={dynamicHeaderSortFunc}
-                    dataSort={true}>{h}  <i className="fa fa-sort" aria-hidden="true"></i></TableHeaderColumn>
-                )
-              })
-            }
-          </BootstrapTable> */}
+
           <br /><br />
           <BootstrapTable
             data={this.state.summaryTableData}
@@ -1076,7 +1039,10 @@ var obj = { [ inputFields]: undefined }
             <TableHeaderColumn dataField='socSecNum'>rcnoSocSecNum</TableHeaderColumn>
             <TableHeaderColumn dataField='contractId' isKey={true}>rcnoContractId</TableHeaderColumn>
             <TableHeaderColumn dataField='ffmPolicyId'>rcnoFFMPolicyId</TableHeaderColumn>
-            <TableHeaderColumn dataField='overallInd'>overallInd</TableHeaderColumn>
+            {
+              (this.state.selectedTab.TabName=="RCNO") ? (<TableHeaderColumn dataField='overallInd'>overallInd</TableHeaderColumn>) : null
+            }
+
           </BootstrapTable>
           <br />
           <Row>
@@ -1201,12 +1167,13 @@ var obj = { [ inputFields]: undefined }
   componentDidMount() {
     console.log("componentDidMount()");
     if (initialState === undefined) {
+      let TabName = this.state.selectedTab.TabName;
       initialState = {
-        covYear: JSON.parse(JSON.stringify(this.state.covYear)),
-        tradSelected: JSON.parse(JSON.stringify(this.state.tradSelected)),
-        fieldFlagSelected: JSON.parse(JSON.stringify(this.state.fieldFlagSelected)),
-        recordFlagSelected: JSON.parse(JSON.stringify(this.state.recordFlagSelected)),
-        fieldNameSelected: JSON.parse(JSON.stringify(this.state.fieldNameSelected))
+        covYear: JSON.parse(JSON.stringify(this.state.covYear[TabName] )),
+        tradSelected: JSON.parse(JSON.stringify(this.state.tradSelected[TabName] )),
+        fieldFlagSelected: JSON.parse(JSON.stringify(this.state.fieldFlagSelected[TabName] )),
+        recordFlagSelected: JSON.parse(JSON.stringify(this.state.recordFlagSelected[TabName] )),
+        fieldNameSelected: JSON.parse(JSON.stringify(this.state.fieldNameSelected[TabName] ))
       };
       //console.log(initialState);
       //console.log(this.state);

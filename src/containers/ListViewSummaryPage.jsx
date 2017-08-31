@@ -346,7 +346,7 @@ class ListViewSummaryPage extends Component {
                 }
         */
 
-debugger;
+
         var obj = {
             frmDate: moment(item.state.startDate[currentTabName]).format('MM/YYYY'),
             cvgYear: item.state.covYear[currentTabName],
@@ -360,12 +360,23 @@ debugger;
         if (item.state.advFields[currentTabName] && Object.keys(item.state.advFields[currentTabName]).length>0) {
             obj = Object.assign(obj, item.state.advFields[currentTabName]);
         }
-        if (item.state.fieldAvdNameSelected[currentTabName] != undefined && item.state.fieldAvdNameSelected[currentTabName].length > 0) {
-            //obj.fldNmFldVal = item.state.fieldAvdNameSelected;
-            obj.fldNmFldVal = item.state.fieldAvdNameSelected[currentTabName].map(function (value, index) {
-                return { fieldName: value.label, fieldValue: value.fieldValue }
+        if (item.state.fieldAvdNameSelected[currentTabName] != undefined) {
 
-            })
+            obj.fldNmFldVal =item.state.fieldAvdNameSelected[currentTabName].value.map(function (value, index) {
+                let FieldSelected =  Object.keys(value.field).length > 0 ? value.field.label : undefined;
+                var FieldValueSelected =  value.fieldValue == "" ? undefined :   value.fieldValue;
+                if(FieldSelected != undefined &&   FieldValueSelected != undefined){
+                        return { fieldName:FieldSelected , fieldValue: FieldValueSelected }
+                }
+            });
+
+
+            obj.fldNmFldVal  = obj.fldNmFldVal .filter(function( element ) {
+                         return element !== undefined;
+            });
+
+
+
         }
         this.getResultSummary(obj);
     }
