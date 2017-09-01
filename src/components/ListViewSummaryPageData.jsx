@@ -143,7 +143,7 @@ class ListViewSummaryPageData extends Component {
       'handleAdvSearch',
       "addAdvRows",
       'handleAdvFieldNameChange',
-      
+
       'handleSelectedTab',
 
 
@@ -210,8 +210,8 @@ class ListViewSummaryPageData extends Component {
       lastDataReceived: this.props.lastDataReceived,
       errStr: {
         [TabName]:[]
-  
-      } 
+
+      }
     };
 
     return initialState;
@@ -221,8 +221,7 @@ class ListViewSummaryPageData extends Component {
   }
   handleDateChange(date) {
     let TabName = this.state.selectedTab.TabName;
-    debugger;
-    this.state.startDate[TabName]= date ||  moment().subtract(1, 'month') ; //={ [TabName]:selected} ;
+    this.state.startDate[TabName]= date;
     this.setState({ startDate:  this.state.startDate },()=> this.checkValidation()  );
   }
 
@@ -302,8 +301,8 @@ class ListViewSummaryPageData extends Component {
       this.setState(Obj);
 
       }
-  
-  
+
+
 
   handleAdvFieldNameChange(inputFields, i,selected={ label:"", value:""}) {
     let TabName = this.state.selectedTab.TabName;
@@ -349,7 +348,7 @@ class ListViewSummaryPageData extends Component {
 
       }
       if (this.state.errStr[selectedTab.TabName] == undefined) {
-        this.state.errStr[selectedTab.TabName]={[selectedTab.TabName]:[] } 
+        this.state.errStr[selectedTab.TabName]={[selectedTab.TabName]:[] }
         this.setState({ errStr: this.state.errStr });
 
       }
@@ -406,8 +405,8 @@ class ListViewSummaryPageData extends Component {
   }
  checkValidation(){
   let currentTabName = this.state.selectedTab.TabName;
-  let state = Object.assign({}, this.state); 
-  
+  let state = Object.assign({}, this.state);
+
   let pass= {
     [currentTabName]:true
   }
@@ -421,7 +420,7 @@ class ListViewSummaryPageData extends Component {
     errStr[currentTabName][4] = "Field Required";
   }
   // validate moment object
-  
+
   let currentRef = "fileRunDPicker"+"_"+ currentTabName;
   const startDate = this.refs[currentRef].refs.input.defaultValue;
   if (!startDate || startDate.length !== 7) {
@@ -475,8 +474,6 @@ class ListViewSummaryPageData extends Component {
 
     let TabName = this.state.selectedTab.TabName;
     this.state.advCustomFiltersRows[this.state.selectedTab.TabName].length = 1;
-debugger;
-   let currentRef = "fileRunDPicker"+"_"+ TabName;
 
       // this.refs[currentRef].setDate();
       // setTimeout(() => {
@@ -493,12 +490,12 @@ debugger;
      } ,() => {
        debugger;
           this.refs[currentRef].props.onChange(moment().subtract(1, 'month'));
-         }) 
+         })
 
 
 
      });
-            */                 
+            */
 
 
     var resetFields = {
@@ -532,25 +529,34 @@ debugger;
 
 
     this.state.fieldAvdNameSelected[TabName] = { value: [ { field:{ label:"", value:""} , fieldValue:"" } ], count: 1};
-  
+
     this.state.advFields[TabName] = {};
-    
-    resetFields.errStr={[TabName]:[] } 
+
+    resetFields.errStr={[TabName]:[] }
     this.setState({
-     
-      advFields:this.state.advFields, fieldAvdNameSelected:this.state.fieldAvdNameSelected ,advCustomFiltersRows:this.state.advCustomFiltersRows 
-    
+
+      advFields:this.state.advFields, fieldAvdNameSelected:this.state.fieldAvdNameSelected ,advCustomFiltersRows:this.state.advCustomFiltersRows
+
     });
 
-   
 
-  
+
+
 
 
 
               this.setState(resetFields, () => {
-                this.refs[currentRef].forceUpdate();
-                
+
+                    let currentRef = "fileRunDPicker"+"_"+ TabName;
+                  if (cxt.refs[currentRef].refs.input.value != cxt.state.startDate[TabName].format('MM/YYYY')){
+                      cxt.refs[currentRef].refs.input.defaultValue = cxt.state.startDate[TabName].format('MM/YYYY');
+                      cxt.refs[currentRef].refs.input.value = cxt.state.startDate[TabName].format('MM/YYYY');
+                      cxt.refs[currentRef].setState({ inputValue:    cxt.state.startDate[TabName].format('MM/YYYY') });;
+                  }
+
+
+
+
                 console.log("Resetting State");
                 console.log(this.state);
              });
@@ -674,7 +680,7 @@ debugger;
                     <div style={{ "marginLeft": "3%" }} >
                       <Column medium={3}>
                         <label className='formLabel' style={{ "display": "inline", "fontWeight": "bold", "color": "#3498db" }}>
-                        File Run Month/Year:* 
+                        File Run Month/Year:*
                                 <DatePicker
                             ref='fileRunDPicker_RCNO'
                             id="fileRunDPicker_RCNO"
@@ -802,14 +808,7 @@ debugger;
                     <Column medium={3}>
                       <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer DOB:
-                            {/* <DatePicker
-                          name="advIsrDob"
-                          selected={this.state.advStartDate}
-                          onChange={this.handleAdvSearch.bind(this, 'advIsrDob', this.state.advStartDate)}
-                          dateFormat="MM/DD/YYYY"
-                          placeholderText="MM/DD/YYYY"
-                          showYearDropdown
-                          scrollableYearDropdown /> */}
+
                         <DatePicker
                           name="advIsrDob"
                           selected={this.state.advStartDate[this.state.selectedTab.TabName]['advIsrDob']}
