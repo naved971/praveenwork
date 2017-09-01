@@ -584,7 +584,25 @@ class ListViewSummaryPageData extends Component {
                 </label>
               )
          }
-
+let rcnoFieldDDL = null;
+let rcniFieldDDL = null;
+         if(this.state.selectedTab.TabName =="RCNO"){
+                      rcnoFieldDDL= (<Select.Async
+                      value={this.state.fieldAvdNameSelected[TabName].value[i].field.value}
+                      searchable={isSearchable}
+                      clearable={isClearable}
+                      onChange={  (e)=>this.handleAdvFieldNameChange(inputFieldName, i,e === null ? undefined : e)}
+                      loadOptions={ this.props.getAvdInputFields.bind(this,this.state.selectedTab.TabName)}
+                      />)
+         }else{
+                 rcniFieldDDL= (<Select.Async
+                      value={this.state.fieldAvdNameSelected[TabName].value[i].field.value}
+                      searchable={isSearchable}
+                      clearable={isClearable}
+                      onChange={  (e)=>this.handleAdvFieldNameChange(inputFieldName, i,e === null ? undefined : e)}
+                      loadOptions={ this.props.getAvdInputFields.bind(this,this.state.selectedTab.TabName)}
+                      />)
+         }
 
 
         uiItems.push(
@@ -595,14 +613,8 @@ class ListViewSummaryPageData extends Component {
             <Column medium={4}>
               <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                 Field Name:
-              <Select.Async
-                  value={this.state.fieldAvdNameSelected[TabName].value[i].field.value}
-                  searchable={isSearchable}
-                  clearable={isClearable}
-                  onChange={  (e)=>this.handleAdvFieldNameChange(inputFieldName, i,e === null ? undefined : e)}
-                  loadOptions={this.props.getAvdInputFields.bind(this,this.state.selectedTab.TabName)}
-
-                />
+                {rcnoFieldDDL}
+                {rcniFieldDDL}
               </label>
             </Column>
           </div>

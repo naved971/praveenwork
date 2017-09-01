@@ -481,7 +481,14 @@ class ListViewSummaryPage extends Component {
             }
             return response.json();
         }).then((response) => {
-            let data = response.fieldNameMap;
+            let data = null
+             //tabName== "RCNO" ? "fieldNameMapRCNO": "fieldNameMapRCNI";
+            // let keys =  Object.keys(response);
+            //let dataKey =keys.length>0 ? keys[0] :  tabName== "RCNO" ? "fieldNameMapRCNO": "fieldNameMapRCNI"    ;
+
+            let dataKey = tabName== "RCNO" ? "fieldNameMapRCNO": "fieldNameMapRCNI"    ;
+
+            data= response[dataKey];
             /*
             data = data.map((d, index) => {
                 return { value: index, label: d }
