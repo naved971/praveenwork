@@ -58,7 +58,7 @@ const styles = {
 };
 
 var isSearchable = false;
-var isClearable = true;
+var isClearable =false;
 
 let advFields = {};
 let initialState = undefined;
@@ -147,7 +147,7 @@ class ListViewSummaryPageData extends Component {
       'handleSelectedTab',
 
 
-      "handleChange", "addClick", "removeClick"
+      "handleChange", "addClick", "removeClick","checkValidation"
 
     ].map(fn => this[fn] = this[fn].bind(this));
     //this.addAdvRows();
@@ -166,17 +166,17 @@ class ListViewSummaryPageData extends Component {
       //{ [selectedTab.TabName]:moment() },
       covYear:{ [TabName]:   this.props.defaultCovYear  },
       tradSelected:{
-        [selectedTab.TabName]:  this.props.defaultTradingPartners
+        [TabName]:  this.props.defaultTradingPartners
       },
       fieldFlagSelected: {
-        [selectedTab.TabName]:  this.props.defaultFieldFlags
+        [TabName]:  this.props.defaultFieldFlags
       },
 
       recordFlagSelected:{
-        [selectedTab.TabName]:  this.props.defaultRecordFlags
+        [TabName]:  this.props.defaultRecordFlags
       },
       fieldNameSelected:{
-        [selectedTab.TabName]:  this.props.defaultFieldNames
+        [TabName]:  this.props.defaultFieldNames
 
       },
       fieldNameOptions: this.props.fieldNameOptions,
@@ -189,11 +189,11 @@ class ListViewSummaryPageData extends Component {
       },
 
       fieldAvdNameSelected: {
-        [selectedTab.TabName]:{ value: [ { field:{ label:"", value:""} , fieldValue:"" } ], count: 1}
+        [TabName]:{ value: [ { field:{ label:"", value:""} , fieldValue:"" } ], count: 1}
       },
       selectedTab: selectedTab,
       advFields: {
-        [selectedTab.TabName]: {}
+        [TabName]: {}
       },
       selectRowProp: {
         mode: 'checkbox',
@@ -208,7 +208,10 @@ class ListViewSummaryPageData extends Component {
       showTable: false,
       showSpinner: true,
       lastDataReceived: this.props.lastDataReceived,
-      errStr: []
+      errStr: {
+        [TabName]:[]
+  
+      } 
     };
 
     return initialState;
@@ -218,9 +221,9 @@ class ListViewSummaryPageData extends Component {
   }
   handleDateChange(date) {
     let TabName = this.state.selectedTab.TabName;
-
-    this.state.startDate[TabName]= date; //={ [TabName]:selected} ;
-    this.setState({ startDate:  this.state.startDate });
+    debugger;
+    this.state.startDate[TabName]= date ||  moment().subtract(1, 'month') ; //={ [TabName]:selected} ;
+    this.setState({ startDate:  this.state.startDate },()=> this.checkValidation()  );
   }
 
   handleChange(i, event) {
@@ -268,12 +271,12 @@ class ListViewSummaryPageData extends Component {
   handleTradPartChange(selected) {
 
     this.state.tradSelected[this.state.selectedTab.TabName]= selected;
-    this.setState({ tradSelected:   this.state.tradSelected });
+    this.setState({ tradSelected:   this.state.tradSelected },()=> this.checkValidation() );
   }
   handleCovYearChange(val) {
     let TabName = this.state.selectedTab.TabName;
-        this.state.covYear[TabName] = val.label;
-    this.setState({ covYear:  this.state.covYear });
+        this.state.covYear[TabName] = val.label || null;
+    this.setState({ covYear:  this.state.covYear },()=> this.checkValidation());
   }
   handleAdvSearch(e, date) {
 
@@ -327,15 +330,15 @@ class ListViewSummaryPageData extends Component {
   handleFieldFlagChange(selected) {
     this.state.fieldFlagSelected[this.state.selectedTab.TabName]= selected;
 
-    this.setState({ fieldFlagSelected: this.state.fieldFlagSelected });
+    this.setState({ fieldFlagSelected: this.state.fieldFlagSelected },()=> this.checkValidation());
   }
   handleRecordFlagChange(selected) {
     this.state.recordFlagSelected[this.state.selectedTab.TabName]= selected;
-    this.setState({ recordFlagSelected:  this.state.recordFlagSelected });
+    this.setState({ recordFlagSelected:  this.state.recordFlagSelected },()=> this.checkValidation());
   }
   handleFieldNameChange(selected) {
     this.state.fieldNameSelected[this.state.selectedTab.TabName]= selected;
-    this.setState({ fieldNameSelected:  this.state.fieldNameSelected });
+    this.setState({ fieldNameSelected:  this.state.fieldNameSelected },()=> this.checkValidation());
   }
 
   handleSelectedTab(selectedTab) {
@@ -343,6 +346,11 @@ class ListViewSummaryPageData extends Component {
       if (this.state.advCustomFiltersRows[selectedTab.TabName] == undefined) {
         this.state.advCustomFiltersRows[selectedTab.TabName]=[];
         this.setState({ advCustomFiltersRows: this.state.advCustomFiltersRows });
+
+      }
+      if (this.state.errStr[selectedTab.TabName] == undefined) {
+        this.state.errStr[selectedTab.TabName]={[selectedTab.TabName]:[] } 
+        this.setState({ errStr: this.state.errStr });
 
       }
 
@@ -384,86 +392,117 @@ class ListViewSummaryPageData extends Component {
       this.setState({ fieldNameSelected: this.state.fieldNameSelected });
     }
 
-    if (this.state.startDate[selectedTab.TabName] == undefined) {
+    if (typeof this.state.startDate[selectedTab.TabName] == "undefined") {
       this.state.startDate[selectedTab.TabName] = moment().subtract(1, 'month');
       this.setState({ startDate: this.state.startDate });
     }
-
-    if (this.state.covYear[selectedTab.TabName] == undefined) {
+    if (typeof this.state.covYear[selectedTab.TabName] == "undefined") {
       this.state.covYear[selectedTab.TabName] =this.props.defaultCovYear;
       this.setState({ covYear: this.state.covYear });
     }
 
-    this.setState({ selectedTab: selectedTab });
+    this.setState({ selectedTab: selectedTab },()=>this.checkValidation());
 
   }
+ checkValidation(){
+  let currentTabName = this.state.selectedTab.TabName;
+  let state = Object.assign({}, this.state); 
+  
+  let pass= {
+    [currentTabName]:true
+  }
+  let errStr ={
+    [currentTabName]:[]
 
+  } ;
+  // validate covYear
+  if (!state.covYear[currentTabName] || parseInt(state.covYear[currentTabName]) !== state.covYear[currentTabName] || String(state.covYear[currentTabName]).indexOf('.') !== -1) {
+    pass[currentTabName] = false;
+    errStr[currentTabName][4] = "Field Required";
+  }
+  // validate moment object
+  
+  let currentRef = "fileRunDPicker"+"_"+ currentTabName;
+  const startDate = this.refs[currentRef].refs.input.defaultValue;
+  if (!startDate || startDate.length !== 7) {
+    pass[currentTabName] = false;
+    errStr[currentTabName][0] = "Field Required";
+  }
+  else {
+    let range = moment(startDate, 'MM/YYYY').add(6, 'month');
+    if (!moment(range).isSameOrAfter(moment())) {
+      pass[currentTabName] = false;
+      errStr[currentTabName][0] = "Error : Date more than 6 months old";
+    }
+  }
+  // validate trad partners
+  if (!state.tradSelected[currentTabName] || state.tradSelected[currentTabName].length < 1) {
+    pass[currentTabName] = false;
+    errStr[currentTabName][1] = "Field Required";
+  }
+  // validate record flags
+  if (!state.recordFlagSelected[currentTabName] || state.recordFlagSelected[currentTabName].length < 1) {
+    pass[currentTabName]= false;
+    errStr[currentTabName][3] = "Field Required";
+  }
+  // validate field flags
+  if (!state.fieldFlagSelected[currentTabName] || state.fieldFlagSelected[currentTabName].length < 1) {
+    pass[currentTabName] = false;
+    errStr[currentTabName][2] = "Field Required";
+  }
+  // validate record flags
+  if (!state.fieldNameSelected[currentTabName] || state.fieldNameSelected[currentTabName].length < 1) {
+    pass[currentTabName] = false;
+    errStr[currentTabName][5] = "Field Required";
+  }
+
+  this.setState({ errStr :errStr});
+  return   pass[currentTabName] ;
+ }
   handleSubmitButton() {
     let currentTabName = this.state.selectedTab.TabName;
-
-    console.log('handleSubmitButton()');
     let state = Object.assign({}, this.state); //JSON.parse(JSON.stringify(this.state));
 
-    let pass= {
-      [currentTabName]:true
-    }
-    let errStr ={
-      [currentTabName]:[]
-
-    } ;
-    // validate covYear
-    if (!state.covYear[currentTabName] || parseInt(state.covYear[currentTabName]) !== state.covYear[currentTabName] || String(state.covYear[currentTabName]).indexOf('.') !== -1) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][4] = "Field Required";
-    }
-    // validate moment object
-    const startDate = this.refs.fileRunDPicker.refs.input.defaultValue;
-    if (!startDate || startDate.length !== 7) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][0] = "Field Required";
-    }
-    else {
-      let range = moment(startDate, 'MM/YYYY').add(6, 'month');
-      if (!moment(range).isSameOrAfter(moment())) {
-        pass[currentTabName] = false;
-        errStr[currentTabName][0] = "Error : Date more than 6 months old";
-      }
-    }
-    // validate trad partners
-    if (!state.tradSelected[currentTabName] || state.tradSelected[currentTabName].length < 1) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][1] = "Field Required";
-    }
-    // validate record flags
-    if (!state.recordFlagSelected[currentTabName] || state.recordFlagSelected[currentTabName].length < 1) {
-      pass[currentTabName]= false;
-      errStr[currentTabName][3] = "Field Required";
-    }
-    // validate field flags
-    if (!state.fieldFlagSelected[currentTabName] || state.fieldFlagSelected[currentTabName].length < 1) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][2] = "Field Required";
-    }
-    // validate record flags
-    if (!state.fieldNameSelected[currentTabName] || state.fieldNameSelected[currentTabName].length < 1) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][5] = "Field Required";
-    }
-    if (pass[currentTabName]) {
+    let isValidForm = this.checkValidation();
+    if (isValidForm) {
       this
         .props
         .handleSubmit({ state })
       this.setState({ activeKey: ['1'], showSpinner: true, showTable: false });
     }
-    this.setState({ errStr });
   }
   handleResetButton() {
 
     let TabName = this.state.selectedTab.TabName;
     this.state.advCustomFiltersRows[this.state.selectedTab.TabName].length = 1;
+debugger;
+   let currentRef = "fileRunDPicker"+"_"+ TabName;
+
+      // this.refs[currentRef].setDate();
+      // setTimeout(() => {
+      //         console.log(this.refs[currentRef].getDate());
+      // }, 2000);
+
+  /*
+    setTimeout(function(){
+
+        document.getElementById(currentRef).value= moment().subtract(1, 'month').format("MM/YYYY").toString()
+        this.refs[currentRef].setState({
+          date:{[TabName] : moment().subtract(1, 'month')},
+          startDate: {[TabName] : moment().subtract(1, 'month')}
+     } ,() => {
+       debugger;
+          this.refs[currentRef].props.onChange(moment().subtract(1, 'month'));
+         }) 
+
+
+
+     });
+            */                 
+
 
     var resetFields = {
-      startDate:{[TabName] : moment().subtract(1, 'month')} ,
+      startDate:{ [TabName] : moment().subtract(1, 'month') } ,
       covYear: {[TabName] : JSON.parse(JSON.stringify(initialState.covYear   )) } ,
       tradSelected: {[TabName] :  JSON.parse(JSON.stringify(initialState.tradSelected))}
     }
@@ -493,16 +532,28 @@ class ListViewSummaryPageData extends Component {
 
 
     this.state.fieldAvdNameSelected[TabName] = { value: [ { field:{ label:"", value:""} , fieldValue:"" } ], count: 1};
-
+  
     this.state.advFields[TabName] = {};
+    
+    resetFields.errStr={[TabName]:[] } 
     this.setState({
+     
+      advFields:this.state.advFields, fieldAvdNameSelected:this.state.fieldAvdNameSelected ,advCustomFiltersRows:this.state.advCustomFiltersRows 
+    
+    });
 
-      advFields:this.state.advFields, fieldAvdNameSelected:this.state.fieldAvdNameSelected ,advCustomFiltersRows:this.state.advCustomFiltersRows });
+   
+
+  
+
+
 
               this.setState(resetFields, () => {
+                this.refs[currentRef].forceUpdate();
+                
                 console.log("Resetting State");
                 console.log(this.state);
-              });
+             });
 
   }
 
@@ -623,17 +674,18 @@ class ListViewSummaryPageData extends Component {
                     <div style={{ "marginLeft": "3%" }} >
                       <Column medium={3}>
                         <label className='formLabel' style={{ "display": "inline", "fontWeight": "bold", "color": "#3498db" }}>
-                          File Run Month/Year:*
+                        File Run Month/Year:* 
                                 <DatePicker
-                            ref='fileRunDPicker'
-                            selected={this.state.startDate[this.state.selectedTab.TabName]}
+                            ref='fileRunDPicker_RCNO'
+                            id="fileRunDPicker_RCNO"
+                            selected={ this.state.startDate[this.state.selectedTab.TabName] ||  moment().subtract(1, 'month')  }
                             onChange={this.handleDateChange}
                             dateFormat="MM/YYYY"
                             showMonthDropdown
                             showYearDropdown
                             scrollableYearDropdown
                           />
-                          <span className="error date-picker-error">{this.state.errStr[0]}</span>
+                          <span className="error date-picker-error">{this.state.errStr[this.state.selectedTab.TabName][0]}</span>
                         </label>
                       </Column>
                     </div>
@@ -646,7 +698,7 @@ class ListViewSummaryPageData extends Component {
                           selected={this.state.tradSelected[this.state.selectedTab.TabName]}
                           valueRenderer={this.handleMultiSelectRenderer}
                           selectAllLabel={"All"} />
-                        <span className="error">{this.state.errStr[1]}</span>
+                        <span className="error">{this.state.errStr[this.state.selectedTab.TabName][1]}</span>
                       </label>
                     </Column>
                     <div style={{ "marginLeft": "2%" }} >
@@ -670,7 +722,7 @@ class ListViewSummaryPageData extends Component {
                           selected={this.state.fieldFlagSelected[this.state.selectedTab.TabName]}
                           valueRenderer={this.handleMultiSelectRenderer}
                           selectAllLabel={"All"} />
-                        <span className="error">{this.state.errStr[2]}</span>
+                        <span className="error">{this.state.errStr[this.state.selectedTab.TabName][2]}</span>
                       </label>
                     </Column>
                     <div style={{ "marginLeft": "2%" }} >
@@ -694,7 +746,7 @@ class ListViewSummaryPageData extends Component {
                           selected={this.state.recordFlagSelected[this.state.selectedTab.TabName]}
                           valueRenderer={this.handleMultiSelectRenderer}
                           selectAllLabel={"All"} />
-                        <span className="error">{this.state.errStr[3]}</span>
+                        <span className="error">{this.state.errStr[this.state.selectedTab.TabName][3]}</span>
                       </label>
                     </Column>
                   </Row>
@@ -707,7 +759,7 @@ class ListViewSummaryPageData extends Component {
                             value={this.state.covYear[this.state.selectedTab.TabName]}
                             options={this.props.covYearOptions}
                             onChange={this.handleCovYearChange} />
-                          <span className="error">{this.state.errStr[4]}</span>
+                          <span className="error">{this.state.errStr[this.state.selectedTab.TabName][4]}</span>
                         </label>
                       </Column>
                     </div>
@@ -720,7 +772,7 @@ class ListViewSummaryPageData extends Component {
                           selected={this.state.fieldNameSelected[this.state.selectedTab.TabName]}
                           valueRenderer={this.handleMultiSelectRenderer}
                           selectAllLabel={"All"} />
-                        <span className="error">{this.state.errStr[5]}</span>
+                        <span className="error">{this.state.errStr[this.state.selectedTab.TabName][5]}</span>
                       </label>
                     </Column>
                   </Row>
@@ -842,14 +894,14 @@ class ListViewSummaryPageData extends Component {
                         }}>
                           File Run Month/Year:*
                                             <DatePicker
-                            ref='fileRunDPickerTab2'
+                            ref='fileRunDPicker_RCNI'
                             selected={this.state.startDate[this.state.selectedTab.TabName]}
                             onChange={this.handleDateChange}
                             dateFormat="MM/YYYY"
                             showMonthDropdown
                             showYearDropdown
                             scrollableYearDropdown />
-                          <span className="error date-picker-error">{this.state.errStr[0]}</span>
+                          <span className="error date-picker-error">{this.state.errStr[this.state.selectedTab.TabName][0]}</span>
                         </div>
                       </Column>
                     </div>
@@ -862,7 +914,7 @@ class ListViewSummaryPageData extends Component {
                           selected={this.state.tradSelected[this.state.selectedTab.TabName]}
                           valueRenderer={this.handleMultiSelectRenderer}
                           selectAllLabel={"All"} />
-                        <span className="error">{this.state.errStr[1]}</span>
+                        <span className="error">{this.state.errStr[this.state.selectedTab.TabName][1]}</span>
                       </label>
                     </Column>
                     <div style={{ "marginLeft": "2%" }} >
@@ -873,7 +925,7 @@ class ListViewSummaryPageData extends Component {
                             value={this.state.covYear[this.state.selectedTab.TabName]}
                             options={this.props.covYearOptions}
                             onChange={this.handleCovYearChange} />
-                          <span className="error">{this.state.errStr[4]}</span>
+                          <span className="error">{this.state.errStr[this.state.selectedTab.TabName][4]}</span>
                         </label>
                       </Column>
                     </div>
