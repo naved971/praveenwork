@@ -162,7 +162,9 @@ class ListViewSummaryPageData extends Component {
             // startDate: moment(),
       startDate:{[TabName] : moment().subtract(1, 'month')}
       ,
-      advStartDate:{ [TabName]:{advIsrDob: "" } } ,
+      RCNI_DOB:null,
+      RCNO_DOB:null,
+
       //{ [selectedTab.TabName]:moment() },
       covYear:{ [TabName]:   this.props.defaultCovYear  },
       tradSelected:{
@@ -290,16 +292,17 @@ class ListViewSummaryPageData extends Component {
   }
   handleDOBChange(e,date){
     let Tabname = this.state.selectedTab.TabName;
-      this.state.advFields[this.state.selectedTab.TabName][e] = moment(date).format('YYYY/MM/DD');
-      var Obj = { advFields: this.state.advFields };
-      if(Tabname=="RCNO"){
-        Obj.RCNO_DOB = this.state.advFields[this.state.selectedTab.TabName][e];
-      }
-       if(Tabname=="RCNI"){
-        Obj.RCNI_DOB = this.state.advFields[this.state.selectedTab.TabName][e];
-      }
-      this.setState(Obj);
 
+      // var Obj = { };
+      // if(Tabname=="RCNO"){
+      //   Obj.RCNO_DOB =  moment(date).format('YYYY/MM/DD');
+
+
+      // }
+      //  if(Tabname=="RCNI"){
+      //   Obj.RCNI_DOB =  moment(date).format('YYYY/MM/DD');
+      // }
+      this.setState({ [e] :moment(date).format('YYYY/MM/DD') });
       }
 
 
@@ -355,10 +358,9 @@ class ListViewSummaryPageData extends Component {
 
 
 
-    if (this.state.advStartDate[selectedTab.TabName] == undefined) {
-      this.state.advStartDate[selectedTab.TabName] = { advFfmDob:""};
-      this.setState({ advStartDate: this.state.advStartDate });
-    }
+
+
+
 
     if (this.state.advFields[selectedTab.TabName] == undefined) {
       this.state.advFields[selectedTab.TabName] = {};
@@ -475,27 +477,6 @@ class ListViewSummaryPageData extends Component {
     let TabName = this.state.selectedTab.TabName;
     this.state.advCustomFiltersRows[this.state.selectedTab.TabName].length = 1;
 
-      // this.refs[currentRef].setDate();
-      // setTimeout(() => {
-      //         console.log(this.refs[currentRef].getDate());
-      // }, 2000);
-
-  /*
-    setTimeout(function(){
-
-        document.getElementById(currentRef).value= moment().subtract(1, 'month').format("MM/YYYY").toString()
-        this.refs[currentRef].setState({
-          date:{[TabName] : moment().subtract(1, 'month')},
-          startDate: {[TabName] : moment().subtract(1, 'month')}
-     } ,() => {
-       debugger;
-          this.refs[currentRef].props.onChange(moment().subtract(1, 'month'));
-         })
-
-
-
-     });
-            */
 
 
     var resetFields = {
@@ -808,16 +789,30 @@ class ListViewSummaryPageData extends Component {
                     <Column medium={3}>
                       <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer DOB:
+                  <DatePicker
+                            ref                        = "advIsrDob"
+                            placeholderText           = "YYYY/MM/DD"
+                            showMonthDropdown
+                            showYearDropdown
+                            scrollableYearDropdown
 
+                            dateFormat                 = "YYYY/MM/DD"
+                            selected                   = {this.state.RCNO_DOB}
+                            onChange                   = {(e) => {
+                            this.setState({RCNO_DOB: e})
+                  }}
+                  />
+
+{/*
                         <DatePicker
                           name="advIsrDob"
-                          selected={this.state.advStartDate[this.state.selectedTab.TabName]['advIsrDob']}
-                          onChange={this.handleDOBChange.bind(this,"advIsrDob")}
+                          selected={this.state.RCNO_DOB}
+                          onChange={this.handleDOBChange.bind(this,"RCNO_DOB")}
                           value={this.state.RCNO_DOB}
                           ref="advIsrDob"
                           dateFormat="YYYY/MM/DD"
                           placeholderText="YYYY/MM/DD"
-                          scrollableYearDropdown />
+                          scrollableYearDropdown />*/}
 
                       </label>
                     </Column>
@@ -956,17 +951,34 @@ class ListViewSummaryPageData extends Component {
                       <label className='formLabel' style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                       Issuer DOB:
 
+                        <DatePicker
+                                  placeholderText           = "YYYY/MM/DD"
+                                  scrollableYearDropdown
+                                  dateFormat                 = "YYYY/MM/DD"
+                                  showMonthDropdown
+                                  showYearDropdown
+                                  scrollableYearDropdown
+                                  ref                        = "advFfmDob"
+                                  selected                   = {this.state.RCNI_DOB}
+                                  onChange                   = {(e) => {
+                                  this.setState({RCNI_DOB: e})
+                  }}
+                  />
+
+
+
+{/*
                      <DatePicker
                           ref='advFfmDob'
                           name="advFfmDob"
-                          selected={this.state.advStartDate[this.state.selectedTab.TabName]['advFfmDob']}
+                          selected={this.state.RCNI_DOB}
                           value={this.state.RCNI_DOB}
-                          onChange={this.handleDOBChange.bind(this,"advFfmDob")}
+                          onChange={this.handleDOBChange.bind(this,"RCNI_DOB")}
                           dateFormat="YYYY/MM/DD"
                           placeholderText="YYYY/MM/DD"
                           showMonthDropdown
                           showYearDropdown
-                          scrollableYearDropdown />
+                          scrollableYearDropdown />*/}
                       </label>
                     </Column>
                   </Row>

@@ -353,14 +353,17 @@ class ListViewSummaryPage extends Component {
             tpId: tradSelected,
             currentTabName:currentTabName
         }
-      
-          if(currentTabName == "RCNO"){
 
+          if(currentTabName == "RCNO"){
             obj.rcdFlag=recordFlagSelected;
             obj.fldFlag= fieldFlagSelected;
             obj.fldName=fieldNameSelected;
+            obj.advIsrDob= item.state.RCNO_DOB!=null && item.state.RCNO_DOB != ""?item.state.RCNO_DOB.format('YYYY/MM/DD').toString()   :undefined;
+
+          }else{
+            obj.advFfmDob= item.state.RCNI_DOB!=null && item.state.RCNI_DOB != ""?item.state.RCNI_DOB.format('YYYY/MM/DD').toString() :undefined;
           }
-            
+
 
 
         if (item.state.advFields[currentTabName] && Object.keys(item.state.advFields[currentTabName]).length>0) {
