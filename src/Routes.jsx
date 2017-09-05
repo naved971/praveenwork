@@ -22,7 +22,7 @@ import ListViewSummaryPage from './containers/ListViewSummaryPage';
 //import FieldSummaryCompare from './containers/FieldSummaryCompare';
 //import RcnoRcniViewPage from './containers/RcnoRcniViewPage';
 //import RcnoRcniDetailPage from './containers/RcnoRcniDetailPage';
-//import SearchViewErrorPage from './containers/SearchViewErrorPage';
+import SearchViewErrorPage from './containers/SearchViewErrorPage';
 export const history = createHistory();
 
 
@@ -43,10 +43,11 @@ const Routes = () => (
             <Route path={rcnorcni.RCNO_RCNI_RECORD_SUMMARY_COMPARE_URL} component={RecordSummaryCompare} />
             <Route path={rcnorcni.RCNO_RCNI_FIELD_SUMMARY_DETAILS_URL} component={FieldSummaryDetail} />
             <Route path={rcnorcni.RCNO_RCNI_LIST_VIEW_PAGE_URL} component={ListViewSummaryPage} />
+            <Route path={rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERROR_URL} component={SearchViewErrorPage} />
             {/*<Route path={rcnorcni.RCNO_RCNI_FIELD_SUMMARY_COMPARE_URL} component={FieldSummaryCompare} />
             <Route path={rcnorcni.RCNO_RCNI_LIST_VIEW_PAGE_URL} component={RcnoRcniViewPage} />
             <Route path={rcnorcni.RCNO_RCNI_DETAILS_PAGE_URL} component={RcnoRcniDetailPage} />
-            <Route path={rcnorcni.RCNO_RCNI_SEACRH_AND_VIEW_ERROR_URL} component={SearchViewErrorPage} />*/}
+            <Route path={rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERROR_URL} component={SearchViewErrorPage} />*/}
         </div>
     </Router>
 );

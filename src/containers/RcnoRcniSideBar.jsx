@@ -63,19 +63,19 @@ class RcnoRcniSideBar extends Component {
                             <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_DETAILS_PAGE_SIDEBARNAME}</NavLink>
                     </Panel>
                     <Panel header={`Error Page`} key={'4'}>
-                        <NavLink className={'sidebar-highlight-link-'+ (window.location.pathname == rcnorcni.RCNO_RCNI_SEACRH_AND_VIEW_ERROR_URL)} to={rcnorcni.RCNO_RCNI_SEACRH_AND_VIEW_ERROR_URL}>
-                            <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_SEACRH_AND_VIEW_ERROR_SIDEBARNAME}</NavLink>
+                        <NavLink className={'sidebar-highlight-link-'+ (window.location.pathname == rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERROR_URL)} to={rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERROR_URL}>
+                            <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERROR_SIDEBARNAME}</NavLink>
                     </Panel>
                     <Panel header={`ER&R Form Page`} key={'5'}>
-                        <NavLink className={'sidebar-highlight-link-'+ (window.location.pathname == rcnorcni.RCNO_RCNI_SEACRH_AND_VIEW_ERR_FORM_URL)} to={rcnorcni.RCNO_RCNI_SEACRH_AND_VIEW_ERR_FORM_URL}>
-                            <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_SEACRH_AND_VIEW_ERR_FORM_SIDEBARNAME}</NavLink>
+                        <NavLink className={'sidebar-highlight-link-'+ (window.location.pathname == rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERR_FORM_URL)} to={rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERR_FORM_URL}>
+                            <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERR_FORM_SIDEBARNAME}</NavLink>
                         <hr className="hrstyle2" />
                         <NavLink className={'sidebar-highlight-link-'+ (window.location.pathname == rcnorcni.RCNO_RCNI_ENTER_AND_EDIT_ERR_FORM_URL)} to={rcnorcni.RCNO_RCNI_ENTER_AND_EDIT_ERR_FORM_URL}>
                             <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_ENTER_AND_EDIT_ERR_FORM_SIDEBARNAME}</NavLink>
                     </Panel>
                     <Panel header={`Admin Page`} key={'6'}>
-                        <NavLink className={'sidebar-highlight-link-'+ (window.location.pathname == rcnorcni.RCNO_RCNI_SEACRH_AND_VIEW_ERROR_ADMIN_SIDEBARNAME)} to={rcnorcni.RCNO_RCNI_SEACRH_AND_VIEW_ERROR_ADMIN_URL}>
-                            <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_SEACRH_AND_VIEW_ERROR_ADMIN_SIDEBARNAME}</NavLink>
+                        <NavLink className={'sidebar-highlight-link-'+ (window.location.pathname == rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERROR_ADMIN_SIDEBARNAME)} to={rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERROR_ADMIN_URL}>
+                            <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERROR_ADMIN_SIDEBARNAME}</NavLink>
                         <hr className="hrstyle2" />
                         <NavLink className={'sidebar-highlight-link-'+ (window.location.pathname == rcnorcni.RCNO_RCNI_ENTER_AND_EDIT_ERROR_ADMIN_URL)} to={rcnorcni.RCNO_RCNI_ENTER_AND_EDIT_ERROR_ADMIN_URL}>
                             <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_ENTER_AND_EDIT_ERROR_ADMIN_SIDEBARNAME}</NavLink>
