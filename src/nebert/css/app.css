@@ -828,3 +828,14 @@ form div div span{
 .list-view-summary-page-data .tab-link-active {
     background: #555;
 }
+
+.errorbuttonDisabled{
+    opacity: 0.5;
+}
+
+.submitERandE{
+    background-color: green;
+    padding-top : 0em;
+    height: 2.5em;
+    margin-right: 20px;
+}

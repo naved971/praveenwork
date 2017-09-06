@@ -135,7 +135,8 @@ class SearchViewErrorPageData extends Component {
       "handleSubmitButton",
       "handleResetButton",
       "getItems",
-      "editFormatter"
+      "editFormatter",
+      "handleAdvSearch"
 
     ].map(fn => (this[fn] = this[fn].bind(this)));
     //this.addAdvRows();
@@ -215,6 +216,7 @@ class SearchViewErrorPageData extends Component {
     );
   }
   handleAdvSearch(e, date) {
+    
     if (typeof e == "string") {
       this.state.advFields[e] = moment(
         date
@@ -364,13 +366,17 @@ class SearchViewErrorPageData extends Component {
     });
   }
   editFormatter(type, cell, row) {
-    debugger;
-    console.log(arguments);
     //submitERE if(submitInventory)
     if(type=="submitInventory"){
-      return (<input type="button" name="submitInventory" value="Submit Inventory" onClick={(e) => this.props.handleSubmitInventory(e, row)} />);
+      let clsName = undefined;
+      if(row.isSubmitInventoryDisabled){
+        debugger;
+        clsName="errorbuttonDisabled";
+      }
+
+      return (<input className={ 'button primary  btn-lg btn-color formButton ' + clsName } disabled={row.isSubmitInventoryDisabled} type="button" name="submitInventory" value="Submit Inventory" onClick={(e) => this.props.handleSubmitInventory(e, row)} />);
     }else{
-          return (<input type="button" name="submitERE" value="Submit ER & E" onClick={(e) => this.props.handleSubmitERE(e, row)} />)
+          return (<input className="button primary  btn-lg btn-color formButton submitERandE" type="button" name="submitERE" value="Submit ER & E" onClick={(e) => this.props.handleSubmitERE(e, row)} />)
     }
 
 
@@ -807,25 +813,25 @@ class SearchViewErrorPageData extends Component {
             options={this.state.tableOptions}
             pagination={true}
           >
-            <TableHeaderColumn dataField="recordIdentifier">
+            <TableHeaderColumn width='150'  dataField="recordIdentifier">
               Record Identifier
             </TableHeaderColumn>
-            <TableHeaderColumn dataField="firstName">
+            <TableHeaderColumn  width='150' dataField="firstName">
               First Name
             </TableHeaderColumn>
-            <TableHeaderColumn dataField="lastName">
+            <TableHeaderColumn  width='150' dataField="lastName">
               Last Name
             </TableHeaderColumn>
-            <TableHeaderColumn dataField="exSubId">
+            <TableHeaderColumn width='150' dataField="exSubId">
               Exch SubId
             </TableHeaderColumn>
-            <TableHeaderColumn dataField="contractId">
+            <TableHeaderColumn width='150'  dataField="contractId">
               Contrac tId
             </TableHeaderColumn>
-            <TableHeaderColumn dataField="errorCode" isKey={true}>
-              Error Code
+            <TableHeaderColumn  width='150' dataField="errorCode" isKey={true}>
+              Error Code 
             </TableHeaderColumn>
-            <TableHeaderColumn dataField="errorDesc">
+            <TableHeaderColumn  width='150' dataField="errorDesc">
               Error Desc
             </TableHeaderColumn>
             <TableHeaderColumn width='150' dataField="submitInventory" dataFormat={this.editFormatter.bind(this,"submitInventory")}>

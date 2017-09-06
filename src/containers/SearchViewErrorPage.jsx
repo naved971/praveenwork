@@ -141,7 +141,6 @@ class SearchViewErrorPage extends Component {
             }
             return response.json();
         }).then((response) => {
-            debugger;
             let data =  response.errorCodeSearchResult;
 
           /*  data = response.errorCodeSearchResult.map((errorStatus, index, arry) => {
@@ -432,7 +431,12 @@ class SearchViewErrorPage extends Component {
             }
             return response.json();
         }).then((response) => {
-            this.setState({ errorCategoryOptions: response.errorCategoryOptions, errorCodeDescOptions: response.errorCategoryOptions });
+            debugger;
+            let SearchErrorDesc= response.getSearchErrorDesc;
+            let errorCodeDesc= Object.keys(SearchErrorDesc).map((err,index)=>({ index:index, value: err  , label:SearchErrorDesc[err]})  ) ;
+            debugger;
+            
+            this.setState({ errorCodeDescOptions:errorCodeDesc});
         }).catch((error) => {
             console.log(error);
         })
@@ -446,8 +450,11 @@ class SearchViewErrorPage extends Component {
             }
             return response.json();
         }).then((response) => {
-            console.log(response);
-            this.setState({ errorCategoryOptions: response.errorCategoryOptions, errorCodeDescOptions: response.errorCategoryOptions });
+            debugger;
+
+            let errorCategoryOptions=  response.errCategoryList.map((err,index)=>({ value:index, label:err})) ;
+            
+            this.setState({ errorCategoryOptions: errorCategoryOptions });
         }).catch((error) => {
             console.log(error);
         })
