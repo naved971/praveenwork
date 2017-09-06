@@ -125,15 +125,15 @@ class SearchViewErrorPage extends Component {
     }
     getResultSummary(args) {
         let url = this.buildUrl(args);
-        // Get Field Flags
-        let urlService = args.currentTabName == "RCNO" ? rcnorcni.GET_LIST_VIEW_SUMMARY_URL : rcnorcni.GET_LIST_VIEW_SUMMARY_URL;
-        args.currentTabName = undefined;
-        fetch(urlService, {
-            method: 'POST', credentials: "same-origin",
+
+
+        fetch(rcnorcni.POST_Data, {
+            method: 'POST', //credentials: "same-origin",
             body: JSON.stringify(args),
             headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
+                //  'Accept': 'application/json, text/plain, */*',
+                // 'Content-Type': "application/json"
+                'Content-Type': "application/x-www-form-urlencoded"
             }
         }).then((response) => {
             if (!response.ok) {
@@ -141,25 +141,31 @@ class SearchViewErrorPage extends Component {
             }
             return response.json();
         }).then((response) => {
-            let data = response;
+            debugger;
+            let data =  response.errorCodeSearchResult;
+
+          /*  data = response.errorCodeSearchResult.map((errorStatus, index, arry) => {
+                errorStatus.submitInventory = (<input type="button" name="submitInventory" value="Submit Inventory" onClick={(e) => this.handleSubmitInventory(e, errorStatus)} />);
+                errorStatus.submitERE = (<input type="button" name="submitERE" value="Submit ER & E" onClick={(e) => this.handleSubmitERE(e, errorStatus)} />);
+                return errorStatus;
+
+            });*/
             this.setState({
                 lastDataReceived: Date.now(),
                 summaryTableData: data
             });
         }).catch((error) => {
-            // Dummy Code for Testing;
-            let response = resultData;
-            let data = response.rcnoListViewRes;
-            setTimeout(() => {
-                this.setState({
-                    lastDataReceived: Date.now(),
-                    summaryTableData: data
-                });
-            }, 2000);
+            console.log(error);
         })
     }
 
+    handleSubmitInventory(e, selectedInventory) {
+        debugger;
+    }
 
+    handleSubmitERE(e, selectedERE) {
+        debugger
+    }
 
 
     getInitialState() {
@@ -240,16 +246,16 @@ class SearchViewErrorPage extends Component {
             tpId: tradSelected,
             currentTabName: "RCNO"
         }
-/*
-        if (currentTabName == "RCNO") {
-            obj.rcdFlag = recordFlagSelected;
-            obj.fldFlag = fieldFlagSelected;
-            obj.fldName = fieldNameSelected;
-            obj.advIsrDob = item.state.RCNO_DOB != null && item.state.RCNO_DOB != "" ? item.state.RCNO_DOB.format('YYYY/MM/DD').toString() : undefined;
-        } else {
-            obj.advFfmDob = item.state.RCNI_DOB != null && item.state.RCNI_DOB != "" ? item.state.RCNI_DOB.format('YYYY/MM/DD').toString() : undefined;
-        }
-*/
+        /*
+                if (currentTabName == "RCNO") {
+                    obj.rcdFlag = recordFlagSelected;
+                    obj.fldFlag = fieldFlagSelected;
+                    obj.fldName = fieldNameSelected;
+                    obj.advIsrDob = item.state.RCNO_DOB != null && item.state.RCNO_DOB != "" ? item.state.RCNO_DOB.format('YYYY/MM/DD').toString() : undefined;
+                } else {
+                    obj.advFfmDob = item.state.RCNI_DOB != null && item.state.RCNI_DOB != "" ? item.state.RCNI_DOB.format('YYYY/MM/DD').toString() : undefined;
+                }
+        */
 
 
 
@@ -362,6 +368,8 @@ class SearchViewErrorPage extends Component {
                                 submissionTypeOptions={submissionTypeOptions}
                                 defaultErrorCodeDesc={this.state.defaultErrorCodeDesc}
                                 errorCodeDescOptions={this.state.errorCodeDescOptions}
+                                handleSubmitInventory={this.handleSubmitInventory}
+                                handleSubmitERE={this.handleSubmitERE}
                             />
                         </Column>
                     </Row>
@@ -408,31 +416,15 @@ class SearchViewErrorPage extends Component {
     }
     getInputFields() {
 
-        /* fetch(rcnorcni.GET_FIELD_NAME_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
-             if (!response.ok) {
-                 throw new Error("Bad response from server");
-             }
-             return response.json();
-         }).then((response) => {
-             console.log(response);
-             let data = response.rcnoFieldNameList;
-             data = data.map((d, index) => {
-                 return { value: index, label: d }
-             });
-             this.setState({ fieldNameOptions: data, fieldNameAvdCustomOptions: data }, () => {
-                 let fN = response.rcnoFieldNameList;
-                 this.getResultSummary({
-                     frmDate: this.state.fromDate,
-                     cvgYear: this.state.covYear,
-                     tpId: 'all',
-                     rcdFlag: 'E,P,N',
-                     fldFlag: 'I,L,J,K',
-                     fldName: fN[0] + ',' + fN[1] + ',' + fN[2] + ',' + fN[3] + ',' + fN[4]
-                 })
-             });
-         }).catch((error) => {
-             console.log(error);
-         })*/
+        this.getResultSummary({
+            frmDate: this.state.fromDate,
+            cvgYear: this.state.covYear,
+            tpId: 'all'
+
+        })
+
+
+
         // Get Error Code Description
         fetch(rcnorcni.GET_RECORD_FLAG_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
@@ -460,39 +452,6 @@ class SearchViewErrorPage extends Component {
             console.log(error);
         })
 
-/*
-   // Get SummeryTab data
-        fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, { method: 'POST', credentials: "same-origin" }).then((response) => {
-            if (!response.ok) {
-                throw new Error("Bad response from server");
-            }
-            return response.json();
-        }).then((response) => {
-            console.log(response);
-            let data = response.rcnoListViewRes;
-            this.setState({ summaryTableData: data });
-        }).catch((error) => {
-            console.log(error);
-        });
-
-
-*/
-
-
-
-     /*   fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, { method: 'POST', credentials: "same-origin" }).then((response) => {
-            if (!response.ok) {
-                throw new Error("Bad response from server");
-            }
-            return response.json();
-        }).then((response) => {
-            console.log(response);
-            debugger;
-            let data = response.rcnoListViewRes;
-            this.setState({ summaryTableData: data });
-        }).catch((error) => {
-            console.log(error);
-        })*/
 
     }
 }

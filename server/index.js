@@ -67,6 +67,59 @@ const errorCodeDescOptions = [
         value: 4
     }
 ];
+
+const errorCodeSearchResult = [
+    {
+        "recordIdentifier": "111-1111-1111",
+        "firstName": "A1",
+        "lastName": "A1_LastName",
+        "exSubId": 2020,
+        "contractId": 1001,
+        "errorCode": 201,
+        "errorDesc": "Missing Fields"
+    }, {
+        "recordIdentifier": "111-1111-1112",
+        "firstName": "A2",
+        "lastName": "A2_LastName",
+        "exSubId": 2021,
+        "contractId": 1002,
+        "errorCode": 201,
+        "errorDesc": "Missing Fields"
+    }, {
+        "recordIdentifier": "111-1111-1113",
+        "firstName": "A3",
+        "lastName": "A3_LastName",
+        "exSubId": 2023,
+        "contractId": 1003,
+        "errorCode": 203,
+        "errorDesc": "Missing Fields"
+    }, {
+        "recordIdentifier": "111-1111-1114",
+        "firstName": "A4",
+        "lastName": "A4_LastName",
+        "exSubId": 2024,
+        "contractId": 1004,
+        "errorCode": 204,
+        "errorDesc": "Missing Fields"
+    }, {
+        "recordIdentifier": "111-1111-1115",
+        "firstName": "A5",
+        "lastName": "A5_LastName",
+        "exSubId": 2025,
+        "contractId": 1005,
+        "errorCode": 205,
+        "errorDesc": "Missing Fields"
+    }, {
+        "recordIdentifier": "111-1111-1116",
+        "firstName": "A6",
+        "lastName": "A6_LastName",
+        "exSubId": 2026,
+        "contractId": 1006,
+        "errorCode": 206,
+        "errorDesc": "Missing Fields"
+    },
+];
+
 app.get('/rcno/getFieldInfo', (req, res) => {
 
 
@@ -84,8 +137,8 @@ app.get('/rcno/getFieldInfo', (req, res) => {
     responseData["fieldLvlList"] = ["C121", "D", "F", "G", "I", "J", "K", "L", "M", "NA", "U"];
     responseData["recordLvlList"] = ["B", "C", "D", "E", "F", "G", "I", "L", "M", "N", "P", "R", "U", "W", "Z"];
 
-    responseData['errorCategoryOptions']= errorCategoryOptions;
-    responseData['errorCodeDescOptions']= errorCodeDescOptions;
+    responseData['errorCategoryOptions'] = errorCategoryOptions;
+    responseData['errorCodeDescOptions'] = errorCodeDescOptions;
 
     res.status(200).send(responseData);
 
@@ -107,35 +160,17 @@ var rcnoListViewRes = [
         "rcnoFFMPolicyId": "H10162144",
         "overallInd": "M"
     }
-    /*,
-       {
-       "recordIdentifier": "RCNI170630115000006",
-       "rcnoFirstName": "TOMMY",
-       "rcnoLastName": "PIIRA",
-       "rcnoExchSubId": "0001798469",
-       "rcnoSocSecNum": "594957396",
-       "rcnoContractId": "RCNI17063",
-       "rcnoFFMPolicyId": "H10166177",
-       "overallInd": "M"
-    },
-       {
-       "recordIdentifier": "RCNI170630115000015",
-       "rcnoFirstName": "JACK",
-       "rcnoLastName": "SHANHOLTZ",
-       "rcnoExchSubId": "0002417445",
-       "rcnoSocSecNum": "356940018",
-       "rcnoContractId": "RCNI17063",
-       "rcnoFFMPolicyId": "H10202275",
-       "overallInd": "C"
-    }*/
+
 ]
 
 
 app.post('/save/ListView', (req, res) => {
     var randomNo = randomIntFromInterval();
-    var resultData = { "rcnoListViewRes": rcnoListViewRes }
-    var year = req.body.coverageYear;
-    res.sendStatus(200).send(resultData);
+    var body = req.body;
+
+    var resultData = { "body": body, "rcnoListViewRes": rcnoListViewRes, "errorCodeSearchResult": errorCodeSearchResult }
+  //  res.sendStatus(200).send(resultData);
+    res.json(200, resultData);
 })
 
 app.listen(3000, function () {

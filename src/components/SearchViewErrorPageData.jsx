@@ -1,3 +1,4 @@
+//https://github.com/AllenFang/react-bootstrap-table/issues/812
 import React, { Component } from "react";
 import _ from "lodash";
 import { Field, reduxForm } from "redux-form";
@@ -133,7 +134,8 @@ class SearchViewErrorPageData extends Component {
       "checkValidation",
       "handleSubmitButton",
       "handleResetButton",
-      "getItems"
+      "getItems",
+      "editFormatter"
 
     ].map(fn => (this[fn] = this[fn].bind(this)));
     //this.addAdvRows();
@@ -361,7 +363,26 @@ class SearchViewErrorPageData extends Component {
       console.log(this.state);
     });
   }
+  editFormatter(type, cell, row) {
+    debugger;
+    console.log(arguments);
+    //submitERE if(submitInventory)
+    if(type=="submitInventory"){
+      return (<input type="button" name="submitInventory" value="Submit Inventory" onClick={(e) => this.props.handleSubmitInventory(e, row)} />);
+    }else{
+          return (<input type="button" name="submitERE" value="Submit ER & E" onClick={(e) => this.props.handleSubmitERE(e, row)} />)
+    }
 
+
+  }
+  editObject(row) {
+    console.log('edit', row);
+  }
+
+  deleteObject(row) {
+    console.log('delete object', row);
+
+  }
   getItems() {
     const items = [];
     items.push(
@@ -787,25 +808,31 @@ class SearchViewErrorPageData extends Component {
             pagination={true}
           >
             <TableHeaderColumn dataField="recordIdentifier">
-              recordIdentifier
+              Record Identifier
             </TableHeaderColumn>
             <TableHeaderColumn dataField="firstName">
-              rcnoFirstName
+              First Name
             </TableHeaderColumn>
             <TableHeaderColumn dataField="lastName">
-              rcnoLastName
+              Last Name
             </TableHeaderColumn>
-            <TableHeaderColumn dataField="exchSubId">
-              rcnoExchSubId
+            <TableHeaderColumn dataField="exSubId">
+              Exch SubId
             </TableHeaderColumn>
-            <TableHeaderColumn dataField="socSecNum">
-              rcnoSocSecNum
+            <TableHeaderColumn dataField="contractId">
+              Contrac tId
             </TableHeaderColumn>
-            <TableHeaderColumn dataField="contractId" isKey={true}>
-              rcnoContractId
+            <TableHeaderColumn dataField="errorCode" isKey={true}>
+              Error Code
             </TableHeaderColumn>
-            <TableHeaderColumn dataField="ffmPolicyId">
-              rcnoFFMPolicyId
+            <TableHeaderColumn dataField="errorDesc">
+              Error Desc
+            </TableHeaderColumn>
+            <TableHeaderColumn width='150' dataField="submitInventory" dataFormat={this.editFormatter.bind(this,"submitInventory")}>
+              Submit Inventory
+            </TableHeaderColumn >
+            <TableHeaderColumn width='150' dataField="submitERE" dataFormat={this.editFormatter.bind(this,"submitERE")}>
+              Submit ER and E
             </TableHeaderColumn>
 
           </BootstrapTable>
