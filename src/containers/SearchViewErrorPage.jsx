@@ -16,15 +16,15 @@ const covYearOptions = [...Array(36).keys()].map(value => {
         value: value + 1990,
         label: value + 1990
     }
-});;
+});
 const tradingPartnerOptions = [
     {
         label: '592015694B-PPO',
-        id: '592015694',
+        id: '592015694B',
         value: 0
     }, {
         label: '592403696B-HMO',
-        id: '592403696',
+        id: '592403696B',
         value: 1
     }, {
         label: '592876465-Dental',
@@ -32,12 +32,41 @@ const tradingPartnerOptions = [
         value: 2
     }
 ];
-
-const fieldNameOptions = [
-    { value: "onev", lebel: "onel" },
-    { value: "twov", lebel: "twol" },
-    { value: "onev1", lebel: "onel1" },
-    { value: "twov1", lebel: "twol1" }
+const inventoryTypeOptions = [
+    {
+        label: 'RCNO',
+        value: 0
+    }
+];
+const errorCodeOptions = [
+    {
+        label: 'X',
+        value: 0
+    }, {
+        label: 'Y',
+        value: 1
+    }, {
+        label: 'Z',
+        value: 2
+    }
+];
+const errorTypeOptions = [
+    {
+        label: 'Technical',
+        value: 0
+    }, {
+        label: 'Business',
+        value: 1
+    }
+];
+const submissionTypeOptions = [
+    {
+        label: 'Manual',
+        value: 0
+    }, {
+        label: 'Automated',
+        value: 1
+    }
 ];
 
 const summaryTableData = [
@@ -46,20 +75,12 @@ const summaryTableData = [
         "rcnoFirstName": "A",
         "rcnoLastName": "10007",
         "rcnoExchSubId": "0.67",
-        "rcnoSocSecNum": "rcnoSocSecNum",
-        "rcnoContractId": "RCNI17063",
-        "rcnoFFMPolicyId": "H10162144",
-        "overallInd": "M"
     },
     {
         "recordIdentifier": "11Non-Match with Issuer Action",
         "rcnoFirstName": "B",
         "rcnoLastName": "10007",
         "rcnoExchSubId": "0.67",
-        "rcnoSocSecNum": "rcnoSocSecNum",
-        "rcnoContractId": "RCNI17",
-        "rcnoFFMPolicyId": "H10162144",
-        "overallInd": "M"
     }
 ];
 let resultData =
@@ -70,28 +91,18 @@ let resultData =
                 "firstName": "ERIN",
                 "lastName": "HILL",
                 "exchSubId": "0001567297",
-                "socSecNum": "770404680",
-                "contractId": "RCNI17063",
-                "ffmPolicyId": "H10162144",
-                "overallInd": "M"
             }, {
                 "recordIdentifier": "RCNI170630115000005",
                 "firstName": "ERIN",
                 "lastName": "HILL",
                 "exchSubId": "0001567297",
-                "socSecNum": "770404680",
-                "contractId": "RCNI17063",
-                "ffmPolicyId": "H10162144",
-                "overallInd": "M"
             }
         ]
     }
-
 class SearchViewErrorPage extends Component {
     constructor(props) {
         super(props);
         this.state = this.getInitialState();
-
         ['handleSubmit', 'getInputFields', 'getResultSummary', 'buildUrl', 'getAvdInputFields'].map(fn => this[fn] = this[fn].bind(this));
         //this.dummy();
     }
@@ -103,7 +114,6 @@ class SearchViewErrorPage extends Component {
             this.setState({
                 lastDataReceived: Date.now(),
                 summaryTableData: data,
-
             });
         }, 2000);
     }
@@ -123,7 +133,7 @@ class SearchViewErrorPage extends Component {
     getResultSummary(args) {
         let url = this.buildUrl(args);
         // Get Field Flags
-        let urlService = args.currentTabName=="RCNO" ?rcnorcni.GET_LIST_VIEW_SUMMARY_URL :rcnorcni.GET_LIST_VIEW_SUMMARY_URL;
+        let urlService = args.currentTabName == "RCNO" ? rcnorcni.GET_LIST_VIEW_SUMMARY_URL : rcnorcni.GET_LIST_VIEW_SUMMARY_URL;
         args.currentTabName = undefined;
         fetch(urlService, {
             method: 'POST', credentials: "same-origin",
@@ -158,11 +168,18 @@ class SearchViewErrorPage extends Component {
 
 
 
+
     getInitialState() {
         const defaultTradingPartners = [0, 1, 2];
-        const defaultRecordFlags = [3, 9, 10];
-        const defaultFieldFlags = [4, 5, 6, 7];
-        const defaultFieldNames = [0, 1, 2, 3, 4];
+        const defaultInventoryType = [0];
+        // const defaultErrorCode = [0, 1, 2];
+        const defaultErrorCategory = [0, 1, 2];
+        const defaultErrorType = [0, 1, 2];
+        const defaultSubmissionType = [0, 1];
+        const defaultErrorCodeDesc = [0, 1, 2];
+
+
+
 
 
 
@@ -174,21 +191,27 @@ class SearchViewErrorPage extends Component {
             covYear: parseInt(moment().format('YYYY')),
             defaultTradingPartners,
             summaryTableData: summaryTableData,
-            fieldNameOptions: fieldNameOptions,
-            fieldNameAvdCustomOptions: [],
+            // fieldNameOptions: fieldNameOptions,
+            // fieldNameAvdCustomOptions: [],
             summaryTable: undefined,
             recordFlagOptions: [],
-            fieldFlagOptions: [],
+            // fieldFlagOptions: [],
             lastDataReceived: Date.now(),
-            defaultFieldNames,
-            defaultFieldFlags,
-            defaultRecordFlags
+            // defaultFieldNames,
+            // defaultFieldFlags,
+            // defaultRecordFlags,
+            defaultInventoryType,
+            // defaultErrorCode,
+            defaultErrorCategory,
+            defaultErrorType,
+            defaultSubmissionType,
+            defaultErrorCodeDesc,
+            errorCategoryOptions:[],
+            errorCodeDescOptions:[]
         };
-
     }
     handleSubmit(item) {
         let currentTabName = item.state.selectedTab.TabName;
-
         console.dir(item);
         let tradSelected = item.state.tradSelected[currentTabName].length == tradingPartnerOptions.length
             ? 'all'
@@ -260,51 +283,48 @@ class SearchViewErrorPage extends Component {
             frmDate: moment(item.state.startDate[currentTabName]).format('MM/YYYY'),
             cvgYear: item.state.covYear[currentTabName],
             tpId: tradSelected,
-            currentTabName:currentTabName
+            currentTabName: currentTabName
+        }
+        if (currentTabName == "RCNO") {
+            obj.rcdFlag = recordFlagSelected;
+            obj.fldFlag = fieldFlagSelected;
+            obj.fldName = fieldNameSelected;
+            obj.advIsrDob = item.state.RCNO_DOB != null && item.state.RCNO_DOB != "" ? item.state.RCNO_DOB.format('YYYY/MM/DD').toString() : undefined;
+        } else {
+            obj.advFfmDob = item.state.RCNI_DOB != null && item.state.RCNI_DOB != "" ? item.state.RCNI_DOB.format('YYYY/MM/DD').toString() : undefined;
         }
 
-          if(currentTabName == "RCNO"){
-            obj.rcdFlag=recordFlagSelected;
-            obj.fldFlag= fieldFlagSelected;
-            obj.fldName=fieldNameSelected;
-            obj.advIsrDob= item.state.RCNO_DOB!=null && item.state.RCNO_DOB != ""?item.state.RCNO_DOB.format('YYYY/MM/DD').toString()   :undefined;
-
-          }else{
-            obj.advFfmDob= item.state.RCNI_DOB!=null && item.state.RCNI_DOB != ""?item.state.RCNI_DOB.format('YYYY/MM/DD').toString() :undefined;
-          }
 
 
 
-        if (item.state.advFields[currentTabName] && Object.keys(item.state.advFields[currentTabName]).length>0) {
-            let advFieldsItems =item.state.advFields[currentTabName] ;
-                
-         
-            Object.keys(advFieldsItems).forEach(key => {  advFieldsItems[key]=  (advFieldsItems[key] == "" || advFieldsItems[key] == undefined) ? undefined : advFieldsItems[key]; });
-            obj = Object.assign(obj,advFieldsItems );
+        if (item.state.advFields[currentTabName] && Object.keys(item.state.advFields[currentTabName]).length > 0) {
+            let advFieldsItems = item.state.advFields[currentTabName];
+
+
+            Object.keys(advFieldsItems).forEach(key => { advFieldsItems[key] = (advFieldsItems[key] == "" || advFieldsItems[key] == undefined) ? undefined : advFieldsItems[key]; });
+            obj = Object.assign(obj, advFieldsItems);
         }
         if (item.state.fieldAvdNameSelected[currentTabName] != undefined) {
-
-            obj.fldNmFldVal =item.state.fieldAvdNameSelected[currentTabName].value.map(function (value, index) {
-                let FieldSelected =  Object.keys(value.field).length > 0 ? value.field.label : undefined;
-                var FieldValueSelected =  value.fieldValue == "" ? undefined :   value.fieldValue;
-                if(FieldSelected != undefined &&   FieldValueSelected != undefined){
-                        return { fieldName:FieldSelected , fieldValue: FieldValueSelected }
+            obj.fldNmFldVal = item.state.fieldAvdNameSelected[currentTabName].value.map(function (value, index) {
+                let FieldSelected = Object.keys(value.field).length > 0 ? value.field.label : undefined;
+                var FieldValueSelected = value.fieldValue == "" ? undefined : value.fieldValue;
+                if (FieldSelected != undefined && FieldValueSelected != undefined) {
+                    return { fieldName: FieldSelected, fieldValue: FieldValueSelected }
                 }
             });
 
 
-            obj.fldNmFldVal  = obj.fldNmFldVal .filter(function( element ) {
-                         return element !== undefined;
+            obj.fldNmFldVal = obj.fldNmFldVal.filter(function (element) {
+                return element !== undefined;
             });
-
-            obj.fldNmFldVal  =  obj.fldNmFldVal .length> 0 ?  obj.fldNmFldVal : undefined;
+            obj.fldNmFldVal = obj.fldNmFldVal.length > 0 ? obj.fldNmFldVal : undefined;
 
 
         }
         this.getResultSummary(obj);
     }
     render() {
-                return (
+        return (
             <App>
                 <Row style={{
                     "maxWidth": "78rem"
@@ -333,8 +353,8 @@ class SearchViewErrorPage extends Component {
                                         <meta property="position" content="2" />
                                     </li>
                                     <li property="itemListElement" typeof="ListItem">
-                                        <NavLink to={rcnorcni.RCNO_RCNI_FIELD_SUMMARY_DETAILS_URL}>
-                                            <span property="name">Field Search</span>
+                                        <NavLink to={rcnorcni.RCNO_RCNI_SEARCH_AND_VIEW_ERROR_URL}>
+                                            <span property="name">Search and View</span>
                                         </NavLink>
                                         <meta property="position" content="3" />
                                     </li>
@@ -342,7 +362,7 @@ class SearchViewErrorPage extends Component {
                             </div>
                         </Column>
                         <Column medium={3}>
-                            <RcnoRcniSideBar activeKey={'2'} />
+                            <RcnoRcniSideBar activeKey={'4'} />
                         </Column>
                         <Column medium={9} className="record-summary-container">
                             {/* <div
@@ -374,6 +394,18 @@ class SearchViewErrorPage extends Component {
                                 handleSubmit={this.handleSubmit}
                                 fieldNameAvdCustomOptions={this.state.fieldNameAvdCustomOptions}
                                 getAvdInputFields={this.getAvdInputFields}
+                                defaultInventoryType={this.state.defaultInventoryType}
+                                inventoryTypeOptions={inventoryTypeOptions}
+                                // defaultErrorCode={this.state.defaultErrorCode}
+                                // errorCodeOptions={errorCodeOptions} 
+                                defaultErrorCategory={this.state.defaultErrorCategory}
+                                errorCategoryOptions={this.state.errorCategoryOptions}
+                                defaultErrorType={this.state.defaultErrorType}
+                                errorTypeOptions={errorTypeOptions}
+                                defaultSubmissionType={this.state.defaultSubmissionType}
+                                submissionTypeOptions={submissionTypeOptions}
+                                defaultErrorCodeDesc={this.state.defaultErrorCodeDesc}
+                                errorCodeDescOptions={this.state.errorCodeDescOptions}
                             />
                         </Column>
                     </Row>
@@ -384,10 +416,9 @@ class SearchViewErrorPage extends Component {
     componentDidMount() {
         this.getInputFields();
     }
-
     getAvdInputFields(tabName) {
         let customerAdvFiels = [];
-        let url = tabName=="RCNO" ?rcnorcni.GET_FIELD_NAME_INPUT_URL :rcnorcni.GET_FIELD_NAME_INPUT_URL;
+        let url = tabName == "RCNO" ? rcnorcni.GET_FIELD_NAME_INPUT_URL : rcnorcni.GET_FIELD_NAME_INPUT_URL;
         return fetch(url, { method: 'GET', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
@@ -395,13 +426,11 @@ class SearchViewErrorPage extends Component {
             return response.json();
         }).then((response) => {
             let data = null
-             //tabName== "RCNO" ? "fieldNameMapRCNO": "fieldNameMapRCNI";
+            //tabName== "RCNO" ? "fieldNameMapRCNO": "fieldNameMapRCNI";
             // let keys =  Object.keys(response);
             //let dataKey =keys.length>0 ? keys[0] :  tabName== "RCNO" ? "fieldNameMapRCNO": "fieldNameMapRCNI"    ;
-
-            let dataKey = tabName== "RCNO" ? "fieldNameMapRCNO": "fieldNameMapRCNI"    ;
-
-            data= response[dataKey];
+            let dataKey = tabName == "RCNO" ? "fieldNameMapRCNO" : "fieldNameMapRCNI";
+            data = response[dataKey];
             /*
             data = data.map((d, index) => {
                 return { value: index, label: d }
@@ -410,9 +439,9 @@ class SearchViewErrorPage extends Component {
 
 
 
+
             for (var key in data) {
                 customerAdvFiels.push({ value: key, label: data[key] })
-
             }
             return { options: customerAdvFiels };
 
@@ -420,9 +449,9 @@ class SearchViewErrorPage extends Component {
         }).catch((error) => {
             console.log(error);
         })
-
     }
     getInputFields() {
+        debugger;
         // Get Field Name
         this.setState({ fieldNameOptions: fieldNameOptions });
         fetch(rcnorcni.GET_FIELD_NAME_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
@@ -462,7 +491,6 @@ class SearchViewErrorPage extends Component {
             data = data.map((d, index) => {
                 return { value: index, label: d }
             });
-
             this.setState({ recordFlagOptions: data });
         }).catch((error) => {
             console.log(error);
@@ -483,7 +511,6 @@ class SearchViewErrorPage extends Component {
         }).catch((error) => {
             console.log(error);
         })
-
         // Get SummeryTab data
         fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, { method: 'POST', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
@@ -496,12 +523,47 @@ class SearchViewErrorPage extends Component {
             this.setState({ summaryTableData: data });
         }).catch((error) => {
             console.log(error);
+        });
+        
+        
+        debugger;
+        fetch(rcnorcni.GET_FIELD_FLAG_INPUT_URL, { method: 'POST', credentials: "same-origin" }).then((response) => {
+            if (!response.ok) {
+                throw new Error("Bad response from server");
+            }
+            return response.json();
+        }).then((response) => {
+            console.log(response);
+            debugger;
+            this.setState({ errorCategoryOptions:response.errorCategoryOptions , errorCodeDescOptions:response.errorCategoryOptions});
+        }).catch((error) => {
+            console.log(error);
         })
-    }
 
+
+
+        
+        fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, { method: 'POST', credentials: "same-origin" }).then((response) => {
+            if (!response.ok) {
+                throw new Error("Bad response from server");
+            }
+            return response.json();
+        }).then((response) => {
+            console.log(response);
+            debugger;
+            let data = response.rcnoListViewRes;
+            this.setState({ summaryTableData: data });
+        }).catch((error) => {
+            console.log(error);
+        })
+
+    }
 }
 SearchViewErrorPage.propTypes = {};
 export default SearchViewErrorPage;
+
+
+
 
 
 

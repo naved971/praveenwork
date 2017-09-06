@@ -24,7 +24,49 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //app.use(bodyParser.json({ type: 'application/*+json' }))
 app.use(bodyParser.json())
+const errorCategoryOptions = [
+    {
+        label: 'QI Info',
+        value: 0
+    }, {
+        label: 'Identifying Info',
+        value: 1
+    }, {
+        label: 'Res Address Info ',
+        value: 2
+    }, {
+        label: 'Mail Address Info ',
+        value: 4
+    }, {
+        label: 'Other Demographic Info',
+        value: 5
+    }, {
+        label: 'Benefit Covg & Financial Info',
+        value: 6
+    }, {
+        label: 'Record Level Error',
+        value: 7
+    }
+];
 
+const errorCodeDescOptions = [
+    {
+        label: 'RCNO_R_D_ER001 - Duplicate Issuer Record ',
+        value: 0
+    }, {
+        label: 'RCNO_R_E_ER002 - Non-Match with Issuer Action, No FFM Action Due to Uneven Record Match',
+        value: 1
+    }, {
+        label: 'RCNO_R_F_ER003 - FFM Orphans',
+        value: 2
+    }, {
+        label: 'RCNO_R_G_ER004 - “Leftover” FFM Orphans',
+        value: 3
+    }, {
+        label: 'RCNO_R_I_ER005 - Issuer Orphans',
+        value: 4
+    }
+];
 app.get('/rcno/getFieldInfo', (req, res) => {
 
 
@@ -42,6 +84,9 @@ app.get('/rcno/getFieldInfo', (req, res) => {
     responseData["fieldLvlList"] = ["C121", "D", "F", "G", "I", "J", "K", "L", "M", "NA", "U"];
     responseData["recordLvlList"] = ["B", "C", "D", "E", "F", "G", "I", "L", "M", "N", "P", "R", "U", "W", "Z"];
 
+    responseData['errorCategoryOptions']= errorCategoryOptions;
+    responseData['errorCodeDescOptions']= errorCodeDescOptions;
+    
     res.status(200).send(responseData);
 
 

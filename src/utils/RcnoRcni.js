@@ -1,3 +1,4 @@
+// export const RCNO_RCNI_URL = "/nebert/rcnorcni";
 export const RCNO_RCNI_LABEL_TEXT = "Monthly Enrollment Reconciliation details between FFM and NASCO";
 export const RCNO_RCNI_USER_ADMIN_BUTTON_NAME = "Enrollment Reconciliation";
 export const RCNO_RCNI_SUBMENU_DASHBOARD_NAME = "Enrollment Reconciliation";
@@ -31,6 +32,7 @@ export const RCNO_RCNI_ENTER_AND_EDIT_ERROR_ADMIN_SIDEBARNAME = "Enter and Edit 
 
 
 
+/* 
 export const GET_RECORD_SUMMARY_DETAILS_URL = 'http://wks51b2228:9080/nebert/ui/recordssearchview/getrecordssearch';
 export const GET_FIELD_SUMMARY_DETAILS_URL = 'http://wks51b2228:9080/nebert/ui/recordfieldsumrysearchview/getrecordsfieldsumry';
 export const GET_FIELD_FLAG_INPUT_URL = 'http://wks51b2228:9080/nebert/ui/rcnofieldsmryview/getrcnofldlvlinddtls';
@@ -40,10 +42,20 @@ export const GET_RCNO_FIELD_NAME_INPUT_URL = 'http://wks51b2228:9080/nebert/ui/l
 export const GET_RCNI_FIELD_NAME_INPUT_URL = 'http://wks51b2228:9080/nebert/ui/rcnilstviewfieldname/getrcnilstvwfldnmdtls';
 export const GET_RCNO_LIST_VIEW_URL ='http://wks51b2228:9080/nebert/ui/rcnolistview/getrcnolistviewdetails';
 export const GET_RCNI_LIST_VIEW_URL ='http://wks51b2228:9080/nebert/ui/rcnilistview/getrcnilistviewdetails';
-// export const GET_RECORD_SUMMARY_DETAILS_URL = '/nebert/ui/recordssearchview/getrecordssearch';
-// export const GET_FIELD_SUMMARY_DETAILS_URL = '/nebert/ui/recordfieldsumrysearchview/getrecordsfieldsumry';
-// export const GET_FIELD_FLAG_INPUT_URL = '/nebert/ui/rcnofieldsmryview/getrcnofldlvlinddtls';
-// export const GET_FIELD_NAME_INPUT_URL = '/nebert/ui/rcnofieldnamesmryview/getrcnofldlvlnamedtls';
-// export const GET_RECORD_FLAG_INPUT_URL = '/nebert/ui/rcnofldsmryview/getrcnorcdlvlinddtls';
+ */
+
+
+export const GET_RECORD_SUMMARY_DETAILS_URL = 'http://localhost:3000/rcno/getFieldInfo';
+export const GET_FIELD_SUMMARY_DETAILS_URL = 'http://localhost:3000/rcno/getFieldInfo';
+export const GET_FIELD_FLAG_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';
+export const GET_FIELD_NAME_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';
+export const GET_RECORD_FLAG_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';
+export const GET_RCNO_FIELD_NAME_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';
+export const GET_RCNI_FIELD_NAME_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';
+export const GET_RCNO_LIST_VIEW_URL= 'http://localhost:3000/rcno/getFieldInfo';
+export const GET_RCNI_LIST_VIEW_URL = 'http://localhost:3000/rcno/getFieldInfo';
+
+
+
 
 
