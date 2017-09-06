@@ -117,13 +117,23 @@ class SearchViewErrorPageData extends Component {
     [
       "onChange",
       "getInitialState",
-      "handleDateChange" ,
+      "handleDateChange",
       "onExportToCSV",
       "handleExport",
-      "handleTradPartChange" ,
+      "handleTradPartChange",
       "handleCovYearChange",
-      "handleDOBChange" ,
-      "handleMultiSelectRenderer"
+      "handleDOBChange",
+      "handleMultiSelectRenderer",
+      'handleErrorCategoryChange',
+      "handleInventoryTypeChange",
+      "handleErrorCategoryChange",
+      "handleErrorTypeChange",
+      "handleSubmissionTypeChange",
+      "handleErrorCodeDescChange",
+      "checkValidation",
+      "handleSubmitButton",
+      "handleResetButton",
+      "getItems"
 
     ].map(fn => (this[fn] = this[fn].bind(this)));
     //this.addAdvRows();
