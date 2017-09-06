@@ -115,45 +115,26 @@ class SearchViewErrorPageData extends Component {
     cxt = this;
     this.state = this.getInitialState();
     [
-      "getItems",
       "onChange",
-      "handleDateChange",
-      "handleTradPartChange",
-      "handleCovYearChange",
-      "handleFieldFlagChange",
-      "handleRecordFlagChange",
-      "handleFieldNameChange",
-      "handleInventoryTypeChange",
-      //'handleErrorCodeChange',
-      "handleErrorCategoryChange",
-      "handleErrorTypeChange",
-      "handleSubmissionTypeChange",
-      "handleErrorCodeDescChange",
-      "handleMultiSelectRenderer",
-      "handleMultiSelectRenderer",
-      "handleSubmitButton",
-      "handleResetButton",
+      "getInitialState",
+      "handleDateChange" ,
+      "onExportToCSV",
       "handleExport",
-      "handleAdvSearch",
-      "addAdvRows",
-      "handleAdvFieldNameChange",
-      "handleSelectedTab",
+      "handleTradPartChange" ,
+      "handleCovYearChange",
+      "handleDOBChange" ,
+      "handleMultiSelectRenderer"
 
-      "handleChange",
-      "addClick",
-      "removeClick",
-      "checkValidation"
     ].map(fn => (this[fn] = this[fn].bind(this)));
     //this.addAdvRows();
   }
   getInitialState() {
-    let selectedTab = { currentIndex: 0, TabName: "RCNO" };
-    let TabName = selectedTab.TabName;
+
     let initialState = {
       accordion: true,
       activeKey: ["1"],
       // startDate: moment(),
-      startDate: { [TabName]: moment().subtract(1, "month") },
+      startDate: moment().subtract(1, "month"),
       inventoryTypeSelected: this.props.defaultInventoryType,
       // errorCodeSelected: this.props.defaultErrorCode,
       errorCategorySelected: this.props.defaultErrorCategory,
@@ -162,36 +143,10 @@ class SearchViewErrorPageData extends Component {
       errorCodeDescSelected: this.props.defaultErrorCodeDesc,
       RCNI_DOB: null,
       RCNO_DOB: null,
-      //{ [selectedTab.TabName]:moment() },
-      covYear: { [TabName]: this.props.defaultCovYear },
-      tradSelected: {
-        [TabName]: this.props.defaultTradingPartners
-      },
-      fieldFlagSelected: {
-        [TabName]: this.props.defaultFieldFlags
-      },
-      recordFlagSelected: {
-        [TabName]: this.props.defaultRecordFlags
-      },
-      fieldNameSelected: {
-        [TabName]: this.props.defaultFieldNames
-      },
-      fieldNameOptions: this.props.fieldNameOptions,
-      fieldNameAvdCustomOptions: this.props.fieldNameAvdCustomOptions,
-      recordFlagOptions: this.props.recordFlagOptions,
-      fieldFlagOptions: this.props.fieldFlagOptions,
-      advCustomFiltersRows: {
-        [TabName]: []
-      },
-      fieldAvdNameSelected: {
-        [TabName]: {
-          value: [{ field: { label: "", value: "" }, fieldValue: "" }],
-          count: 1
-        }
-      },
-      selectedTab: selectedTab,
+      covYear: this.props.defaultCovYear,
+      tradSelected: this.props.defaultTradingPartners,
       advFields: {
-        [TabName]: {}
+
       },
       selectRowProp: {
         mode: "checkbox",
@@ -206,9 +161,7 @@ class SearchViewErrorPageData extends Component {
       showTable: false,
       showSpinner: true,
       lastDataReceived: this.props.lastDataReceived,
-      errStr: {
-        [TabName]: []
-      }
+      errStr: []
     };
     return initialState;
   }
@@ -216,32 +169,13 @@ class SearchViewErrorPageData extends Component {
     this.setState({ activeKey });
   }
   handleDateChange(date) {
-    let TabName = this.state.selectedTab.TabName;
-    this.state.startDate[TabName] = date;
+    this.state.startDate = date;
     this.setState({ startDate: this.state.startDate }, () =>
       this.checkValidation()
     );
   }
-  handleChange(i, event) {
-    let TabName = this.state.selectedTab.TabName;
-    this.state.fieldAvdNameSelected[TabName].value[i].fieldValue =
-      event.target.value;
-    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-  }
 
-  addClick() {
-    let TabName = this.state.selectedTab.TabName;
-    this.state.fieldAvdNameSelected[TabName].count =
-      this.state.fieldAvdNameSelected[TabName].count + 1;
-    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-  }
-  removeClick(i) {
-    let TabName = this.state.selectedTab.TabName;
-    this.state.fieldAvdNameSelected[TabName].value.splice(i, 1);
-    (this.state.fieldAvdNameSelected[TabName].count =
-      this.state.fieldAvdNameSelected[TabName].count - 1),
-      this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-  }
+
 
   onExportToCSV() {
     const selectedRows = cxt.refs.table.state.selectedRowKeys;
@@ -257,60 +191,34 @@ class SearchViewErrorPageData extends Component {
     this.refs.table.handleExportCSV();
   }
   handleTradPartChange(selected) {
-    this.state.tradSelected[this.state.selectedTab.TabName] = selected;
+    this.state.tradSelected = selected;
     this.setState({ tradSelected: this.state.tradSelected }, () =>
       this.checkValidation()
     );
   }
   handleCovYearChange(val) {
-    let TabName = this.state.selectedTab.TabName;
-    this.state.covYear[TabName] = val.label || null;
+    this.state.covYear = val.label || null;
     this.setState({ covYear: this.state.covYear }, () =>
       this.checkValidation()
     );
   }
   handleAdvSearch(e, date) {
     if (typeof e == "string") {
-      this.state.advFields[this.state.selectedTab.TabName][e] = moment(
+      this.state.advFields[e] = moment(
         date
       ).format("YYYY");
     } else {
-      ///advFields[this.state.selectedTab.TabName] ={};
-      this.state.advFields[this.state.selectedTab.TabName][e.target.name] =
+
+      this.state.advFields[e.target.name] =
         e.target.value;
     }
     this.setState({ advFields: this.state.advFields });
   }
   handleDOBChange(e, date) {
-    let Tabname = this.state.selectedTab.TabName;
-    // var Obj = { };
-    // if(Tabname=="RCNO"){
-    //   Obj.RCNO_DOB =  moment(date).format('YYYY/MM/DD');
 
-    // }
-    //  if(Tabname=="RCNI"){
-    //   Obj.RCNI_DOB =  moment(date).format('YYYY/MM/DD');
-    // }
     this.setState({ [e]: moment(date).format("YYYY/MM/DD") });
   }
 
-  handleAdvFieldNameChange(
-    inputFields,
-    i,
-    selected = { label: "", value: "" }
-  ) {
-    let TabName = this.state.selectedTab.TabName;
-    if (this.state.fieldAvdNameSelected[TabName].value[i] == undefined) {
-      this.state.fieldAvdNameSelected[TabName].value[i] = {
-        field: selected,
-        fieldValue: ""
-      };
-    } else {
-      this.state.fieldAvdNameSelected[TabName].value[i].field = selected;
-    }
-
-    this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-  }
   handleMultiSelectRenderer(selected, options) {
     if (selected.length === 0) {
       return "Select";
@@ -320,81 +228,8 @@ class SearchViewErrorPageData extends Component {
     }
     return `Selected (${selected.length})`;
   }
-  handleFieldFlagChange(selected) {
-    this.state.fieldFlagSelected[this.state.selectedTab.TabName] = selected;
-    this.setState({ fieldFlagSelected: this.state.fieldFlagSelected }, () =>
-      this.checkValidation()
-    );
-  }
-  handleRecordFlagChange(selected) {
-    this.state.recordFlagSelected[this.state.selectedTab.TabName] = selected;
-    this.setState({ recordFlagSelected: this.state.recordFlagSelected }, () =>
-      this.checkValidation()
-    );
-  }
-  handleFieldNameChange(selected) {
-    this.state.fieldNameSelected[this.state.selectedTab.TabName] = selected;
-    this.setState({ fieldNameSelected: this.state.fieldNameSelected }, () =>
-      this.checkValidation()
-    );
-  }
-  handleSelectedTab(selectedTab) {
-    if (this.state.advCustomFiltersRows[selectedTab.TabName] == undefined) {
-      this.state.advCustomFiltersRows[selectedTab.TabName] = [];
-      this.setState({ advCustomFiltersRows: this.state.advCustomFiltersRows });
-    }
-    if (this.state.errStr[selectedTab.TabName] == undefined) {
-      this.state.errStr[selectedTab.TabName] = { [selectedTab.TabName]: [] };
-      this.setState({ errStr: this.state.errStr });
-    }
 
-    if (this.state.advFields[selectedTab.TabName] == undefined) {
-      this.state.advFields[selectedTab.TabName] = {};
-      this.setState({ advFields: this.state.advFields });
-    }
-    if (this.state.fieldAvdNameSelected[selectedTab.TabName] == undefined) {
-      this.state.fieldAvdNameSelected[selectedTab.TabName] = {
-        value: [{ field: {}, fieldValue: "" }],
-        count: 1
-      };
-      this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-      //this.setState({ fieldAvdNameSelected: this.state.fieldAvdNameSelected });
-    }
 
-    if (this.state.tradSelected[selectedTab.TabName] == undefined) {
-      this.state.tradSelected[
-        selectedTab.TabName
-      ] = this.props.defaultTradingPartners;
-      this.setState({ tradSelected: this.state.tradSelected });
-    }
-    if (this.state.fieldFlagSelected[selectedTab.TabName] == undefined) {
-      this.state.fieldFlagSelected[
-        selectedTab.TabName
-      ] = this.props.defaultFieldFlags;
-      this.setState({ fieldFlagSelected: this.state.fieldFlagSelected });
-    }
-    if (this.state.recordFlagSelected[selectedTab.TabName] == undefined) {
-      this.state.recordFlagSelected[
-        selectedTab.TabName
-      ] = this.props.defaultRecordFlags;
-      this.setState({ recordFlagSelected: this.state.recordFlagSelected });
-    }
-    if (this.state.fieldNameSelected[selectedTab.TabName] == undefined) {
-      this.state.fieldNameSelected[
-        selectedTab.TabName
-      ] = this.props.defaultFieldNames;
-      this.setState({ fieldNameSelected: this.state.fieldNameSelected });
-    }
-    if (typeof this.state.startDate[selectedTab.TabName] == "undefined") {
-      this.state.startDate[selectedTab.TabName] = moment().subtract(1, "month");
-      this.setState({ startDate: this.state.startDate });
-    }
-    if (typeof this.state.covYear[selectedTab.TabName] == "undefined") {
-      this.state.covYear[selectedTab.TabName] = this.props.defaultCovYear;
-      this.setState({ covYear: this.state.covYear });
-    }
-    this.setState({ selectedTab: selectedTab }, () => this.checkValidation());
-  }
   handleInventoryTypeChange(selected) {
     this.setState({ inventoryTypeSelected: selected });
   }
@@ -414,74 +249,45 @@ class SearchViewErrorPageData extends Component {
     this.setState({ errorCodeDescSelected: selected });
   }
   checkValidation() {
-    let currentTabName = this.state.selectedTab.TabName;
     let state = Object.assign({}, this.state);
-    let pass = {
-      [currentTabName]: true
-    };
-    let errStr = {
-      [currentTabName]: []
-    };
+    let pass = true;
+    let errStr = []
     // validate covYear
     if (
-      !state.covYear[currentTabName] ||
-      parseInt(state.covYear[currentTabName]) !==
-        state.covYear[currentTabName] ||
-      String(state.covYear[currentTabName]).indexOf(".") !== -1
+      !state.covYear ||
+      parseInt(state.covYear) !==
+      state.covYear ||
+      String(state.covYear).indexOf(".") !== -1
     ) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][4] = "Field Required";
+      pass = false;
+      errStr[4] = "Field Required";
     }
     // validate moment object
-    let currentRef = "fileRunDPicker" + "_" + currentTabName;
+    let currentRef = "fileRunDPicker";
     const startDate = this.refs[currentRef].refs.input.defaultValue;
     if (!startDate || startDate.length !== 7) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][0] = "Field Required";
+      pass = false;
+      errStr[0] = "Field Required";
     } else {
       let range = moment(startDate, "MM/YYYY").add(6, "month");
       if (!moment(range).isSameOrAfter(moment())) {
-        pass[currentTabName] = false;
-        errStr[currentTabName][0] = "Error : Date more than 6 months old";
+        pass = false;
+        errStr[0] = "Error : Date more than 6 months old";
       }
     }
     // validate trad partners
     if (
-      !state.tradSelected[currentTabName] ||
-      state.tradSelected[currentTabName].length < 1
+      !state.tradSelected ||
+      state.tradSelected.length < 1
     ) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][1] = "Field Required";
+      pass = false;
+      errStr[1] = "Field Required";
     }
-    // validate record flags
-    if (
-      !state.recordFlagSelected[currentTabName] ||
-      state.recordFlagSelected[currentTabName].length < 1
-    ) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][3] = "Field Required";
-    }
-    // validate field flags
-    if (
-      !state.fieldFlagSelected[currentTabName] ||
-      state.fieldFlagSelected[currentTabName].length < 1
-    ) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][2] = "Field Required";
-    }
-    // validate record flags
-    if (
-      !state.fieldNameSelected[currentTabName] ||
-      state.fieldNameSelected[currentTabName].length < 1
-    ) {
-      pass[currentTabName] = false;
-      errStr[currentTabName][5] = "Field Required";
-    }
+
     this.setState({ errStr: errStr });
-    return pass[currentTabName];
+    return pass;
   }
   handleSubmitButton() {
-    let currentTabName = this.state.selectedTab.TabName;
     let state = Object.assign({}, this.state); //JSON.parse(JSON.stringify(this.state));
     let isValidForm = this.checkValidation();
     if (isValidForm) {
@@ -490,15 +296,13 @@ class SearchViewErrorPageData extends Component {
     }
   }
   handleResetButton() {
-    let TabName = this.state.selectedTab.TabName;
-    this.state.advCustomFiltersRows[this.state.selectedTab.TabName].length = 1;
+
+
 
     var resetFields = {
-      startDate: { [TabName]: moment().subtract(1, "month") },
-      covYear: { [TabName]: JSON.parse(JSON.stringify(initialState.covYear)) },
-      tradSelected: {
-        [TabName]: JSON.parse(JSON.stringify(initialState.tradSelected))
-      },
+      startDate: moment().subtract(1, "month"),
+      covYear: JSON.parse(JSON.stringify(initialState.covYear)),
+      tradSelected: JSON.parse(JSON.stringify(initialState.tradSelected)),
       inventoryTypeSelected: JSON.parse(
         JSON.stringify(initialState.inventoryTypeSelected)
       ),
@@ -516,15 +320,7 @@ class SearchViewErrorPageData extends Component {
         JSON.stringify(initialState.errorCodeDescSelected)
       )
     };
-    resetFields.fieldFlagSelected = {
-      [TabName]: JSON.parse(JSON.stringify(initialState.fieldFlagSelected))
-    };
-    resetFields.recordFlagSelected = {
-      [TabName]: JSON.parse(JSON.stringify(initialState.recordFlagSelected))
-    };
-    resetFields.fieldNameSelected = {
-      [TabName]: JSON.parse(JSON.stringify(initialState.fieldNameSelected))
-    };
+
     this.refs.advFfmFstNm.value = "";
     this.refs.advFfmLstNm.value = "";
     this.refs.advFfmIsurExchSubId.value = "";
@@ -532,40 +328,30 @@ class SearchViewErrorPageData extends Component {
     this.refs.advFfmAscnRcTcNum.value = "";
     this.refs.advFfmDob.refs.input.value = "";
     this.setState({ RCNI_DOB: null });
-    this.state.fieldAvdNameSelected[TabName] = {
-      value: [{ field: { label: "", value: "" }, fieldValue: "" }],
-      count: 1
-    };
-    this.state.advFields[TabName] = {};
-    resetFields.errStr = { [TabName]: [] };
+
+    this.state.advFields = {};
+    resetFields.errStr = [];
     this.setState({
       advFields: this.state.advFields,
-      fieldAvdNameSelected: this.state.fieldAvdNameSelected,
-      advCustomFiltersRows: this.state.advCustomFiltersRows
+
     });
 
     this.setState(resetFields, () => {
-      let currentRef = "fileRunDPicker" + "_" + TabName;
+      let currentRef = "fileRunDPicker";
       if (
         cxt.refs[currentRef].refs.input.value !=
-        cxt.state.startDate[TabName].format("MM/YYYY")
+        cxt.state.startDate.format("MM/YYYY")
       ) {
-        cxt.refs[currentRef].refs.input.defaultValue = cxt.state.startDate[
-          TabName
-        ].format("MM/YYYY");
-        cxt.refs[currentRef].refs.input.value = cxt.state.startDate[
-          TabName
-        ].format("MM/YYYY");
-        cxt.refs[currentRef].setState({
-          inputValue: cxt.state.startDate[TabName].format("MM/YYYY")
-        });
+        cxt.refs[currentRef].refs.input.defaultValue = cxt.state.startDate.format("MM/YYYY");
+        cxt.refs[currentRef].refs.input.value = cxt.state.startDate.format("MM/YYYY");
+        cxt.refs[currentRef].setState({ inputValue: cxt.state.startDate.format("MM/YYYY") });
       }
 
       console.log("Resetting State");
       console.log(this.state);
     });
   }
- 
+
   getItems() {
     const items = [];
     items.push(
@@ -589,7 +375,7 @@ class SearchViewErrorPageData extends Component {
                       <DatePicker
                         ref="fileRunDPicker_RCNI"
                         selected={
-                          this.state.startDate[this.state.selectedTab.TabName]
+                          this.state.startDate
                         }
                         onChange={this.handleDateChange}
                         dateFormat="MM/YYYY"
@@ -598,7 +384,7 @@ class SearchViewErrorPageData extends Component {
                         scrollableYearDropdown
                       />
                       <span className="error date-picker-error">
-                        {this.state.errStr[this.state.selectedTab.TabName][0]}
+                        {this.state.errStr[0]}
                       </span>
                     </div>
                   </Column>
@@ -617,17 +403,17 @@ class SearchViewErrorPageData extends Component {
                       options={this.props.tradingPartnerOptions}
                       onSelectedChanged={this.handleTradPartChange}
                       selected={
-                        this.state.tradSelected[this.state.selectedTab.TabName]
+                        this.state.tradSelected
                       }
                       valueRenderer={this.handleMultiSelectRenderer}
                       selectAllLabel={"All"}
                     />
                     <span className="error">
-                      {this.state.errStr[this.state.selectedTab.TabName][1]}
+                      {this.state.errStr[1]}
                     </span>
                   </label>
                 </Column>
-                
+
                 <Column medium={3} className="coverage-year">
                   <label
                     className="formLabel"
@@ -647,7 +433,7 @@ class SearchViewErrorPageData extends Component {
                   </label>
                 </Column>
 
-                
+
                 <Column medium={3} className="multi-select">
                   <label
                     className="formLabel"
@@ -1011,11 +797,7 @@ class SearchViewErrorPageData extends Component {
             <TableHeaderColumn dataField="ffmPolicyId">
               rcnoFFMPolicyId
             </TableHeaderColumn>
-            {this.state.selectedTab.TabName == "RCNO" ? (
-              <TableHeaderColumn dataField="overallInd">
-                overallInd
-              </TableHeaderColumn>
-            ) : null}
+
           </BootstrapTable>
           <br />
           <Row>
@@ -1083,30 +865,6 @@ class SearchViewErrorPageData extends Component {
     );
   }
   componentWillReceiveProps(nextProps) {
-    //console.log("props"); console.log(this.state.fieldNameOptions); console.log(this.props.fieldNameOptions)
-    if (
-      this.state.fieldNameOptions.length == 0 &&
-      nextProps.fieldNameOptions.length > 0
-    ) {
-      this.setState({ fieldNameOptions: nextProps.fieldNameOptions });
-    }
-    if (
-      this.state.recordFlagOptions.length == 0 &&
-      nextProps.recordFlagOptions.length > 0
-    ) {
-      this.setState({ recordFlagOptions: nextProps.recordFlagOptions });
-    }
-    if (
-      this.state.fieldFlagOptions.length == 0 &&
-      nextProps.fieldFlagOptions.length > 0
-    ) {
-      this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions });
-    }
-    this.setState({
-      fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions
-    });
-
-    // this.setState({ fieldNameOptions: nextProps.fieldNameOptions })
 
     if (this.state.lastDataReceived < nextProps.lastDataReceived) {
       if (
@@ -1126,50 +884,18 @@ class SearchViewErrorPageData extends Component {
           lastDataReceived: nextProps.lastDataReceived,
           summaryTableData: nextProps.summaryTableData
         });
-        /*
-        let tableData = nextProps.summaryTable;
-        let tableHeaders = tableData.headerSet;
-        let summaryTableData = [];
-        let rMap = tableData.responseMap;
-        for (let key in rMap) {
-          let row = {
-            flag: key
-          };
-          let rowData = rMap[key];
-          for (let i in rowData) {
-            row[i] = rowData[i];
-          }
-          summaryTableData.push(row);
-        }
-        console.log(summaryTableData);
-        this.setState({
-          showSpinner: false,
-          showTable: true,
-          lastDataReceived: nextProps.lastDataReceived
-        }, () => {
-          this.setState({tableHeaders, summaryTableData})
-        })
-      */
+
       }
     }
   }
   componentDidMount() {
     console.log("componentDidMount()");
     if (initialState === undefined) {
-      let TabName = this.state.selectedTab.TabName;
+
       initialState = {
-        covYear: JSON.parse(JSON.stringify(this.state.covYear[TabName])),
+        covYear: JSON.parse(JSON.stringify(this.state.covYear)),
         tradSelected: JSON.parse(
-          JSON.stringify(this.state.tradSelected[TabName])
-        ),
-        fieldFlagSelected: JSON.parse(
-          JSON.stringify(this.state.fieldFlagSelected[TabName])
-        ),
-        recordFlagSelected: JSON.parse(
-          JSON.stringify(this.state.recordFlagSelected[TabName])
-        ),
-        fieldNameSelected: JSON.parse(
-          JSON.stringify(this.state.fieldNameSelected[TabName])
+          JSON.stringify(this.state.tradSelected)
         )
       };
       //console.log(initialState);

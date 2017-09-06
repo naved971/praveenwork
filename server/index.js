@@ -86,7 +86,7 @@ app.get('/rcno/getFieldInfo', (req, res) => {
 
     responseData['errorCategoryOptions']= errorCategoryOptions;
     responseData['errorCodeDescOptions']= errorCodeDescOptions;
-    
+
     res.status(200).send(responseData);
 
 

@@ -103,20 +103,13 @@ class SearchViewErrorPage extends Component {
     constructor(props) {
         super(props);
         this.state = this.getInitialState();
-        ['handleSubmit', 'getInputFields', 'getResultSummary', 'buildUrl', 'getAvdInputFields'].map(fn => this[fn] = this[fn].bind(this));
+        ['handleSubmit', 'getInputFields', 'getResultSummary', 'buildUrl', 'getAvdInputFields'].map(fn => {
+            this[fn] = this[fn].bind(this)
+
+        });
         //this.dummy();
     }
-    dummy() {
-        // Dummy Code for Testing;
-        let response = resultData;
-        let data = response.rcnoListViewRes;
-        setTimeout(() => {
-            this.setState({
-                lastDataReceived: Date.now(),
-                summaryTableData: data,
-            });
-        }, 2000);
-    }
+
     buildUrl(parameters) {
         let url = rcnorcni.GET_FIELD_SUMMARY_DETAILS_URL;
         let qs = "";
@@ -206,64 +199,26 @@ class SearchViewErrorPage extends Component {
             defaultErrorType,
             defaultSubmissionType,
             defaultErrorCodeDesc,
-            errorCategoryOptions:[],
-            errorCodeDescOptions:[]
+            errorCategoryOptions: [],
+            errorCodeDescOptions: []
         };
     }
     handleSubmit(item) {
-        let currentTabName = item.state.selectedTab.TabName;
-        console.dir(item);
-        let tradSelected = item.state.tradSelected[currentTabName].length == tradingPartnerOptions.length
+
+        let tradSelected = item.state.tradSelected.length == tradingPartnerOptions.length
             ? 'all'
             : undefined;
         if (tradSelected === undefined) {
             tradSelected = '';
             item
                 .state
-                .tradSelected[currentTabName]
+                .tradSelected
                 .forEach((t) => {
                     tradSelected += tradingPartnerOptions[t].id + ',';
                 })
             tradSelected = tradSelected.slice(0, -1);
         }
-        let fieldFlagSelected = item.state.fieldFlagSelected[currentTabName].length == this.state.fieldFlagOptions.length
-            ? 'all'
-            : undefined;
-        if (fieldFlagSelected === undefined) {
-            fieldFlagSelected = '';
-            item
-                .state
-                .fieldFlagSelected[currentTabName]
-                .forEach((f) => {
-                    fieldFlagSelected += this.state.fieldFlagOptions[f].label + ',';
-                })
-            fieldFlagSelected = fieldFlagSelected.slice(0, -1);
-        }
-        let recordFlagSelected = item.state.recordFlagSelected[currentTabName].length == this.state.recordFlagOptions.length
-            ? 'all'
-            : undefined;
-        if (recordFlagSelected === undefined) {
-            recordFlagSelected = '';
-            item
-                .state
-                .recordFlagSelected[currentTabName]
-                .forEach((f) => {
-                    recordFlagSelected += this.state.recordFlagOptions[f].label + ',';
-                })
-            recordFlagSelected = recordFlagSelected.slice(0, -1);
-        }
-        let fieldNameSelected = item.state.fieldNameSelected[currentTabName].length == this.state.fieldNameOptions.length
-            ? 'all'
-            : undefined;
-        if (fieldNameSelected === undefined) {
-            fieldNameSelected = '';
-            item.state.fieldNameSelected[currentTabName]
-                .forEach((f, i) => {
-                    // fieldNameSelected += f.label + ',';
-                    fieldNameSelected += this.state.fieldNameOptions[f].label + ',';
-                })
-            fieldNameSelected = fieldNameSelected.slice(0, -1);
-        }
+
         /*
                     let fieldAvdNameSelected = item.state.fieldAvdNameSelected.length == this.state.fieldAvdNameSelected.length
                     ? 'all'
@@ -280,11 +235,12 @@ class SearchViewErrorPage extends Component {
 
 
         var obj = {
-            frmDate: moment(item.state.startDate[currentTabName]).format('MM/YYYY'),
-            cvgYear: item.state.covYear[currentTabName],
+            frmDate: moment(item.state.startDate).format('MM/YYYY'),
+            cvgYear: item.state.covYear,
             tpId: tradSelected,
-            currentTabName: currentTabName
+            currentTabName: "RCNO"
         }
+/*
         if (currentTabName == "RCNO") {
             obj.rcdFlag = recordFlagSelected;
             obj.fldFlag = fieldFlagSelected;
@@ -293,19 +249,19 @@ class SearchViewErrorPage extends Component {
         } else {
             obj.advFfmDob = item.state.RCNI_DOB != null && item.state.RCNI_DOB != "" ? item.state.RCNI_DOB.format('YYYY/MM/DD').toString() : undefined;
         }
+*/
 
 
 
-
-        if (item.state.advFields[currentTabName] && Object.keys(item.state.advFields[currentTabName]).length > 0) {
-            let advFieldsItems = item.state.advFields[currentTabName];
+        if (item.state.advFields && Object.keys(item.state.advFields).length > 0) {
+            let advFieldsItems = item.state.advFields;
 
 
             Object.keys(advFieldsItems).forEach(key => { advFieldsItems[key] = (advFieldsItems[key] == "" || advFieldsItems[key] == undefined) ? undefined : advFieldsItems[key]; });
             obj = Object.assign(obj, advFieldsItems);
         }
-        if (item.state.fieldAvdNameSelected[currentTabName] != undefined) {
-            obj.fldNmFldVal = item.state.fieldAvdNameSelected[currentTabName].value.map(function (value, index) {
+        if (item.state.fieldAvdNameSelected != undefined) {
+            obj.fldNmFldVal = item.state.fieldAvdNameSelected.value.map(function (value, index) {
                 let FieldSelected = Object.keys(value.field).length > 0 ? value.field.label : undefined;
                 var FieldValueSelected = value.fieldValue == "" ? undefined : value.fieldValue;
                 if (FieldSelected != undefined && FieldValueSelected != undefined) {
@@ -397,7 +353,7 @@ class SearchViewErrorPage extends Component {
                                 defaultInventoryType={this.state.defaultInventoryType}
                                 inventoryTypeOptions={inventoryTypeOptions}
                                 // defaultErrorCode={this.state.defaultErrorCode}
-                                // errorCodeOptions={errorCodeOptions} 
+                                // errorCodeOptions={errorCodeOptions}
                                 defaultErrorCategory={this.state.defaultErrorCategory}
                                 errorCategoryOptions={this.state.errorCategoryOptions}
                                 defaultErrorType={this.state.defaultErrorType}
@@ -451,51 +407,47 @@ class SearchViewErrorPage extends Component {
         })
     }
     getInputFields() {
-        debugger;
-        // Get Field Name
-        this.setState({ fieldNameOptions: fieldNameOptions });
-        fetch(rcnorcni.GET_FIELD_NAME_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
-            if (!response.ok) {
-                throw new Error("Bad response from server");
-            }
-            return response.json();
-        }).then((response) => {
-            console.log(response);
-            let data = response.rcnoFieldNameList;
-            data = data.map((d, index) => {
-                return { value: index, label: d }
-            });
-            this.setState({ fieldNameOptions: data, fieldNameAvdCustomOptions: data }, () => {
-                let fN = response.rcnoFieldNameList;
-                this.getResultSummary({
-                    frmDate: this.state.fromDate,
-                    cvgYear: this.state.covYear,
-                    tpId: 'all',
-                    rcdFlag: 'E,P,N',
-                    fldFlag: 'I,L,J,K',
-                    fldName: fN[0] + ',' + fN[1] + ',' + fN[2] + ',' + fN[3] + ',' + fN[4]
-                })
-            });
-        }).catch((error) => {
-            console.log(error);
-        })
-        // Get Record Flags
+
+        /* fetch(rcnorcni.GET_FIELD_NAME_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
+             if (!response.ok) {
+                 throw new Error("Bad response from server");
+             }
+             return response.json();
+         }).then((response) => {
+             console.log(response);
+             let data = response.rcnoFieldNameList;
+             data = data.map((d, index) => {
+                 return { value: index, label: d }
+             });
+             this.setState({ fieldNameOptions: data, fieldNameAvdCustomOptions: data }, () => {
+                 let fN = response.rcnoFieldNameList;
+                 this.getResultSummary({
+                     frmDate: this.state.fromDate,
+                     cvgYear: this.state.covYear,
+                     tpId: 'all',
+                     rcdFlag: 'E,P,N',
+                     fldFlag: 'I,L,J,K',
+                     fldName: fN[0] + ',' + fN[1] + ',' + fN[2] + ',' + fN[3] + ',' + fN[4]
+                 })
+             });
+         }).catch((error) => {
+             console.log(error);
+         })*/
+        // Get Error Code Description
         fetch(rcnorcni.GET_RECORD_FLAG_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
             }
             return response.json();
         }).then((response) => {
-            console.log(response);
-            let data = response.recordLvlList;
-            data = data.map((d, index) => {
-                return { value: index, label: d }
-            });
-            this.setState({ recordFlagOptions: data });
+            this.setState({ errorCategoryOptions: response.errorCategoryOptions, errorCodeDescOptions: response.errorCategoryOptions });
         }).catch((error) => {
             console.log(error);
         })
-        // Get Field Flags
+
+
+
+
         fetch(rcnorcni.GET_FIELD_FLAG_INPUT_URL, { method: 'GET', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
@@ -503,15 +455,13 @@ class SearchViewErrorPage extends Component {
             return response.json();
         }).then((response) => {
             console.log(response);
-            let data = response.fieldLvlList;
-            data = data.map((d, index) => {
-                return { value: index, label: d }
-            });
-            this.setState({ fieldFlagOptions: data });
+            this.setState({ errorCategoryOptions: response.errorCategoryOptions, errorCodeDescOptions: response.errorCategoryOptions });
         }).catch((error) => {
             console.log(error);
         })
-        // Get SummeryTab data
+
+/*
+   // Get SummeryTab data
         fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, { method: 'POST', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
@@ -524,26 +474,13 @@ class SearchViewErrorPage extends Component {
         }).catch((error) => {
             console.log(error);
         });
-        
-        
-        debugger;
-        fetch(rcnorcni.GET_FIELD_FLAG_INPUT_URL, { method: 'POST', credentials: "same-origin" }).then((response) => {
-            if (!response.ok) {
-                throw new Error("Bad response from server");
-            }
-            return response.json();
-        }).then((response) => {
-            console.log(response);
-            debugger;
-            this.setState({ errorCategoryOptions:response.errorCategoryOptions , errorCodeDescOptions:response.errorCategoryOptions});
-        }).catch((error) => {
-            console.log(error);
-        })
+
+
+*/
 
 
 
-        
-        fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, { method: 'POST', credentials: "same-origin" }).then((response) => {
+     /*   fetch(rcnorcni.GET_LIST_VIEW_SUMMARY_URL, { method: 'POST', credentials: "same-origin" }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
             }
@@ -555,7 +492,7 @@ class SearchViewErrorPage extends Component {
             this.setState({ summaryTableData: data });
         }).catch((error) => {
             console.log(error);
-        })
+        })*/
 
     }
 }
