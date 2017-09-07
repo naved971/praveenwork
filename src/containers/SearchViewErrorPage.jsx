@@ -238,7 +238,7 @@ class SearchViewErrorPage extends Component {
 
     getInitialState() {
         const defaultTradingPartners = [0, 1, 2];
-        const defaultInventoryType = [0];
+        const defaultInventoryType = {"label":"RCNO","value":0};
         // const defaultErrorCode = [0, 1, 2];
         const defaultErrorCategory = [0, 1, 2];
         const defaultErrorType = [0, 1, 2];

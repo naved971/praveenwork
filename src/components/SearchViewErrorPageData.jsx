@@ -374,7 +374,8 @@ class SearchViewErrorPageData extends Component {
         clsName="errorbuttonDisabled";
       }
 
-      return (<input className={ 'button primary  btn-lg btn-color formButton ' + clsName } disabled={row.isSubmitInventoryDisabled} type="button" name="submitInventory" value="Submit Inventory" onClick={(e) => this.props.handleSubmitInventory(e, row)} />);
+      return (<input disabled={row.isSubmitInventoryDisabled} type="checkbox" name="submitInventory" value="Submit Inventory"
+       onChange={(e) => this.props.handleSubmitInventory(e, row)} />);
     }else{
           return (<input className="button primary  btn-lg btn-color formButton submitERandE" type="button" name="submitERE" value="Submit ER & E" onClick={(e) => this.props.handleSubmitERE(e, row)} />)
     }
