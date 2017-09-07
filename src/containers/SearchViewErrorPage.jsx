@@ -99,6 +99,68 @@ let resultData =
             }
         ]
     }
+
+    
+const errorCodeSearchResult = [
+    {
+      recordIdentifier: "111-1111-1111",
+      firstName: "A1",
+      lastName: "A1_LastName",
+      exSubId: 2020,
+      contractId: 1001,
+      errorCode: 201,
+      errorDesc: "Missing Fields",
+      isSubmitInventoryDisabled:true
+  },
+    {
+      recordIdentifier: "111-1111-1112",
+      firstName: "A2",
+      lastName: "A2_LastName",
+      exSubId: 2021,
+      contractId: 1002,
+      errorCode: 201,
+      errorDesc: "Missing Fields"
+    },
+    {
+      recordIdentifier: "111-1111-1113",
+      firstName: "A3",
+      lastName: "A3_LastName",
+      exSubId: 2023,
+      contractId: 1003,
+      errorCode: 203,
+      errorDesc: "Missing Fields"
+    },
+    {
+      recordIdentifier: "111-1111-1114",
+      firstName: "A4",
+      lastName: "A4_LastName",
+      exSubId: 2024,
+      contractId: 1004,
+      errorCode: 204,
+      errorDesc: "Missing Fields"
+    },
+    {
+      recordIdentifier: "111-1111-1115",
+      firstName: "A5",
+      lastName: "A5_LastName",
+      exSubId: 2025,
+      contractId: 1005,
+      errorCode: 205,
+      errorDesc: "Missing Fields",
+      isSubmitInventoryDisabled:true
+    },
+    {
+      recordIdentifier: "111-1111-1116",
+      firstName: "A6",
+      lastName: "A6_LastName",
+      exSubId: 2026,
+      contractId: 1006,
+      errorCode: 206,
+      errorDesc: "Missing Fields"
+    }
+  ];
+
+
 class SearchViewErrorPage extends Component {
     constructor(props) {
         super(props);
@@ -154,6 +216,13 @@ class SearchViewErrorPage extends Component {
                 summaryTableData: data
             });
         }).catch((error) => {
+            let data =  errorCodeSearchResult;
+        
+            this.setState({
+                lastDataReceived: Date.now(),
+                summaryTableData: data
+            });
+
             console.log(error);
         })
     }
