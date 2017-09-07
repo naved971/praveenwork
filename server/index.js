@@ -93,8 +93,8 @@ const errorCodeSearchResult = [
     contractId: 1001,
     errorCode: 201,
     errorDesc: "Missing Fields",
-    isSubmitInventoryDisabled:true
-},
+    isSubmitInventoryDisabled: true
+  },
   {
     recordIdentifier: "111-1111-1112",
     firstName: "A2",
@@ -130,7 +130,7 @@ const errorCodeSearchResult = [
     contractId: 1005,
     errorCode: 205,
     errorDesc: "Missing Fields",
-    isSubmitInventoryDisabled:true
+    isSubmitInventoryDisabled: true
   },
   {
     recordIdentifier: "111-1111-1116",
@@ -144,17 +144,18 @@ const errorCodeSearchResult = [
 ];
 
 var errCategoryList = [
-    "ADM_INFO",
-    "BENF_FIN_INFO",
-    "IDEN_INFO",
-    "MAIL_ADDR_INFO",
-    "OTHER_DEMO_INFO",
-    "QI_INFO",
-    "RES_ADDR_INFO",
-    "ROW_LEVEL"
-  ];
+  "ADM_INFO",
+  "BENF_FIN_INFO",
+  "IDEN_INFO",
+  "MAIL_ADDR_INFO",
+  "OTHER_DEMO_INFO",
+  "QI_INFO",
+  "RES_ADDR_INFO",
+  "ROW_LEVEL"
+];
 var getSearchErrorDesc = {
-  "RCNO_F_I_ERR020 -  Mailing Address Street Mismatch, Issuer to update to FFM value":"RCNO_F_I_ERR020",
+  "RCNO_F_I_ERR020 -  Mailing Address Street Mismatch, Issuer to update to FFM value":
+    "RCNO_F_I_ERR020",
   "RCNO_F_L_ERR040 -  Total Premium End Date Mismatch, FFM and Issuer to update to value listed in the FFM field based on automated business rule":
     "RCNO_F_L_ERR040",
   "RCNO_F_K_ERR029 -  QHPID Identifier Mismatch, both FFM and Issuer to update to value listed in the FFM field based on ER&R determination":
@@ -163,218 +164,194 @@ var getSearchErrorDesc = {
   "RCNO_F_L_ERR033 -  Applied APTC Effective Date Mismatch, FFM and Issuer to update to value listed in the FFM field based on automated business rule":
     "RCNO_F_L_ERR033"
 };
-app.get("/rcno/getFieldInfo", (req, res) => {
-  let responseData = {};
+var rcnoFieldNameList = [
+  "RCNO/Broker-NPN",
+  "Naved/Broker-NPN",
+  "Agent/Broker-NPN",
+  "Agent/Broker-Name",
+  "Applied-APTC-Amount",
+  "Applied-APTC-Effective-Date",
+  "Applied-APTC-End-Date",
+  "Benefit-End-Date",
+  "Benefit-Start-Date",
+  "CSR-AMT",
+  "CSR-Effective-Date",
+  "CSR-End-Date",
+  "Coverage-Year",
+  "DOB",
+  "End-of-Year-Termination-Indicator",
+  "Enrollment-Group-Member-Count",
+  "Exchange-Assigned-Member-ID",
+  "Exchange-Assigned-Policy-ID",
+  "Exchange-Assigned-Subscriber-ID",
+  "Gender",
+  "Initial-Premium-Paid-Status",
+  "Issuer-Assigned Member-ID",
+  "Issuer-Assigned-Policy-ID",
+  "Issuer-Assigned-Subscriber-ID",
+  "Mailing-Address-City",
+  "Mailing-Address-State",
+  "Mailing-Address-Street",
+  "Mailing-Address-Street-Line-2",
+  "Mailing-Address-Zip-Code",
+  "Member-First-Name",
+  "Member-Last-Name",
+  "Member-Middle-Name",
+  "Member-Premium-Amount",
+  "Member-Premium-Effective-Date",
+  "Member-Premium-End-Date",
+  "Paid-Through-Date",
+  "QHPID-Identifier",
+  "Rating-Area",
+  "Relationship-to-Subscriber-Indicator",
+  "Residential-City",
+  "Residential-County-Code",
+  "Residential-State",
+  "Residential-Street-Address",
+  "Residential-Street-Address-Line-2",
+  "Residential-Zip-Code",
+  "SSN",
+  "Subscriber-Indicator",
+  "Telephone-Number",
+  "Tobacco-Status",
+  "Total-Premium-Amount",
+  "Total-Premium-Effective-Date",
+  "Total-Premium-End-Date"
+];
+var rcniFieldNameList = [
+  "RCNI/Broker-NPN",
+  "Naved/Broker-NPN",
+  "Agent/Broker-NPN",
+  "Agent/Broker-Name",
+  "Applied-APTC-Amount",
+  "Applied-APTC-Effective-Date",
+  "Applied-APTC-End-Date",
+  "Benefit-End-Date",
+  "Benefit-Start-Date",
+  "CSR-AMT",
+  "CSR-Effective-Date",
+  "CSR-End-Date",
+  "Coverage-Year",
+  "DOB",
+  "End-of-Year-Termination-Indicator",
+  "Enrollment-Group-Member-Count",
+  "Exchange-Assigned-Member-ID",
+  "Exchange-Assigned-Policy-ID",
+  "Exchange-Assigned-Subscriber-ID",
+  "Gender",
+  "Initial-Premium-Paid-Status",
+  "Issuer-Assigned Member-ID",
+  "Issuer-Assigned-Policy-ID",
+  "Issuer-Assigned-Subscriber-ID",
+  "Mailing-Address-City",
+  "Mailing-Address-State",
+  "Mailing-Address-Street",
+  "Mailing-Address-Street-Line-2",
+  "Mailing-Address-Zip-Code",
+  "Member-First-Name",
+  "Member-Last-Name",
+  "Member-Middle-Name",
+  "Member-Premium-Amount",
+  "Member-Premium-Effective-Date",
+  "Member-Premium-End-Date",
+  "Paid-Through-Date",
+  "QHPID-Identifier",
+  "Rating-Area",
+  "Relationship-to-Subscriber-Indicator",
+  "Residential-City",
+  "Residential-County-Code",
+  "Residential-State",
+  "Residential-Street-Address",
+  "Residential-Street-Address-Line-2",
+  "Residential-Zip-Code",
+  "SSN",
+  "Subscriber-Indicator",
+  "Telephone-Number",
+  "Tobacco-Status",
+  "Total-Premium-Amount",
+  "Total-Premium-Effective-Date",
+  "Total-Premium-End-Date"
+];
 
-  //M->Field Name Response:
-  responseData["rcnoFieldNameList"] = [
-    "RCNO/Broker-NPN",
-    "Naved/Broker-NPN",
-    "Agent/Broker-NPN",
-    "Agent/Broker-Name",
-    "Applied-APTC-Amount",
-    "Applied-APTC-Effective-Date",
-    "Applied-APTC-End-Date",
-    "Benefit-End-Date",
-    "Benefit-Start-Date",
-    "CSR-AMT",
-    "CSR-Effective-Date",
-    "CSR-End-Date",
-    "Coverage-Year",
-    "DOB",
-    "End-of-Year-Termination-Indicator",
-    "Enrollment-Group-Member-Count",
-    "Exchange-Assigned-Member-ID",
-    "Exchange-Assigned-Policy-ID",
-    "Exchange-Assigned-Subscriber-ID",
-    "Gender",
-    "Initial-Premium-Paid-Status",
-    "Issuer-Assigned Member-ID",
-    "Issuer-Assigned-Policy-ID",
-    "Issuer-Assigned-Subscriber-ID",
-    "Mailing-Address-City",
-    "Mailing-Address-State",
-    "Mailing-Address-Street",
-    "Mailing-Address-Street-Line-2",
-    "Mailing-Address-Zip-Code",
-    "Member-First-Name",
-    "Member-Last-Name",
-    "Member-Middle-Name",
-    "Member-Premium-Amount",
-    "Member-Premium-Effective-Date",
-    "Member-Premium-End-Date",
-    "Paid-Through-Date",
-    "QHPID-Identifier",
-    "Rating-Area",
-    "Relationship-to-Subscriber-Indicator",
-    "Residential-City",
-    "Residential-County-Code",
-    "Residential-State",
-    "Residential-Street-Address",
-    "Residential-Street-Address-Line-2",
-    "Residential-Zip-Code",
-    "SSN",
-    "Subscriber-Indicator",
-    "Telephone-Number",
-    "Tobacco-Status",
-    "Total-Premium-Amount",
-    "Total-Premium-Effective-Date",
-    "Total-Premium-End-Date"
-  ];
-  responseData["rcniFieldNameList"] = [
-    "RCNI/Broker-NPN",
-    "Naved/Broker-NPN",
-    "Agent/Broker-NPN",
-    "Agent/Broker-Name",
-    "Applied-APTC-Amount",
-    "Applied-APTC-Effective-Date",
-    "Applied-APTC-End-Date",
-    "Benefit-End-Date",
-    "Benefit-Start-Date",
-    "CSR-AMT",
-    "CSR-Effective-Date",
-    "CSR-End-Date",
-    "Coverage-Year",
-    "DOB",
-    "End-of-Year-Termination-Indicator",
-    "Enrollment-Group-Member-Count",
-    "Exchange-Assigned-Member-ID",
-    "Exchange-Assigned-Policy-ID",
-    "Exchange-Assigned-Subscriber-ID",
-    "Gender",
-    "Initial-Premium-Paid-Status",
-    "Issuer-Assigned Member-ID",
-    "Issuer-Assigned-Policy-ID",
-    "Issuer-Assigned-Subscriber-ID",
-    "Mailing-Address-City",
-    "Mailing-Address-State",
-    "Mailing-Address-Street",
-    "Mailing-Address-Street-Line-2",
-    "Mailing-Address-Zip-Code",
-    "Member-First-Name",
-    "Member-Last-Name",
-    "Member-Middle-Name",
-    "Member-Premium-Amount",
-    "Member-Premium-Effective-Date",
-    "Member-Premium-End-Date",
-    "Paid-Through-Date",
-    "QHPID-Identifier",
-    "Rating-Area",
-    "Relationship-to-Subscriber-Indicator",
-    "Residential-City",
-    "Residential-County-Code",
-    "Residential-State",
-    "Residential-Street-Address",
-    "Residential-Street-Address-Line-2",
-    "Residential-Zip-Code",
-    "SSN",
-    "Subscriber-Indicator",
-    "Telephone-Number",
-    "Tobacco-Status",
-    "Total-Premium-Amount",
-    "Total-Premium-Effective-Date",
-    "Total-Premium-End-Date"
-  ];
+var fieldNameMapRCNO = {
+  "RCNO KEY": "RCNO_VAL",
+  "FFM Member Middle Name": "FFM_MBR_MIDL_NM",
+  "FFM DOB": "FFM_BTH_DT",
+  "Issuer Exchange Assigned Member ID": "ISUR_EXCH_ASGD_MBR_ID",
+  "FFM Issuer Assigned Policy ID": "FFM_ISUR_PLCY_ID",
+  "FFM Member First Name": "FFM_MBR_1ST_NM",
+  "Issuer DOB": "ISUR_BTH_DT",
+  "FFM Issuer Assigned Subscriber ID": "FFM_ISUR_ASGD_SUBR_ID",
+  "Issuer Member Last Name": "ISUR_MBR_LAST_NM",
+  "Issuer Issuer Assigned Policy ID": "ISUR_ISUR_PLCY_ID",
+  "Issuer Member First Name": "ISUR_MBR_1ST_NM",
+  "FFM SSN": "FFM_SSN_NB",
+  "Issuer QHPID Identifier": "ISUR_QHP_ID",
+  "FFM Exchange Assigned Policy ID": "FFM_EXCH_ASGD_PLCY_ID",
+  "Issuer Issuer Assigned Subscriber ID": "ISUR_ISUR_ASGD_SUBR_ID",
+  "FFM Coverage Year": "FFM_COVA_YR_NB",
+  "FFM Issuer Assigned Member ID": "FFM_ISUR_ASGD_MBR_ID",
+  "FTI Issuer Overall Record Flag": "FTI_ISUR_OVAL_REC_IN",
+  "Issuer SSN": "ISUR_SSN_NB",
+  "FFM QHPID Identifier": "FFM_QHP_ID",
+  "FFM Exchange Assigned Subscriber ID": "FFM_EXCH_ASGD_SUBR_ID",
+  "Issuer Exchange Assigned Policy ID": "ISUR_EXCH_ASGD_PLCY_ID",
+  "Issuer Coverage Year": "ISUR_COVA_YR_NB",
+  "Issuer Assigned Trace Number": "FTI_ISUR_ASGD_REC_TRAC_NB",
+  "Issuer Issuer Assigned Member ID": "ISUR_ISUR_ASGD_MBR_ID",
+  "Issuer Member Middle Name": "ISUR_MBR_MIDL_NM",
+  "Issuer Exchange Assigned Subscriber ID": "ISUR_EXCH_ASGD_SUBSR_ID",
+  "FFM Exchange Assigned Member ID": "FFM_EXCH_ASGD_MBR_ID"
+};
+var fieldNameMapRCNI = {
+  "RCNI KEY": "RCNI_VAL",
+  "FFM Member Middle Name": "FFM_MBR_MIDL_NM",
+  "FFM DOB": "FFM_BTH_DT",
+  "Issuer Exchange Assigned Member ID": "ISUR_EXCH_ASGD_MBR_ID",
+  "FFM Issuer Assigned Policy ID": "FFM_ISUR_PLCY_ID",
+  "FFM Member First Name": "FFM_MBR_1ST_NM",
+  "Issuer DOB": "ISUR_BTH_DT",
+  "FFM Issuer Assigned Subscriber ID": "FFM_ISUR_ASGD_SUBR_ID",
+  "Issuer Member Last Name": "ISUR_MBR_LAST_NM",
+  "Issuer Issuer Assigned Policy ID": "ISUR_ISUR_PLCY_ID",
+  "Issuer Member First Name": "ISUR_MBR_1ST_NM",
+  "FFM SSN": "FFM_SSN_NB",
+  "Issuer QHPID Identifier": "ISUR_QHP_ID",
+  "FFM Exchange Assigned Policy ID": "FFM_EXCH_ASGD_PLCY_ID",
+  "Issuer Issuer Assigned Subscriber ID": "ISUR_ISUR_ASGD_SUBR_ID",
+  "FFM Coverage Year": "FFM_COVA_YR_NB",
+  "FFM Issuer Assigned Member ID": "FFM_ISUR_ASGD_MBR_ID",
+  "FTI Issuer Overall Record Flag": "FTI_ISUR_OVAL_REC_IN",
+  "Issuer SSN": "ISUR_SSN_NB",
+  "FFM QHPID Identifier": "FFM_QHP_ID",
+  "FFM Exchange Assigned Subscriber ID": "FFM_EXCH_ASGD_SUBR_ID",
+  "Issuer Exchange Assigned Policy ID": "ISUR_EXCH_ASGD_PLCY_ID",
+  "Issuer Coverage Year": "ISUR_COVA_YR_NB",
+  "Issuer Assigned Trace Number": "FTI_ISUR_ASGD_REC_TRAC_NB",
+  "Issuer Issuer Assigned Member ID": "ISUR_ISUR_ASGD_MBR_ID",
+  "Issuer Member Middle Name": "ISUR_MBR_MIDL_NM",
+  "Issuer Exchange Assigned Subscriber ID": "ISUR_EXCH_ASGD_SUBSR_ID",
+  "FFM Exchange Assigned Member ID": "FFM_EXCH_ASGD_MBR_ID"
+};
+var fieldLvlList = ["C121", "D", "F", "G", "I", "J", "K", "L", "M", "NA", "U"];
+var recordLvlList = [
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "I",
+  "L",
+  "M",
+  "N",
+  "P",
+  "R",
+  "U",
+  "W",
+  "Z"
+];
 
-  responseData["fieldNameMapRCNO"] = {
-    "RCNO KEY": "RCNO_VAL",
-    "FFM Member Middle Name": "FFM_MBR_MIDL_NM",
-    "FFM DOB": "FFM_BTH_DT",
-    "Issuer Exchange Assigned Member ID": "ISUR_EXCH_ASGD_MBR_ID",
-    "FFM Issuer Assigned Policy ID": "FFM_ISUR_PLCY_ID",
-    "FFM Member First Name": "FFM_MBR_1ST_NM",
-    "Issuer DOB": "ISUR_BTH_DT",
-    "FFM Issuer Assigned Subscriber ID": "FFM_ISUR_ASGD_SUBR_ID",
-    "Issuer Member Last Name": "ISUR_MBR_LAST_NM",
-    "Issuer Issuer Assigned Policy ID": "ISUR_ISUR_PLCY_ID",
-    "Issuer Member First Name": "ISUR_MBR_1ST_NM",
-    "FFM SSN": "FFM_SSN_NB",
-    "Issuer QHPID Identifier": "ISUR_QHP_ID",
-    "FFM Exchange Assigned Policy ID": "FFM_EXCH_ASGD_PLCY_ID",
-    "Issuer Issuer Assigned Subscriber ID": "ISUR_ISUR_ASGD_SUBR_ID",
-    "FFM Coverage Year": "FFM_COVA_YR_NB",
-    "FFM Issuer Assigned Member ID": "FFM_ISUR_ASGD_MBR_ID",
-    "FTI Issuer Overall Record Flag": "FTI_ISUR_OVAL_REC_IN",
-    "Issuer SSN": "ISUR_SSN_NB",
-    "FFM QHPID Identifier": "FFM_QHP_ID",
-    "FFM Exchange Assigned Subscriber ID": "FFM_EXCH_ASGD_SUBR_ID",
-    "Issuer Exchange Assigned Policy ID": "ISUR_EXCH_ASGD_PLCY_ID",
-    "Issuer Coverage Year": "ISUR_COVA_YR_NB",
-    "Issuer Assigned Trace Number": "FTI_ISUR_ASGD_REC_TRAC_NB",
-    "Issuer Issuer Assigned Member ID": "ISUR_ISUR_ASGD_MBR_ID",
-    "Issuer Member Middle Name": "ISUR_MBR_MIDL_NM",
-    "Issuer Exchange Assigned Subscriber ID": "ISUR_EXCH_ASGD_SUBSR_ID",
-    "FFM Exchange Assigned Member ID": "FFM_EXCH_ASGD_MBR_ID"
-  };
-  responseData["fieldNameMapRCNI"] = {
-    "RCNI KEY": "RCNI_VAL",
-    "FFM Member Middle Name": "FFM_MBR_MIDL_NM",
-    "FFM DOB": "FFM_BTH_DT",
-    "Issuer Exchange Assigned Member ID": "ISUR_EXCH_ASGD_MBR_ID",
-    "FFM Issuer Assigned Policy ID": "FFM_ISUR_PLCY_ID",
-    "FFM Member First Name": "FFM_MBR_1ST_NM",
-    "Issuer DOB": "ISUR_BTH_DT",
-    "FFM Issuer Assigned Subscriber ID": "FFM_ISUR_ASGD_SUBR_ID",
-    "Issuer Member Last Name": "ISUR_MBR_LAST_NM",
-    "Issuer Issuer Assigned Policy ID": "ISUR_ISUR_PLCY_ID",
-    "Issuer Member First Name": "ISUR_MBR_1ST_NM",
-    "FFM SSN": "FFM_SSN_NB",
-    "Issuer QHPID Identifier": "ISUR_QHP_ID",
-    "FFM Exchange Assigned Policy ID": "FFM_EXCH_ASGD_PLCY_ID",
-    "Issuer Issuer Assigned Subscriber ID": "ISUR_ISUR_ASGD_SUBR_ID",
-    "FFM Coverage Year": "FFM_COVA_YR_NB",
-    "FFM Issuer Assigned Member ID": "FFM_ISUR_ASGD_MBR_ID",
-    "FTI Issuer Overall Record Flag": "FTI_ISUR_OVAL_REC_IN",
-    "Issuer SSN": "ISUR_SSN_NB",
-    "FFM QHPID Identifier": "FFM_QHP_ID",
-    "FFM Exchange Assigned Subscriber ID": "FFM_EXCH_ASGD_SUBR_ID",
-    "Issuer Exchange Assigned Policy ID": "ISUR_EXCH_ASGD_PLCY_ID",
-    "Issuer Coverage Year": "ISUR_COVA_YR_NB",
-    "Issuer Assigned Trace Number": "FTI_ISUR_ASGD_REC_TRAC_NB",
-    "Issuer Issuer Assigned Member ID": "ISUR_ISUR_ASGD_MBR_ID",
-    "Issuer Member Middle Name": "ISUR_MBR_MIDL_NM",
-    "Issuer Exchange Assigned Subscriber ID": "ISUR_EXCH_ASGD_SUBSR_ID",
-    "FFM Exchange Assigned Member ID": "FFM_EXCH_ASGD_MBR_ID"
-  };
-
-  responseData["fieldLvlList"] = [
-    "C121",
-    "D",
-    "F",
-    "G",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "NA",
-    "U"
-  ];
-  responseData["recordLvlList"] = [
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "I",
-    "L",
-    "M",
-    "N",
-    "P",
-    "R",
-    "U",
-    "W",
-    "Z"
-  ];
-
-  responseData["errorCategoryOptions"] = errorCategoryOptions;
-  responseData["errorCodeDescOptions"] = errorCodeDescOptions;
-  responseData["errCategoryList"] = errCategoryList;
-  responseData["getSearchErrorDesc"] = getSearchErrorDesc;
-  
-  res.status(200).send(responseData);
-});
 
 function randomIntFromInterval(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -405,6 +382,38 @@ app.post("/save/ListView", (req, res) => {
   //  res.sendStatus(200).send(resultData);
   res.json(200, resultData);
 });
+
+//?errCategory=QI_INFO
+app.get("/rcno/getFieldInfo", (req, res) => {
+  let responseData = {};
+
+  //M->Field Name Response:
+  responseData["rcnoFieldNameList"] = rcnoFieldNameList;
+  responseData["rcniFieldNameList"] = rcniFieldNameList;
+  responseData["fieldNameMapRCNO"] = fieldNameMapRCNO;
+  responseData["fieldNameMapRCNI"] = fieldNameMapRCNI;
+
+  responseData["fieldLvlList"] = fieldLvlList;
+  responseData["recordLvlList"] = recordLvlList;
+
+  responseData["errorCategoryOptions"] = errorCategoryOptions;
+  responseData["errorCodeDescOptions"] = errorCodeDescOptions;
+  responseData["errCategoryList"] = errCategoryList;
+  responseData["getSearchErrorDesc"] = getSearchErrorDesc;
+
+  res.status(200).send(responseData);
+});
+
+app.get("/geterrorcodedescusgerrctg",
+  (req, res) => {
+    var data = req.query.errCategory;
+    var resultData = {
+      rcnoListViewRes: rcnoListViewRes,
+      errorCodeSearchResult: errorCodeSearchResult
+    };
+    res.status(200).send(resultData);
+  }
+);
 
 app.listen(3000, function() {
   console.log("Server running port localhost:3000");
