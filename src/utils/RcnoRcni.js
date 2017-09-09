@@ -45,6 +45,7 @@ export const GET_RCNI_LIST_VIEW_URL ='http://wks51b2228:9080/nebert/ui/rcnilistv
  */
 
 
+export const GET_SEARCH_VIEW_ERROR_PAGE_URL = 'http://wks51b228:9080/nebert/ui/rcnosearchanderrorview/getreconsearchandviewerrorlist';
 export const GET_RECORD_SUMMARY_DETAILS_URL = 'http://localhost:3000/rcno/getFieldInfo';
 export const GET_FIELD_SUMMARY_DETAILS_URL = 'http://localhost:3000/rcno/getFieldInfo';
 export const GET_FIELD_FLAG_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';

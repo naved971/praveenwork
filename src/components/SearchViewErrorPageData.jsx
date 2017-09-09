@@ -152,10 +152,11 @@ class SearchViewErrorPageData extends Component {
       // errorCodeSelected: this.props.defaultErrorCode,
       errorCategorySelected: this.props.defaultErrorCategory,
       errorTypeSelected: this.props.defaultErrorType,
+      errType:"ALL",
       submissionTypeSelected: this.props.defaultSubmissionType,
+      subType:"ALL",
       errorCodeDescSelected: this.props.defaultErrorCodeDesc,
-      RCNI_DOB: null,
-      RCNO_DOB: null,
+      isurDob: null,
       covYear: this.props.defaultCovYear,
       tradSelected: this.props.defaultTradingPartners,
       advFields: {
@@ -251,13 +252,39 @@ class SearchViewErrorPageData extends Component {
   //   this.setState({ errorCodeSelected: selected });
   // }
   handleErrorCategoryChange(selected) {
+    debugger;
     this.setState({ errorCategorySelected: selected });
   }
   handleErrorTypeChange(selected) {
-    this.setState({ errorTypeSelected: selected });
+      //---Error Type
+      let errType = selected.length === 0 ? "ALL" : undefined;
+      
+          if (errType === undefined) {
+            errType = "";
+            selected.forEach(t => {
+              errType +=this.props.errorTypeOptions[t].label + ",";
+            });
+            errType = errType.slice(0, -1);
+          }
+
+
+
+    this.setState({errType:errType, errorTypeSelected: selected });
   }
   handleSubmissionTypeChange(selected) {
-    this.setState({ submissionTypeSelected: selected });
+    //---Sub Type
+    let subType =
+    selected.length === 0 ? "ALL" : undefined;
+
+  if (subType === undefined) {
+    subType = "";
+    selected.forEach(t => {
+      subType += this.props.submissionTypeOptions[t].label + ",";
+    });
+    subType = subType.slice(0, -1);
+  }
+
+    this.setState({ subType: subType ,submissionTypeSelected: selected });
   }
   handleErrorCodeDescChange(selected) {
     this.setState({ errorCodeDescSelected: selected });
@@ -335,13 +362,13 @@ class SearchViewErrorPageData extends Component {
       )
     };
 
-    this.refs.advFfmFstNm.value = "";
-    this.refs.advFfmLstNm.value = "";
-    this.refs.advFfmIsurExchSubId.value = "";
-    this.refs.advFfmExchPlcyId.value = "";
-    this.refs.advFfmAscnRcTcNum.value = "";
-    this.refs.advFfmDob.refs.input.value = "";
-    this.setState({ RCNI_DOB: null });
+    this.refs.isurFstName.value = "";
+    this.refs.isurLstName.value = "";
+    this.refs.isurExchSubId.value = "";
+    this.refs.isurPolicyId.value = "";
+    this.refs.recordTrcNb.value = "";
+    this.refs.isurDob.refs.input.value = "";
+    this.setState({ isurDob: null });
 
     this.state.advFields = {};
     resetFields.errStr = [];
@@ -370,7 +397,6 @@ class SearchViewErrorPageData extends Component {
     if(type=="submitInventory"){
       let clsName = undefined;
       if(row.isSubmitInventoryDisabled){
-        debugger;
         clsName="errorbuttonDisabled";
       }
 
@@ -411,7 +437,7 @@ class SearchViewErrorPageData extends Component {
                     >
                       File Run Month/Year:*
                       <DatePicker
-                        ref="fileRunDPicker_RCNI"
+                        ref="fileRunDPicker"
                         selected={
                           this.state.startDate
                         }
@@ -607,9 +633,9 @@ class SearchViewErrorPageData extends Component {
                       First Name:
                       <input
                         type="text"
-                        ref="advFfmFstNm"
-                        name="advFfmFstNm"
-                        value={this.state.advFfmFstNm}
+                        ref="isurFstName"
+                        name="isurFstName"
+                        value={this.state.isurFstName}
                         onChange={this.handleAdvSearch}
                         placeholder="First Name"
                       />
@@ -628,9 +654,9 @@ class SearchViewErrorPageData extends Component {
                     Last Name:
                     <input
                       type="text"
-                      ref="advFfmLstNm"
-                      name="advFfmLstNm"
-                      value={this.state.advFfmLstNm}
+                      ref="isurLstName"
+                      name="isurLstName"
+                      value={this.state.isurLstName}
                       onChange={this.handleAdvSearch}
                       placeholder="Last Name"
                     />
@@ -653,10 +679,10 @@ class SearchViewErrorPageData extends Component {
                       showMonthDropdown
                       showYearDropdown
                       scrollableYearDropdown
-                      ref="advFfmDob"
-                      selected={this.state.RCNI_DOB}
+                      ref="isurDob"
+                      selected={this.state.isurDob}
                       onChange={e => {
-                        this.setState({ RCNI_DOB: e });
+                        this.setState({ isurDob: e });
                       }}
                     />
                   </label>
@@ -676,9 +702,9 @@ class SearchViewErrorPageData extends Component {
                       Issuer Ex Subscriber Id:
                       <input
                         type="text"
-                        ref="advFfmIsurExchSubId"
-                        name="advFfmIsurExchSubId"
-                        value={this.state.advFfmIsurExchSubId}
+                        ref="isurExchSubId"
+                        name="isurExchSubId"
+                        value={this.state.isurExchSubId}
                         onChange={this.handleAdvSearch}
                         placeholder="Ex Subscriber Id"
                       />
@@ -697,9 +723,9 @@ class SearchViewErrorPageData extends Component {
                     Issuer Assigned Ex Policy ID:
                     <input
                       type="text"
-                      ref="advFfmExchPlcyId"
-                      name="advFfmExchPlcyId"
-                      value={this.state.advFfmIsurExchSubId}
+                      ref="isurPolicyId"
+                      name="isurPolicyId"
+                      value={this.state.isurPolicyId}
                       onChange={this.handleAdvSearch}
                       placeholder="Ex Policy ID"
                     />
@@ -717,9 +743,9 @@ class SearchViewErrorPageData extends Component {
                     Issuer Record Trace Number:
                     <input
                       type="text"
-                      ref="advFfmAscnRcTcNum"
-                      name="advFfmAscnRcTcNum"
-                      value={this.state.advFfmIsurExchSubId}
+                      ref="recordTrcNb"
+                      name="recordTrcNb"
+                      value={this.state.recordTrcNb}
                       onChange={this.handleAdvSearch}
                       placeholder="Record Trace Number"
                     />
@@ -908,7 +934,14 @@ class SearchViewErrorPageData extends Component {
       </div>
     );
   }
-  componentWillReceiveProps(nextProps) {
+  
+  componentWillReceiveProps(nextProps,nextState) {
+
+    this.setState({
+      errorCategorySelected: nextProps.defaultErrorCategory,
+      errorCodeDescSelected: nextProps.defaultErrorCodeDesc
+    });
+
 
     if (this.state.lastDataReceived < nextProps.lastDataReceived) {
       if (
