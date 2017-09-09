@@ -492,7 +492,7 @@ class ListViewSummaryPageData extends Component {
           this.refs.advIsrRcTcNum.value="";
           this.refs.advIsrPlcyId.value="";
           this.refs.advIsrExchSubId.value="";
-          this.refs.advIsrExchSubId.value="";
+          
           this.refs.advIsrFstNm.value="";
           this.refs.advIsrLstNm.value="";
           this.refs.advIsrDob.refs.input.value =""
@@ -1008,14 +1008,14 @@ let rcniFieldDDL = null;
                       <label className="formLabel"
                         style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer Assigned Ex Policy ID:
-          <input type="text" ref="advFfmExchPlcyId" name="advFfmExchPlcyId" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Ex Policy ID" />
+          <input type="text" ref="advFfmExchPlcyId" name="advFfmExchPlcyId" value={this.state.advFfmExchPlcyId} onChange={this.handleAdvSearch} placeholder="Ex Policy ID" />
                       </label>
                     </Column>
                     <Column medium={3}>
                       <label className="formLabel"
                         style={{ "display": "inline", "fontWeight": "500", "color": "#3498db" }}>
                         Issuer Record Trace Number:
-          <input type="text" ref="advFfmAscnRcTcNum" name="advFfmAscnRcTcNum" value={this.state.advFfmIsurExchSubId} onChange={this.handleAdvSearch} placeholder="Record Trace Number" />
+          <input type="text" ref="advFfmAscnRcTcNum" name="advFfmAscnRcTcNum" value={this.state.advFfmAscnRcTcNum} onChange={this.handleAdvSearch} placeholder="Record Trace Number" />
                       </label>
                     </Column>
                   </Row>

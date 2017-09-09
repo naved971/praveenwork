@@ -154,8 +154,7 @@ var errCategoryList = [
   "ROW_LEVEL"
 ];
 var getSearchErrorDesc = {
-  "RCNO_F_I_ERR020 -  Mailing Address Street Mismatch, Issuer to update to FFM value":
-    "RCNO_F_I_ERR020",
+  "RCNO_F_I_ERR020 -  Mailing Address Street Mismatch, Issuer to update to FFM value": "RCNO_F_I_ERR020",
   "RCNO_F_L_ERR040 -  Total Premium End Date Mismatch, FFM and Issuer to update to value listed in the FFM field based on automated business rule":
     "RCNO_F_L_ERR040",
   "RCNO_F_K_ERR029 -  QHPID Identifier Mismatch, both FFM and Issuer to update to value listed in the FFM field based on ER&R determination":
@@ -373,7 +372,6 @@ var rcnoListViewRes = [
 app.post("/save/ListView", (req, res) => {
   var randomNo = randomIntFromInterval();
   var body = req.body;
-
   var resultData = {
     body: body,
     rcnoListViewRes: rcnoListViewRes,
