@@ -55,6 +55,7 @@ export const GET_RCNO_FIELD_NAME_INPUT_URL = 'http://localhost:3000/rcno/getFiel
 export const GET_RCNI_FIELD_NAME_INPUT_URL = 'http://localhost:3000/rcno/getFieldInfo';
 export const GET_RCNO_LIST_VIEW_URL= 'http://localhost:3000/rcno/getFieldInfo';
 export const GET_RCNI_LIST_VIEW_URL = 'http://localhost:3000/rcno/getFieldInfo';
+export const GET_SEARCH_VIEW_DESC = 'http://localhost:3000/rcno/getFieldInfo';
 
 export const POST_Data = 'http://localhost:3000/save/ListView';
 

@@ -93,7 +93,7 @@ const errorCodeSearchResult = [
     contractId: 1001,
     errorCode: 201,
     errorDesc: "Missing Fields",
-    isSubmitInventoryDisabled: true
+    indicator: "AUTO"
   },
   {
     recordIdentifier: "111-1111-1112",
@@ -102,7 +102,9 @@ const errorCodeSearchResult = [
     exSubId: 2021,
     contractId: 1002,
     errorCode: 201,
-    errorDesc: "Missing Fields"
+    errorDesc: "Missing Fields",
+    indicator: "AUTO"
+
   },
   {
     recordIdentifier: "111-1111-1113",
@@ -111,7 +113,9 @@ const errorCodeSearchResult = [
     exSubId: 2023,
     contractId: 1003,
     errorCode: 203,
-    errorDesc: "Missing Fields"
+    errorDesc: "Missing Fields",
+    indicator: "MANUAL"
+
   },
   {
     recordIdentifier: "111-1111-1114",
@@ -120,7 +124,8 @@ const errorCodeSearchResult = [
     exSubId: 2024,
     contractId: 1004,
     errorCode: 204,
-    errorDesc: "Missing Fields"
+    errorDesc: "Missing Fields",
+    indicator: "MANUAL"
   },
   {
     recordIdentifier: "111-1111-1115",
@@ -130,7 +135,7 @@ const errorCodeSearchResult = [
     contractId: 1005,
     errorCode: 205,
     errorDesc: "Missing Fields",
-    isSubmitInventoryDisabled: true
+    indicator: "MANUAL"
   },
   {
     recordIdentifier: "111-1111-1116",
@@ -139,7 +144,8 @@ const errorCodeSearchResult = [
     exSubId: 2026,
     contractId: 1006,
     errorCode: 206,
-    errorDesc: "Missing Fields"
+    errorDesc: "Missing Fields",
+    indicator: "AUTO"
   }
 ];
 

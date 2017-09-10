@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import _ from "lodash";
 import { Field, reduxForm } from "redux-form";
-
+import * as rcnorcni from '../utils/RcnoRcni';
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Row, Column, Grid, Button } from "react-foundation";
@@ -125,7 +125,6 @@ class SearchViewErrorPageData extends Component {
       "handleCovYearChange",
       "handleDOBChange",
       "handleMultiSelectRenderer",
-      'handleErrorCategoryChange',
       "handleInventoryTypeChange",
       "handleErrorCategoryChange",
       "handleErrorTypeChange",
@@ -252,8 +251,27 @@ class SearchViewErrorPageData extends Component {
   //   this.setState({ errorCodeSelected: selected });
   // }
   handleErrorCategoryChange(selected) {
-    debugger;
-    this.setState({ errorCategorySelected: selected });
+
+    let selectedCategory = selected.length === this.props.defaultErrorCategory.length ? "ALL" : undefined;
+    
+        if (selectedCategory === undefined) {
+          selectedCategory = "";
+          selected.forEach(t => {
+            selectedCategory += t + ",";
+          });
+          selectedCategory = selectedCategory.slice(0, -1);
+        }
+      
+      let Url= rcnorcni.GET_SEARCH_VIEW_DESC +"?errCategory=" + selectedCategory;
+      this.props.fetchErrorDescription(Url,()=>{
+        this.setState({ errorCategorySelected: selected });
+        
+      })
+
+
+
+
+
   }
   handleErrorTypeChange(selected) {
       //---Error Type
@@ -396,11 +414,14 @@ class SearchViewErrorPageData extends Component {
     //submitERE if(submitInventory)
     if(type=="submitInventory"){
       let clsName = undefined;
-      if(row.isSubmitInventoryDisabled){
+      let isCheckBoxDiabled= false;
+      if(row.indicator == "AUTO"){
+        
         clsName="errorbuttonDisabled";
+        isCheckBoxDiabled = true;
       }
 
-      return (<input disabled={row.isSubmitInventoryDisabled} type="checkbox" name="submitInventory" value="Submit Inventory"
+      return (<input disabled={isCheckBoxDiabled} type="checkbox" name="submitInventory" value="Submit Inventory"
        onChange={(e) => this.props.handleSubmitInventory(e, row)} />);
     }else{
           return (<input className="button primary  btn-lg btn-color formButton submitERandE" type="button" name="submitERE" value="Submit ER & E" onClick={(e) => this.props.handleSubmitERE(e, row)} />)

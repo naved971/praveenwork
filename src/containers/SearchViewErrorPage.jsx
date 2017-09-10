@@ -103,63 +103,69 @@ let resultData =
 
     
     const errorCodeSearchResult = [
-  {
-    recordIdentifier: "111-1111-1111",
-    firstName: "A1",
-    lastName: "A1_LastName",
-    exSubId: 2020,
-    contractId: 1001,
-    errorCode: 201,
-    errorDesc: "Missing Fields",
-    isSubmitInventoryDisabled:true
-  },
-  {
-    recordIdentifier: "111-1111-1112",
-    firstName: "A2",
-    lastName: "A2_LastName",
-    exSubId: 2021,
-    contractId: 1002,
-    errorCode: 201,
-    errorDesc: "Missing Fields"
-  },
-  {
-    recordIdentifier: "111-1111-1113",
-    firstName: "A3",
-    lastName: "A3_LastName",
-    exSubId: 2023,
-    contractId: 1003,
-    errorCode: 203,
-    errorDesc: "Missing Fields"
-  },
-  {
-    recordIdentifier: "111-1111-1114",
-    firstName: "A4",
-    lastName: "A4_LastName",
-    exSubId: 2024,
-    contractId: 1004,
-    errorCode: 204,
-    errorDesc: "Missing Fields"
-  },
-  {
-    recordIdentifier: "111-1111-1115",
-    firstName: "A5",
-    lastName: "A5_LastName",
-    exSubId: 2025,
-    contractId: 1005,
-    errorCode: 205,
-    errorDesc: "Missing Fields",
-    isSubmitInventoryDisabled: true
-  },
-  {
-    recordIdentifier: "111-1111-1116",
-    firstName: "A6",
-    lastName: "A6_LastName",
-    exSubId: 2026,
-    contractId: 1006,
-    errorCode: 206,
-    errorDesc: "Missing Fields"
-  }
-];
+      {
+        recordIdentifier: "111-1111-1111",
+        firstName: "A1",
+        lastName: "A1_LastName",
+        exSubId: 2020,
+        contractId: 1001,
+        errorCode: 201,
+        errorDesc: "Missing Fields",
+        indicator: "AUTO"
+      },
+      {
+        recordIdentifier: "111-1111-1112",
+        firstName: "A2",
+        lastName: "A2_LastName",
+        exSubId: 2021,
+        contractId: 1002,
+        errorCode: 201,
+        errorDesc: "Missing Fields",
+        indicator: "AUTO"
+    
+      },
+      {
+        recordIdentifier: "111-1111-1113",
+        firstName: "A3",
+        lastName: "A3_LastName",
+        exSubId: 2023,
+        contractId: 1003,
+        errorCode: 203,
+        errorDesc: "Missing Fields",
+        indicator: "MANUAL"
+    
+      },
+      {
+        recordIdentifier: "111-1111-1114",
+        firstName: "A4",
+        lastName: "A4_LastName",
+        exSubId: 2024,
+        contractId: 1004,
+        errorCode: 204,
+        errorDesc: "Missing Fields",
+        indicator: "MANUAL"
+      },
+      {
+        recordIdentifier: "111-1111-1115",
+        firstName: "A5",
+        lastName: "A5_LastName",
+        exSubId: 2025,
+        contractId: 1005,
+        errorCode: 205,
+        errorDesc: "Missing Fields",
+        indicator: "MANUAL"
+      },
+      {
+        recordIdentifier: "111-1111-1116",
+        firstName: "A6",
+        lastName: "A6_LastName",
+        exSubId: 2026,
+        contractId: 1006,
+        errorCode: 206,
+        errorDesc: "Missing Fields",
+        indicator: "AUTO"
+      }
+    ];
 
 class SearchViewErrorPage extends Component {
   constructor(props) {
@@ -170,6 +176,7 @@ class SearchViewErrorPage extends Component {
       "getInputFields",
       "getResultSummary",
       "buildUrl",
+      "fetchErrorDescription"
     ].map(fn => {
       this[fn] = this[fn].bind(this);
     });
@@ -446,6 +453,7 @@ let errorCategory =
                 errorCodeDescOptions={this.state.errorCodeDescOptions}
                 handleSubmitInventory={this.handleSubmitInventory}
                 handleSubmitERE={this.handleSubmitERE}
+                fetchErrorDescription = {this.fetchErrorDescription}
               />
             </Column>
           </Row>
@@ -456,16 +464,8 @@ let errorCategory =
   componentDidMount() {
     this.getInputFields();
   }
-  
-  getInputFields() {
-    this.getResultSummary({
-        fromDate: this.state.fromDate,
-        coverageYear: this.state.covYear,
-        tradingPartnerId: "All"
-    });
-
-    // Get Error Code Description
-    fetch(rcnorcni.GET_RECORD_FLAG_INPUT_URL, {
+  fetchErrorDescription(url,callback){
+    fetch(url, {
       method: "GET",
       credentials: "same-origin"
     })
@@ -486,10 +486,24 @@ let errorCategory =
           label: err
         }));
         this.setState({ defaultErrorCodeDesc: defaultErrorCodeDesc, errorCodeDescOptions: errorCodeDesc });
+        if(callback){
+          callback();
+        }
       })
       .catch(error => {
         console.log(error);
       });
+
+  }
+  getInputFields() {
+    this.getResultSummary({
+        fromDate: this.state.fromDate,
+        coverageYear: this.state.covYear,
+        tradingPartnerId: "All"
+    });
+
+    // Get Error Code Description
+   this.fetchErrorDescription(rcnorcni.GET_RECORD_FLAG_INPUT_URL);
 
     fetch(rcnorcni.GET_FIELD_FLAG_INPUT_URL, {
       method: "GET",
