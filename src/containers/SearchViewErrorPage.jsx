@@ -181,7 +181,9 @@ class SearchViewErrorPage extends Component {
     let qs = "";
     for (let key in parameters) {
       let value = parameters[key];
-      qs += key + "=" + value + "&";
+      if(value!==undefined){
+         qs += key + "=" + value + "&";
+      }
     }
     if (qs.length > 0) {
       qs = qs.substring(0, qs.length - 1); //chop off last "&"
