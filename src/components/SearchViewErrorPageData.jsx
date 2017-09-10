@@ -421,8 +421,8 @@ class SearchViewErrorPageData extends Component {
         isCheckBoxDiabled = true;
       }
 
-      return (<input disabled={isCheckBoxDiabled} type="checkbox" name="submitInventory" value="Submit Inventory"
-       onChange={(e) => this.props.handleSubmitInventory(e, row)} />);
+      return (<input disabled={isCheckBoxDiabled} className="submit_inventry" type="checkbox" name="submitInventory" value="Submit Inventory"
+       onChange={(e) => this.props.handleSubmitInventory(e, row)}  />);
     }else{
           return (<input className="button primary  btn-lg btn-color formButton submitERandE" type="button" name="submitERE" value="Submit ER & E" onClick={(e) => this.props.handleSubmitERE(e, row)} />)
     }
@@ -882,10 +882,10 @@ class SearchViewErrorPageData extends Component {
             <TableHeaderColumn  width='150' dataField="errorDesc">
               Error Desc
             </TableHeaderColumn>
-            <TableHeaderColumn width='150' dataField="submitInventory" dataFormat={this.editFormatter.bind(this,"submitInventory")}>
+            <TableHeaderColumn width='150' dataAlign="center" dataField="submitInventory" dataFormat={this.editFormatter.bind(this,"submitInventory")}>
               Submit Inventory
             </TableHeaderColumn >
-            <TableHeaderColumn width='150' dataField="submitERE" dataFormat={this.editFormatter.bind(this,"submitERE")}>
+            <TableHeaderColumn width='150'  dataAlign="center" dataField="submitERE" dataFormat={this.editFormatter.bind(this,"submitERE")}>
               Submit ER and E
             </TableHeaderColumn>
 

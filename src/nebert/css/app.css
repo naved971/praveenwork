@@ -832,10 +832,14 @@ form div div span{
 .errorbuttonDisabled{
     opacity: 0.5;
 }
-
+.submit_inventry{
+    height: 2.0em;
+    
+}
 .submitERandE{
-    background-color: green;
+    background-color: green ;
     padding-top : 0em;
-    height: 2.5em;
-    margin-right: 20px;
+    /* height: 2.0em; */
+    margin:0 !important;
+    
 }
