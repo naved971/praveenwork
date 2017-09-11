@@ -362,22 +362,13 @@ class SearchViewErrorPageData extends Component {
       startDate: moment().subtract(1, "month"),
       covYear: JSON.parse(JSON.stringify(initialState.covYear)),
       tradSelected: JSON.parse(JSON.stringify(initialState.tradSelected)),
-      inventoryTypeSelected: JSON.parse(
-        JSON.stringify(initialState.inventoryTypeSelected)
-      ),
+      //inventoryTypeSelected: JSON.parse(JSON.stringify(initialState.inventoryTypeSelected)      ),
       // errorCodeSelected: JSON.parse(JSON.stringify(initialState.errorCodeSelected)),
-      errorCategorySelected: JSON.parse(
-        JSON.stringify(initialState.errorCategorySelected)
-      ),
-      errorTypeSelected: JSON.parse(
-        JSON.stringify(initialState.errorTypeSelected)
-      ),
-      submissionTypeSelected: JSON.parse(
-        JSON.stringify(initialState.submissionTypeSelected)
-      ),
-      errorCodeDescSelected: JSON.parse(
-        JSON.stringify(initialState.errorCodeDescSelected)
-      )
+      errorCategorySelected: JSON.parse( JSON.stringify(initialState.errorCategorySelected) ),
+      errorTypeSelected: JSON.parse(JSON.stringify(initialState.errorTypeSelected) ),
+      submissionTypeSelected: JSON.parse( JSON.stringify(initialState.submissionTypeSelected) ),
+      errorCodeDescSelected: JSON.parse( JSON.stringify(initialState.errorCodeDescSelected) ),
+      
     };
 
     this.refs.isurFstName.value = "";
@@ -386,7 +377,9 @@ class SearchViewErrorPageData extends Component {
     this.refs.isurPolicyId.value = "";
     this.refs.recordTrcNb.value = "";
     this.refs.isurDob.refs.input.value = "";
-    this.setState({ isurDob: null });
+    this.setState({ isurDob: null
+     // , isurFstName:"" , isurLstName:"",isurExchSubId:"",isurPolicyId:"",recordTrcNb:"",
+    });
 
     this.state.advFields = {};
     resetFields.errStr = [];
@@ -962,7 +955,10 @@ class SearchViewErrorPageData extends Component {
       errorCategorySelected: nextProps.defaultErrorCategory,
       errorCodeDescSelected: nextProps.defaultErrorCodeDesc
     });
-
+    if(initialState!==undefined){
+        initialState.errorCategorySelected= JSON.parse(JSON.stringify(nextProps.defaultErrorCategory)),
+        initialState.errorCodeDescSelected= JSON.parse(JSON.stringify(nextProps.defaultErrorCodeDesc))
+    }
 
     if (this.state.lastDataReceived < nextProps.lastDataReceived) {
       if (
@@ -992,9 +988,11 @@ class SearchViewErrorPageData extends Component {
 
       initialState = {
         covYear: JSON.parse(JSON.stringify(this.state.covYear)),
-        tradSelected: JSON.parse(
-          JSON.stringify(this.state.tradSelected)
-        )
+        tradSelected: JSON.parse(JSON.stringify(this.state.tradSelected)),
+
+        errorTypeSelected: JSON.parse(JSON.stringify(this.props.defaultErrorType)),
+        submissionTypeSelected: JSON.parse(JSON.stringify(this.props.defaultSubmissionType)),
+  
       };
       //console.log(initialState);
       //console.log(this.state);
