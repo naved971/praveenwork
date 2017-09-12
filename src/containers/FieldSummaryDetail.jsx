@@ -442,7 +442,9 @@ class FieldSummaryDetail extends Component {
             }
             return response.json();
         }).then((response) => {
+
             console.log(response);
+            response= response['resultData'];
             let data = response;
             this.setState({
                 lastDataReceived: Date.now(),

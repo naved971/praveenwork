@@ -412,6 +412,52 @@ var rcnoSearchRecords = {
   totalPercentage: "100.00%"
 };
 
+const resultData = {
+    "headerSet": [
+        "Member-First-Name %",
+        "Agent/Broker-NPN Count",
+        "Total Count",
+        "Mailing-Address-Street %",
+        "Member-Middle-Name %",
+        "Total Percentage",
+        "Agent/Broker-NPN %",
+        "Member-First-Name Count",
+        "Mailing-Address-Street Count",
+        "Field Level Flag",
+        "Member-Middle-Name Count"
+    ],
+    "responseMap": {
+        "D": {
+            "Member-First-Name %": "35.25%",
+            "Agent/Broker-NPN Count": "12635",
+            "Mailing-Address-Street %": "95.00%",
+            "Member-Middle-Name %": "35.25%",
+            "Agent/Broker-NPN %": "92.65%",
+            "Member-First-Name Count": "4808",
+            "Mailing-Address-Street Count": "12956",
+            "Member-Middle-Name Count": "4808"
+        },
+        "I": {
+            "Agent/Broker-NPN Count": "1001",
+            "Agent/Broker-NPN %": "7.34%"
+        },
+        "M": {
+            "Member-First-Name %": "64.74%",
+            "Agent/Broker-NPN Count": "1",
+            "Mailing-Address-Street %": "4.99%",
+            "Member-Middle-Name %": "64.74%",
+            "Agent/Broker-NPN %": ".00%",
+            "Member-First-Name Count": "8829",
+            "Mailing-Address-Street Count": "681",
+            "Member-Middle-Name Count": "8829"
+        }
+    },
+    "total": {
+        "Member-Middle-Name Total Count": "13637",
+        "Member-Middle-Name Total %": "100.00%"
+    }
+};
+
 //?errCategory=QI_INFO
 app.get("/rcno/getFieldInfo", (req, res) => {
   let responseData = {};
@@ -430,7 +476,7 @@ app.get("/rcno/getFieldInfo", (req, res) => {
   responseData["errorCodeDescOptions"] = errorCodeDescOptions;
   responseData["errCategoryList"] = errCategoryList;
   responseData["getSearchErrorDesc"] = getSearchErrorDesc;
-
+responseData["resultData"]= resultData;
   res.status(200).send(responseData);
 });
 
