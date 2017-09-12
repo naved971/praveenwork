@@ -104,7 +104,6 @@ const errorCodeSearchResult = [
     errorCode: 201,
     errorDesc: "Missing Fields",
     indicator: "AUTO"
-
   },
   {
     recordIdentifier: "111-1111-1113",
@@ -115,7 +114,6 @@ const errorCodeSearchResult = [
     errorCode: 203,
     errorDesc: "Missing Fields",
     indicator: "MANUAL"
-
   },
   {
     recordIdentifier: "111-1111-1114",
@@ -160,7 +158,8 @@ var errCategoryList = [
   "ROW_LEVEL"
 ];
 var getSearchErrorDesc = {
-  "RCNO_F_I_ERR020 -  Mailing Address Street Mismatch, Issuer to update to FFM value": "RCNO_F_I_ERR020",
+  "RCNO_F_I_ERR020 -  Mailing Address Street Mismatch, Issuer to update to FFM value":
+    "RCNO_F_I_ERR020",
   "RCNO_F_L_ERR040 -  Total Premium End Date Mismatch, FFM and Issuer to update to value listed in the FFM field based on automated business rule":
     "RCNO_F_L_ERR040",
   "RCNO_F_K_ERR029 -  QHPID Identifier Mismatch, both FFM and Issuer to update to value listed in the FFM field based on ER&R determination":
@@ -357,7 +356,6 @@ var recordLvlList = [
   "Z"
 ];
 
-
 function randomIntFromInterval(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -386,12 +384,40 @@ app.post("/save/ListView", (req, res) => {
   //  res.sendStatus(200).send(resultData);
   res.json(200, resultData);
 });
+var rcnoSearchRecords = {
+  rcnoSearchRecords: [
+    {
+      flagDescription:
+        "Non-Match with Issuer Action, No FFM Action Due to Uneven Record Match",
+      flag: "E",
+      count: "95",
+      percentage: "9.26%"
+    },
+    {
+      flagDescription: "Non-Match with Issuer Action Required",
+      flag: "N",
+      count: "329",
+      percentage: "32.09%"
+    },
+    {
+      flagDescription:
+        "Non-Match with No Issuer Action, No FFM Action Due   to Uneven Record Match",
+      flag: "P",
+      count: "601",
+      percentage: "58.63%"
+    }
+  ],
+  flagTotalDesc: "Grand Total(Selected Records/Total Records in Files)",
+  totalCount: "1025",
+  totalPercentage: "100.00%"
+};
 
 //?errCategory=QI_INFO
 app.get("/rcno/getFieldInfo", (req, res) => {
   let responseData = {};
 
   //M->Field Name Response:
+  responseData["rcnoSearchRecords"] = rcnoSearchRecords;
   responseData["rcnoFieldNameList"] = rcnoFieldNameList;
   responseData["rcniFieldNameList"] = rcniFieldNameList;
   responseData["fieldNameMapRCNO"] = fieldNameMapRCNO;
@@ -408,16 +434,14 @@ app.get("/rcno/getFieldInfo", (req, res) => {
   res.status(200).send(responseData);
 });
 
-app.get("/geterrorcodedescusgerrctg",
-  (req, res) => {
-    var data = req.query.errCategory;
-    var resultData = {
-      rcnoListViewRes: rcnoListViewRes,
-      errorCodeSearchResult: errorCodeSearchResult
-    };
-    res.status(200).send(resultData);
-  }
-);
+app.get("/geterrorcodedescusgerrctg", (req, res) => {
+  var data = req.query.errCategory;
+  var resultData = {
+    rcnoListViewRes: rcnoListViewRes,
+    errorCodeSearchResult: errorCodeSearchResult
+  };
+  res.status(200).send(resultData);
+});
 
 app.listen(3000, function() {
   console.log("Server running port localhost:3000");

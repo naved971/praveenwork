@@ -273,14 +273,16 @@ class RecordSummaryDetails extends Component {
 
         let url = this.buildUrl(input);
         fetch(url, {
-            method: 'GET',
-            credentials: "same-origin"
+            method: 'GET'
+            //,credentials: "same-origin"
         }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
             }
             return response.json();
         }).then((response) => {
+            debugger;
+            response = response.rcnoSearchRecords;
             console.log(response);
             let data = JSON.parse(JSON.stringify(response.rcnoSearchRecords));
             data.push({"flagDescription": response.flagTotalDesc, "flag": "-", "count": response.totalCount, "percentage": response.totalPercentage});
