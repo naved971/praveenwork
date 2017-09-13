@@ -56,6 +56,10 @@ export default class CapsuleBarChart extends React.Component {
         let chartComp = this.getChartElements(this.props.chartData);
         return { chartComp };
     }
+    flagClick(flag)
+        {
+            this.props.flagClick(flag);
+        }
     getChartElements(data) {
         let chartComp = [];
         let totalChartElement = data.length;
@@ -82,7 +86,7 @@ export default class CapsuleBarChart extends React.Component {
                     style.borderBottomLeftRadius = defaultClass.chart.height / 2
             }
             let el = <span key={index} style={style}>
-                <span style={defaultClass.label}>{d.label}</span>
+                 <span style={defaultClass.label} className="capsule-flag" onClick={this.flagClick.bind(this,d.label)}>{d.label}</span>
             </span>;
             chartComp.push(el);
         });

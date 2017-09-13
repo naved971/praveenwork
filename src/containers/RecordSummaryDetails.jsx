@@ -1,13 +1,14 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import RcnoRcniSideBar from './RcnoRcniSideBar';
 import App from '../components/App';
 import RecordSummaryDetailsData from '../components/RecordSummaryDetailsData';
 import moment from 'moment';
-import {Row, Column} from 'react-foundation'
-import {NavLink} from 'react-router-dom';
+import { Row, Column } from 'react-foundation'
+import { NavLink } from 'react-router-dom';
 import * as rcnorcni from '../utils/RcnoRcni';
 import * as dashboardConstValues from '../utils/DashboardConstants';
+
 
 const test = {
     "rcnoSearchRecords": [
@@ -120,11 +121,11 @@ const recordFlags = [
 const tradingPartnerOptions = [
     {
         label: '592015694B-PPO',
-        id: '592015694',
+        id: '592015694B',
         value: 0
     }, {
         label: '592403696B-HMO',
-        id: '592403696',
+        id: '592403696B',
         value: 1
     }, {
         label: '592876465-Dental',
@@ -133,28 +134,32 @@ const tradingPartnerOptions = [
     }
 ];
 
+
 class RecordSummaryDetails extends Component {
     constructor(props) {
         super(props);
+        window.rsd = this;
         this.state = this.getInitialState();
         ['handleSubmit', 'getSummaryResult', 'buildUrl'].map(fn => this[fn] = this[fn].bind(this));
         console.log(this.state);
     }
     getInitialState() {
+        // const defaultTradingPartners = [0, 1, 2];
         return {
-            recordFlags,
+            // fromDate: moment().format('MM/YYYY'),
             summaryTableData: [],
-            lastDataReceived: Date.now()
+            lastDataReceived: Date.now(),
+            recordFlags
         };
     }
-    handleSubmit(item) {
+    handleSubmit(item, callback) {
+        // console.dir(item);
         item
             .state
             .checkBoxFlags
             .forEach((f, index) => {
                 recordFlags[index].selected = f;
             });
-
         this.setState({
             recordFlags
         }, () => {
@@ -162,7 +167,7 @@ class RecordSummaryDetails extends Component {
                 fromDate: moment(item.state.startDate).format('MM/YYYY'),
                 covYear: item.state.covYear,
                 tradSelected: item.state.tradSelected
-            });
+            }, callback);
         });
     }
     render() {
@@ -171,79 +176,73 @@ class RecordSummaryDetails extends Component {
                 <Row style={{
                     "maxWidth": "78rem"
                 }}>
-                    <Row
-                        className='record-summary-details'
-                        style={{
-                        "maxWidth": "80rem"
-                    }}>
-                        <Column medium={12}>
-                            <div className="record-summary-breadcrumb">
-                                <ol
-                                    className="gwos-breadcrumbs"
-                                    vocab="http://schema.org/"
-                                    typeof="BreadcrumbList">
-                                    <li property="itemListElement" typeof="ListItem">
-                                        <NavLink to={dashboardConstValues.HOME_PAGE_URL}>
-                                            <span property="name">Dashboard</span>
-                                        </NavLink>
-                                        <meta property="position" content="1"/>
-                                    </li>
-                                    <li property="itemListElement" typeof="ListItem">
-                                        <NavLink to={rcnorcni.RCNO_RCNI_RECORD_SUMMARY_DETAILS_URL}>
-                                            <span property="name">RCNO/RCNI</span>
-                                        </NavLink>
-                                        <meta property="position" content="2"/>
-                                    </li>
-                                    <li property="itemListElement" typeof="ListItem">
-                                        <NavLink to={rcnorcni.RCNO_RCNI_RECORD_SUMMARY_DETAILS_URL}>
-                                            <span property="name">Record Search</span>
-                                        </NavLink>
-                                        <meta property="position" content="3"/>
-                                    </li>
-                                </ol>
-                            </div>
-                        </Column>
-                        <Column medium={3}>
-                            <RcnoRcniSideBar activeKey={'1'}/>
-                        </Column>
-                        <Column medium={9} className="record-summary-container">
-                            <div
-                                className="modal-header"
-                                style={{
+                    <Column medium={12}>
+                        <div className="record-summary-breadcrumb">
+                            <ol
+                                className="gwos-breadcrumbs"
+                                vocab="http://schema.org/"
+                                typeof="BreadcrumbList">
+                                <li property="itemListElement" typeof="ListItem">
+                                    <NavLink to={dashboardConstValues.HOME_PAGE_URL}>
+                                        <span property="name">Dashboard</span>
+                                    </NavLink>
+                                    <meta property="position" content="1" />
+                                </li>
+                                <li property="itemListElement" typeof="ListItem">
+                                    <NavLink to={rcnorcni.RCNO_RCNI_RECORD_SUMMARY_DETAILS_URL}>
+                                        <span property="name">RCNO/RCNI</span>
+                                    </NavLink>
+                                    <meta property="position" content="2" />
+                                </li>
+                                <li property="itemListElement" typeof="ListItem">
+                                    <NavLink to={rcnorcni.RCNO_RCNI_RECORD_SUMMARY_DETAILS_URL}>
+                                        <span property="name">Record Search</span>
+                                    </NavLink>
+                                    <meta property="position" content="3" />
+                                </li>
+                            </ol>
+                        </div>
+                    </Column>
+                    <Column medium={3}>
+                        <RcnoRcniSideBar activeKey={'1'} />
+                    </Column>
+                    <Column medium={9} className="record-summary-container">
+                        <div
+                            className="modal-header"
+                            style={{
                                 "backgroundColor": "#3498db",
                                 "borderBottom": "1px solid white",
                                 "borderRadius": "10px 10px"
                             }}>
-                                <h4 className="modal-title">
-                                    <p className="modal-title-header">Record Summary Detail</p>
-                                </h4>
-                            </div>
-                            <br/>
-                            <RecordSummaryDetailsData
-                                lastDataReceived={this.state.lastDataReceived}
-                                covYearOptions={covYearOptions}
-                                tradingPartnerOptions={tradingPartnerOptions}
-                                summaryTableData={this.state.summaryTableData}
-                                recordFlags={this.state.recordFlags}
-                                handleSubmit={this.handleSubmit}/>
-                        </Column>
-                    </Row>
+                            <h4 className="modal-title">
+                                <p className="modal-title-header">Record Summary Detail</p>
+                            </h4>
+                        </div>
+                        <br />
+                        <RecordSummaryDetailsData
+                            lastDataReceived={this.state.lastDataReceived}
+                            covYearOptions={covYearOptions}
+                            tradingPartnerOptions={tradingPartnerOptions}
+                            //summaryTableData={this.state.summaryTableData}
+                            recordFlags={this.state.recordFlags}
+                            handleSubmit={this.handleSubmit} />
+                    </Column>
                 </Row>
             </App>
         );
     }
     componentDidMount() {
-        this.getSummaryResult({
-            tradSelected: [
-                0, 1, 2
-            ],
-            covYear: parseInt(moment().format('YYYY')),
-            fromDate: moment().format('MM/YYYY')
-        });
+        // this.getSummaryResult({
+        //     tradSelected: [
+        //         0, 1, 2
+        //     ],
+        //     covYear: parseInt(moment().format('YYYY')),
+        //     fromDate: moment().subtract(1, 'month').format('MM/YYYY')
+        // });
     }
-
-    getSummaryResult(data) {
+    getSummaryResult(data, callback) {
         let reconFlag = '';
+        this
         this
             .state
             .recordFlags
@@ -259,45 +258,44 @@ class RecordSummaryDetails extends Component {
             data
                 .tradSelected
                 .forEach((a) => {
+                    // console.log("a- ", a);
                     tradingPartnerOptions[a];
                     local += tradingPartnerOptions[a].id + ',';
                 });
             tradingPartnerId = local.slice(0, -1);
         }
         let input = {
+            fromDate: this.state.fromDate,
             fromDate: data.fromDate,
             tradingPartnerId,
             coverageYear: data.covYear,
             reconFlag
         }
-
         let url = this.buildUrl(input);
         fetch(url, {
-            method: 'GET'
-            //,credentials: "same-origin"
+            method: 'GET',
+           // credentials: "same-origin"
         }).then((response) => {
             if (!response.ok) {
                 throw new Error("Bad response from server");
             }
             return response.json();
         }).then((response) => {
-            debugger;
             response = response.rcnoSearchRecords;
             console.log(response);
             let data = JSON.parse(JSON.stringify(response.rcnoSearchRecords));
-            data.push({"flagDescription": response.flagTotalDesc, "flag": "-", "count": response.totalCount, "percentage": response.totalPercentage});
-            console.log("Table Final Data");
+            data.push({ "flagDescription": response.flagTotalDesc, "flag": "-", "count": response.totalCount, "percentage": response.totalPercentage });
+            console.log("Table Final Data - rsd1");
             console.log(data);
-            this.setState({
-                lastDataReceived: Date.now(),
-                summaryTableData: data
-            });
+            callback(data);
         }).catch((error) => {
             console.log(error);
-            this.setState({
-                lastDataReceived: Date.now(),
-                summaryTableData: []
-            });
+            let response = test;
+            let data = JSON.parse(JSON.stringify(response.rcnoSearchRecords));
+            data.push({ "flagDescription": Math.random(), "flag": "-", "count": response.totalCount, "percentage": response.totalPercentage });
+            console.log("Table Final Data - rsd2");
+            console.log(data);
+            callback(data);
         })
     }
     buildUrl(parameters) {
@@ -316,3 +314,5 @@ class RecordSummaryDetails extends Component {
 }
 RecordSummaryDetails.propTypes = {};
 export default RecordSummaryDetails;
+
+

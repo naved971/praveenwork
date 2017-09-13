@@ -1,6 +1,5 @@
 import moment from 'moment';
 let initialCheckBoxFlags = [false, true, false, false, false, true, false, false, false, false, false, false, false, true, false];
-
 export function rsdStartDate(state = moment().subtract(1, 'month'), action) {
   console.log('rsdStartDate - ' + action.type);
   switch (action.type) {
@@ -12,7 +11,6 @@ export function rsdStartDate(state = moment().subtract(1, 'month'), action) {
       return state;
   }
 }
-
 export function rsdCovYear(state = parseInt(moment().format('YYYY')), action) {
   console.log('rsdCovYear - ' + action.type);
   switch (action.type) {
@@ -28,7 +26,6 @@ export function rsdCovYear(state = parseInt(moment().format('YYYY')), action) {
       return state;
   }
 }
-
 export function rsdTradSelected(state = [0,1,2], action) {
   switch (action.type) {
     case 'RSD_TRAD_SELECTED':
@@ -39,7 +36,6 @@ export function rsdTradSelected(state = [0,1,2], action) {
       return state;
   }
 }
-
 export function rsdSelectAllCheckBox(state = false, action) {
   switch (action.type) {
     case 'RSD_SELECT_ALL_CHECKBOX':
@@ -50,7 +46,6 @@ export function rsdSelectAllCheckBox(state = false, action) {
       return state;
   }
 }
-
 export function rsdCheckBoxFlags(state = initialCheckBoxFlags, action) {
   switch (action.type) {
     case 'RSD_CHECKBOX_FLAGS':
@@ -61,3 +56,19 @@ export function rsdCheckBoxFlags(state = initialCheckBoxFlags, action) {
       return state;
   }
 }
+export function rsdTableData(state = [], action) {
+  switch (action.type) {
+    case 'RSD_TABLE_DATA':
+      {
+        if (action.tableData == undefined)
+        {
+          return [];
+        }
+        return action.tableData;
+      }
+    default:
+      return state;
+  }
+}
+
+
