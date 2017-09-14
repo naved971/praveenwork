@@ -68,7 +68,7 @@ function flagFormatter(cell, row) {
   if (cell == "Total") {
     return <div style={{ textAlign: 'center' }}>{cell}</div>;
   }
-  return <div onClick={cxt.handleFlagClick.bind(this, cell)} className='hyperlink-flag'>{cell}</div>;
+  return <div onClick={cxt.handleFlagClick.bind(cxt, cell)} className='hyperlink-flag'>{cell}</div>;
 }
 function emptyDataFormatter(cell, row) {
   if (cell == undefined || cell == "") {
@@ -176,6 +176,7 @@ class FieldSummaryDetailPageData extends Component {
     })
   }
   callBackAfterInputFields() {
+
     if (this.state.fieldFlagOptions.length > 0 && this.state.recordFlagOptions.length > 0 && this.state.fieldNameOptions.length > 0) {
       this.setState({
         startDate: this.props.startDate,
@@ -222,9 +223,28 @@ class FieldSummaryDetailPageData extends Component {
     }
   }
   handleFlagClick(cell, e) {
+
     console.log(cell);
+    reactLocalStorage.setObject('toListViewSummaryPageData', {
+      'time': Date.now(),
+      'flags': [cell],
+      'startDate': this.state.startDate,
+      'tradSelected': this.state.tradSelected,
+      'covYear': this.state.covYear,
+      "fieldFlagSelected": this.state.fieldFlagSelected,
+      "recordFlagSelected": this.state.recordFlagSelected,
+      "fieldNameSelected":this.state.fieldNameSelected,
+      "summaryTableData": this.state.summaryTableData,
+      "tableHeaders": this.state.tableHeaders
+
+    });
+    this
+      .props
+      .history
+      .push('/nebert/rcnorcniviewpage');
   }
   onChange(activeKey) {
+   // debugger;
     this.setState({ activeKey });
   }
   handleDateChange(date) {
@@ -725,6 +745,8 @@ class FieldSummaryDetailPageData extends Component {
     );
   }
   componentWillReceiveProps(nextProps) {
+  //  debugger;
+    
     if (!isEqual(this.props.startDate, nextProps.startDate)) {
       console.log("changing date");
       this.setState({ startDate: nextProps.startDate });

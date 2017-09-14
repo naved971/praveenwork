@@ -8,6 +8,7 @@ import { fetchReconDataLoading, fetchReconDataFailure, fetchReconData } from './
 //import { fetchBusinessDataLoading, fetchBusinessDataFailure, fetchBusinessViewData } from './businessExceptionReducer';
 import {rsdStartDate, rsdCovYear, rsdTradSelected, rsdSelectAllCheckBox, rsdCheckBoxFlags, rsdTableData} from './recordSummaryDetailsReducer';
 import {fsdStartDate,fsdCovYear,fsdTradSelected,fsdFieldFlagSelected,fsdRecordFlagSelected,fsdFieldNameSelected, fsdTableHeaders} from './fieldSummaryDetailsReducer';
+import {lvspFieldFlagSelected ,lvspStartDate}from "./listViewSummaryPageDataReducer"
 const rootReducer = combineReducers({
     fetchDataLoading,
     fetchFailed,
@@ -35,6 +36,8 @@ const rootReducer = combineReducers({
     rsdSelectAllCheckBox,
     rsdTableData,
     fsdStartDate,fsdCovYear,fsdTradSelected,fsdFieldFlagSelected,fsdRecordFlagSelected,fsdFieldNameSelected,fsdTableHeaders,
+
+    lvspFieldFlagSelected, lvspStartDate
 })
 export default rootReducer;
 

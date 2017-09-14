@@ -55,8 +55,11 @@ class RcnoRcniSideBar extends Component {
                             <i className=" "></i> {rcnorcni.RCNO_RCNI_RECORD_SUMMARY_COMPARE_SIDEBARNAME}</NavLink>
                     </Panel>
                     <Panel header={`Field Summary Page`} key={'2'}>
-                        <NavLink className={'sidebar-highlight-link-' + (window.location.pathname == rcnorcni.RCNO_RCNI_FIELD_SUMMARY_DETAILS_URL)} to={rcnorcni.RCNO_RCNI_FIELD_SUMMARY_DETAILS_URL}><div onClick={this.resetFSD}>
-                            <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_FIELD_SUMMARY_DETAILS_SIDEBARNAME}</div></NavLink>
+                        <NavLink className={'sidebar-highlight-link-' + (window.location.pathname == rcnorcni.RCNO_RCNI_FIELD_SUMMARY_DETAILS_URL)} to={rcnorcni.RCNO_RCNI_FIELD_SUMMARY_DETAILS_URL}>
+                            <div onClick={this.resetFSD}>
+                            <i className="fa fa-minus-square-o fa-lg"></i> {rcnorcni.RCNO_RCNI_FIELD_SUMMARY_DETAILS_SIDEBARNAME}
+                            </div>
+                            </NavLink>
                         <hr className="hrstyle2" />
                         <NavLink className={'sidebar-highlight-link-' + (window.location.pathname == rcnorcni.RCNO_RCNI_FIELD_SUMMARY_COMPARE_URL)} to={rcnorcni.RCNO_RCNI_FIELD_SUMMARY_COMPARE_URL}>
                             <i className=" "></i> {rcnorcni.RCNO_RCNI_FIELD_SUMMARY_COMPARE_SIDEBARNAME}</NavLink>

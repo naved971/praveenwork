@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import _ from 'lodash'
 
-
+import { reactLocalStorage } from 'reactjs-localstorage';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Row, Column, Grid, Button } from 'react-foundation'
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom'
 import '../nebert/css/rc-collapse.css';
 import Collapse, { Panel } from 'rc-collapse';
 import DatePicker from 'react-datepicker';
@@ -20,6 +21,7 @@ import ReactDOM from 'react-dom'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import Spinner from 'react-spinner-material';
 import ReactHover from 'react-hover'
+import * as listViewSummaryPageDataAction from '../actions/listViewSummaryPageDataAction';
 // import FieldFlagsHelp from './FieldFlagsHelp'
 // import RecordFlagsFeildSummaryHelp from './RecordFlagsFeildSummaryHelp'
 import { Tabs, TabLink, TabContent } from 'react-tabs-redux';
@@ -145,8 +147,7 @@ class ListViewSummaryPageData extends Component {
       'handleAdvFieldNameChange',
 
       'handleSelectedTab',
-
-
+      'callBackAfterInputFields',
       "handleChange", "addClick", "removeClick","checkValidation"
 
     ].map(fn => this[fn] = this[fn].bind(this));
@@ -219,11 +220,15 @@ class ListViewSummaryPageData extends Component {
     return initialState;
   }
   onChange(activeKey) {
+
+   // debugger;
     this.setState({ activeKey });
   }
   handleDateChange(date) {
     let TabName = this.state.selectedTab.TabName;
     this.state.startDate[TabName]= date;
+    this.props.updateStartDate(date);
+    
     this.setState({ startDate:  this.state.startDate },()=> this.checkValidation()  );
   }
 
@@ -331,7 +336,7 @@ class ListViewSummaryPageData extends Component {
   }
   handleFieldFlagChange(selected) {
     this.state.fieldFlagSelected[this.state.selectedTab.TabName]= selected;
-
+    this.props.updateFieldFlagSelected(selected);
     this.setState({ fieldFlagSelected: this.state.fieldFlagSelected },()=> this.checkValidation());
   }
   handleRecordFlagChange(selected) {
@@ -1164,15 +1169,15 @@ let rcniFieldDDL = null;
   componentWillReceiveProps(nextProps) {
     //console.log("props"); console.log(this.state.fieldNameOptions); console.log(this.props.fieldNameOptions)
     if (this.state.fieldNameOptions.length == 0 && nextProps.fieldNameOptions.length > 0) {
-      this.setState({ fieldNameOptions: nextProps.fieldNameOptions });
+      this.setState({ fieldNameOptions: nextProps.fieldNameOptions },()=>this.callBackAfterInputFields());
     }
     if (this.state.recordFlagOptions.length == 0 && nextProps.recordFlagOptions.length > 0) {
-      this.setState({ recordFlagOptions: nextProps.recordFlagOptions });
+      this.setState({ recordFlagOptions: nextProps.recordFlagOptions },()=>this.callBackAfterInputFields());
     }
     if (this.state.fieldFlagOptions.length == 0 && nextProps.fieldFlagOptions.length > 0) {
-      this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions });
+      this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions },()=>this.callBackAfterInputFields());
     }
-    this.setState({ fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions });
+    this.setState({ fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions },()=>this.callBackAfterInputFields());
 
 
     // this.setState({ fieldNameOptions: nextProps.fieldNameOptions })
@@ -1190,7 +1195,7 @@ let rcniFieldDDL = null;
           showTable: true,
           lastDataReceived: nextProps.lastDataReceived,
           summaryTableData: nextProps.summaryTableData
-        });
+        },()=>this.callBackAfterInputFields());
 
         /*
         let tableData = nextProps.summaryTable;
@@ -1220,7 +1225,80 @@ let rcniFieldDDL = null;
       }
     }
   }
+  callBackAfterInputFields() {
+    
+        if (this.state.fieldFlagOptions.length > 0 && this.state.recordFlagOptions.length > 0 && this.state.fieldNameOptions.length > 0) {
+      
+          debugger;
+          let TabName = this.state.selectedTab.TabName;
+          this.state.startDate[TabName]= this.props.startDate;
+          this.state.covYear[TabName]= this.props.covYear;
+          this.state.tradSelected[TabName]= this.props.tradSelected;
+          this.state.fieldFlagSelected[TabName]= this.props.fieldFlagSelected;
+          this.state.recordFlagSelected[TabName]= this.props.recordFlagSelected;
+          this.state.fieldNameSelected[TabName]= this.props.fieldNameSelected;
+          
 
+          this.setState({
+            startDate:  this.state.startDate ,
+            covYear: this.state.covYear,
+            tradSelected: this.state.tradSelected,
+            fieldFlagSelected: this.state.fieldFlagSelected,
+            recordFlagSelected: this.state.recordFlagSelected,
+            fieldNameSelected: this.state.fieldNameSelected,
+            //summaryTableData: this.props.summaryTableData,
+          //  summaryTableData: this.props.summaryTableData,
+          //  tableHeaders: this.props.tableHeaders
+          }, () => {
+
+debugger;
+            let state = JSON.parse(JSON.stringify(this.state));
+            let toFSD = reactLocalStorage.getObject('toListViewSummaryPageData');
+            if (Date.now() - toFSD.time < 30000) {
+              let fieldFlagOptions = this.state.fieldFlagSelected;
+              let fieldFlagSelected = [];
+              fieldFlagOptions.forEach((r, index) => {
+                debugger;
+                if (r.label == toFSD.flags[0]) {
+                  fieldFlagSelected.push(index);
+                }
+              });
+
+              this.state.fieldFlagSelected[TabName]= fieldFlagSelected;
+              this.state.recordFlagSelected[TabName]= toFSD.recordFlagSelected;
+              this.state.covYear[TabName]=toFSD.covYear;
+              this.state.tradSelected[TabName]= toFSD.tradSelected;
+              
+              this.state.startDate[TabName]= moment(toFSD.startDate);
+              
+
+
+            //  this.props.updateRecordFlagSelected(recordFlagSelected);
+              this.props.updateStartDate(moment(toFSD.startDate));
+              this.props.updateFieldFlagSelected(toFSD.flags);
+          //    this.props.updateCovYear(toFSD.covYear);
+          //    this.props.updateTradSelected(toFSD.tradSelected);
+              
+              this.setState({
+                fieldFlagSelected:this.state.fieldFlagSelected,
+                recordFlagSelected:this.state.recordFlagSelected,
+                startDate:  this.state.startDate,
+                covYear:this.state.covYear ,
+                tradSelected:  this.state.tradSelected
+              }, () => {
+                console.log(recordFlagOptions);
+                console.log(recordFlagSelected);
+                let state = JSON.parse(JSON.stringify(this.state));
+                this.props.handleSubmit({ state });
+              })
+            }
+            else {
+              let state = JSON.parse(JSON.stringify(this.state));
+              this.props.handleSubmit({ state });
+            }
+          });
+        }
+      }
   componentDidMount() {
     console.log("componentDidMount()");
     if (initialState === undefined) {
@@ -1244,7 +1322,33 @@ let rcniFieldDDL = null;
 
 
 ListViewSummaryPageData.propTypes = {};
-export default ListViewSummaryPageData;
+
+const mapStateToProps = (state)=>{
+
+    return {
+      //startDate:state
+      startDate:state.lvspStartDate,
+      covYear: state.lvspCovYear,
+      tradSelected: state.lvspTradSelected,
+      fieldFlagSelected:state.lvspFieldFlagSelected,
+      recordFlagSelected: state.lvspRecordFlagSelected,
+      fieldNameSelected: state.lvspFieldNameSelected
+      //summaryTableData: state.lvspTableData,
+      //tableHeaders: state.lvspTableHeaders
+    }
+}
+
+
+const mapDispatchToProps = (dispatch)=>{
+  return {
+    updateStartDate : (stateDate)=> dispatch(listViewSummaryPageDataAction.updateLVSPStartDate(stateDate)),
+    updateFieldFlagSelected:(fieldFlagSelected)=> dispatch(listViewSummaryPageDataAction.updateFieldFlagSelected(fieldFlagSelected))
+  }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(withRouter(ListViewSummaryPageData));
+
+
+//export default ListViewSummaryPageData;
 
 
 

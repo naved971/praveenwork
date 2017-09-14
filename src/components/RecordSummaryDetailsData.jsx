@@ -810,7 +810,14 @@ class RecordSummaryDetailsData extends Component {
 }
 RecordSummaryDetailsData.propTypes = {};
 const mapStateToProps = (state) => {
-  return { startDate: state.rsdStartDate, covYear: state.rsdCovYear, tradSelected: state.rsdTradSelected, selectAllCheckBox: state.rsdSelectAllCheckBox, checkBoxFlags: state.rsdCheckBoxFlags, summaryTableData: state.rsdTableData };
+  return {
+      startDate: state.rsdStartDate,
+      covYear: state.rsdCovYear, 
+      tradSelected: state.rsdTradSelected, 
+      selectAllCheckBox: state.rsdSelectAllCheckBox, 
+      checkBoxFlags: state.rsdCheckBoxFlags, 
+      summaryTableData: state.rsdTableData 
+  };
 };
 const mapDispatchToProps = (dispatch) => {
   return {

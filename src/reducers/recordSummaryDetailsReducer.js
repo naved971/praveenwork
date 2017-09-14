@@ -1,5 +1,7 @@
 import moment from 'moment';
 let initialCheckBoxFlags = [false, true, false, false, false, true, false, false, false, false, false, false, false, true, false];
+
+
 export function rsdStartDate(state = moment().subtract(1, 'month'), action) {
   console.log('rsdStartDate - ' + action.type);
   switch (action.type) {
