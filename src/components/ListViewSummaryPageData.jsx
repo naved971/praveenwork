@@ -228,7 +228,7 @@ class ListViewSummaryPageData extends Component {
     let TabName = this.state.selectedTab.TabName;
     this.state.startDate[TabName]= date;
     this.props.updateStartDate(date);
-    
+
     this.setState({ startDate:  this.state.startDate },()=> this.checkValidation()  );
   }
 
@@ -282,6 +282,7 @@ class ListViewSummaryPageData extends Component {
   handleCovYearChange(val) {
     let TabName = this.state.selectedTab.TabName;
         this.state.covYear[TabName] = val.label || null;
+        this.props.updateCovYear(this.state.covYear[TabName])
     this.setState({ covYear:  this.state.covYear },()=> this.checkValidation());
   }
   handleAdvSearch(e, date) {
@@ -497,7 +498,7 @@ class ListViewSummaryPageData extends Component {
           this.refs.advIsrRcTcNum.value="";
           this.refs.advIsrPlcyId.value="";
           this.refs.advIsrExchSubId.value="";
-          
+
           this.refs.advIsrFstNm.value="";
           this.refs.advIsrLstNm.value="";
           this.refs.advIsrDob.refs.input.value =""
@@ -1226,10 +1227,10 @@ let rcniFieldDDL = null;
     }
   }
   callBackAfterInputFields() {
-    
+
         if (this.state.fieldFlagOptions.length > 0 && this.state.recordFlagOptions.length > 0 && this.state.fieldNameOptions.length > 0) {
-      
-          debugger;
+
+
           let TabName = this.state.selectedTab.TabName;
           this.state.startDate[TabName]= this.props.startDate;
           this.state.covYear[TabName]= this.props.covYear;
@@ -1237,7 +1238,7 @@ let rcniFieldDDL = null;
           this.state.fieldFlagSelected[TabName]= this.props.fieldFlagSelected;
           this.state.recordFlagSelected[TabName]= this.props.recordFlagSelected;
           this.state.fieldNameSelected[TabName]= this.props.fieldNameSelected;
-          
+
 
           this.setState({
             startDate:  this.state.startDate ,
@@ -1251,34 +1252,35 @@ let rcniFieldDDL = null;
           //  tableHeaders: this.props.tableHeaders
           }, () => {
 
-debugger;
             let state = JSON.parse(JSON.stringify(this.state));
-            let toFSD = reactLocalStorage.getObject('toListViewSummaryPageData');
-            if (Date.now() - toFSD.time < 30000) {
-              let fieldFlagOptions = this.state.fieldFlagSelected;
+            let toLVSPD = reactLocalStorage.getObject('toListViewSummaryPageData');
+            if (Date.now() - toLVSPD.time < 30000) {
+              debugger;
+              //this.props.fieldFlagOptions
+              let fieldFlagOptions = this.state.fieldFlagOptions
               let fieldFlagSelected = [];
               fieldFlagOptions.forEach((r, index) => {
-                debugger;
-                if (r.label == toFSD.flags[0]) {
+                if (r.label == toLVSPD.flags[0]) {
                   fieldFlagSelected.push(index);
                 }
               });
 
               this.state.fieldFlagSelected[TabName]= fieldFlagSelected;
-              this.state.recordFlagSelected[TabName]= toFSD.recordFlagSelected;
-              this.state.covYear[TabName]=toFSD.covYear;
-              this.state.tradSelected[TabName]= toFSD.tradSelected;
-              
-              this.state.startDate[TabName]= moment(toFSD.startDate);
-              
+              this.state.recordFlagSelected[TabName]= toLVSPD.recordFlagSelected;
+              this.state.covYear[TabName]=toLVSPD.covYear;
+              this.state.tradSelected[TabName]= toLVSPD.tradSelected;
+
+              this.state.startDate[TabName]= moment(toLVSPD.startDate);
 
 
-            //  this.props.updateRecordFlagSelected(recordFlagSelected);
-              this.props.updateStartDate(moment(toFSD.startDate));
-              this.props.updateFieldFlagSelected(toFSD.flags);
-          //    this.props.updateCovYear(toFSD.covYear);
-          //    this.props.updateTradSelected(toFSD.tradSelected);
-              
+
+              this.props.updateRecordFlagSelected(recordFlagSelected);
+              this.props.updateStartDate(moment(toLVSPD.startDate));
+              this.props.updateFieldFlagSelected(toLVSPD.flags);
+              this.props.updateCovYear(toLVSPD.covYear);
+              this.props.updateTradSelected(toLVSPD.tradSelected);
+              this.props.updateFieldNameSelected(toLVSPD.fieldNameSelected)
+
               this.setState({
                 fieldFlagSelected:this.state.fieldFlagSelected,
                 recordFlagSelected:this.state.recordFlagSelected,
@@ -1342,7 +1344,14 @@ const mapStateToProps = (state)=>{
 const mapDispatchToProps = (dispatch)=>{
   return {
     updateStartDate : (stateDate)=> dispatch(listViewSummaryPageDataAction.updateLVSPStartDate(stateDate)),
-    updateFieldFlagSelected:(fieldFlagSelected)=> dispatch(listViewSummaryPageDataAction.updateFieldFlagSelected(fieldFlagSelected))
+    updateFieldFlagSelected:(fieldFlagSelected)=> dispatch(listViewSummaryPageDataAction.updateFieldFlagSelected(fieldFlagSelected)),
+    updateCovYear: (covYear) => dispatch(listViewSummaryPageDataAction.updateLVSPCovYear(covYear)),
+    updateTradSelected: (tradSelected) => dispatch(listViewSummaryPageDataAction.updateLVSPTradSelected(tradSelected)),
+    updateFieldNameSelected: (fieldNameSelected) => dispatch(listViewSummaryPageDataAction.updateLVSPFieldNameSelected(fieldNameSelected)),
+    updateRecordFlagSelected: (recordFlagSelected) => dispatch(listViewSummaryPageDataAction.updatelvspRecordFlagSelected(recordFlagSelected)),
+    resetState: () => dispatch(listViewSummaryPageDataAction.resetLVSPState()),
+
+
   }
 }
 export default connect(mapStateToProps,mapDispatchToProps)(withRouter(ListViewSummaryPageData));

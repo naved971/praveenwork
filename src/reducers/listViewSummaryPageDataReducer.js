@@ -1,6 +1,12 @@
 import moment from 'moment';
 let initialCheckBoxFlags = [false, true, false, false, false, true, false, false, false, false, false, false, false, true, false];
+const defaultTradingPartners = [0, 1, 2];
+const defaultRecordFlags = [3, 9, 10];
 const defaultFieldFlags = [4, 5, 6, 7];
+const defaultFieldNames = [0, 1, 2, 3, 4];
+const defaultCovYear = parseInt(moment().format('YYYY'));
+const defaultStartDate = moment().subtract(1, 'month');
+
 
 export function lvspFieldFlagSelected(state=defaultFieldFlags,action){
 
@@ -16,10 +22,12 @@ export function lvspFieldFlagSelected(state=defaultFieldFlags,action){
 }
 export function lvspStartDate(state = moment().subtract(1, 'month'), action) {
   console.log('lvspStartDate - ' + action.type);
-  debugger;
   switch (action.type) {
+
+
     case 'LVSP_START_DATE':
       {
+              debugger;
         return action.startDate;
       }
     default:
@@ -52,6 +60,29 @@ export function lvspTradSelected(state = [0,1,2], action) {
   }
 }
 
+
+export function lvspRecordFlagSelected(state = defaultRecordFlags, action) {
+  switch (action.type) {
+    case 'LVSP_RECORD_FLAG_SELECTED':
+      {
+        return action.fieldRecordSelected;
+      }
+    default:
+      return state;
+  }
+}
+export function lvspFieldNameSelected(state = defaultFieldNames, action) {
+  switch (action.type) {
+    case 'LVSP_FIELD_NAME_SELECTED':
+      {
+        return action.fieldNameSelected;
+      }
+    default:
+      return state;
+  }
+}
+
+
 export function lvspTableData(state = [], action) {
   switch (action.type) {
     case 'LVSP_TABLE_DATA':
@@ -66,5 +97,3 @@ export function lvspTableData(state = [], action) {
       return state;
   }
 }
-
-

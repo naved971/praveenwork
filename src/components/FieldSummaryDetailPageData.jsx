@@ -192,6 +192,7 @@ class FieldSummaryDetailPageData extends Component {
         let state = JSON.parse(JSON.stringify(this.state));
         let toFSD = reactLocalStorage.getObject('toFieldSummaryDetails');
         if (Date.now() - toFSD.time < 30000) {
+          debugger;
           let recordFlagOptions = this.state.recordFlagOptions;
           let recordFlagSelected = [];
           recordFlagOptions.forEach((r, index) => {
@@ -475,7 +476,7 @@ class FieldSummaryDetailPageData extends Component {
                   placeholderText="MM/YYYY"
                 //showMonthDropdown
                 //showYearDropdown
-                //scrollableYearDropdown 
+                //scrollableYearDropdown
                 />
                 <span className="error date-picker-error">{this.state.errStr[0]}</span>
               </div>
@@ -644,7 +645,7 @@ class FieldSummaryDetailPageData extends Component {
             className="record-summary-details-result-table"
             selectRow={this.state.selectRowProp}
             options={this.state.tableOptions}
-            //keyField='flag' 
+            //keyField='flag'
             //exportCSV
             headerStyle={{ background: '#d3ded3' }}>
             <TableHeaderColumn
@@ -746,7 +747,7 @@ class FieldSummaryDetailPageData extends Component {
   }
   componentWillReceiveProps(nextProps) {
   //  debugger;
-    
+
     if (!isEqual(this.props.startDate, nextProps.startDate)) {
       console.log("changing date");
       this.setState({ startDate: nextProps.startDate });

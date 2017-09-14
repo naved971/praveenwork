@@ -1,6 +1,16 @@
 
 import moment from 'moment';
 let initialCheckBoxFlags = [false, true, false, false, false, true, false, false, false, false, false, false, false, true, false];
+
+const defaultTradingPartners = [0, 1, 2];
+const defaultRecordFlags = [3, 9, 10];
+const defaultFieldFlags = [4, 5, 6, 7];
+const defaultFieldNames = [0, 1, 2, 3, 4];
+const defaultCovYear = parseInt(moment().format('YYYY'));
+const defaultStartDate = moment().subtract(1, 'month');
+
+
+
 export function lvspStartDate(startDate) {
   console.log("LVSP_START_DATE - " + startDate);
   return {type: 'LVSP_START_DATE', startDate};
@@ -63,13 +73,36 @@ export function updateLVSPTableData(tableData) {
     dispatch(lvspTableData(tableData));
   }
 }
-export function resetLVSPState(covYear) {
+
+export function lvspFieldNameSelected(fieldNameSelected){
+  return {type: 'LVSP_FIELD_NAME_SELECTED', fieldNameSelected};
+
+}
+
+export function updateLVSPFieldNameSelected(fieldNameSelected){
+    return (dispatch) => {
+    dispatch(lvspFieldNameSelected(fieldNameSelected));
+  }
+}
+
+export function lvspRecordFlagSelected(fieldRecordSelected){
+  return {type: 'LVSP_RECORD_FLAG_SELECTED', fieldRecordSelected};
+
+}
+
+export function updatelvspRecordFlagSelected(recordFlagSelected){
+    return (dispatch) => {
+    dispatch(lvspRecordFlagSelected(recordFlagSelected));
+  }
+}
+export function resetLVSPState() {
   return (dispatch) => {
     dispatch(lvspCovYear(parseInt(moment().format('YYYY'))));
     dispatch(lvspStartDate(moment().subtract(1, 'month')));
     dispatch(lvspTradSelected([0,1,2]));
-    dispatch(lvspSelectAllCheckBox(false));
-    dispatch(lvspCheckBoxFlags(initialCheckBoxFlags));
+    dispatch(lvspRecordFlagSelected(defaultRecordFlags));
+    dispatch(lvspFieldNameSelected(defaultFieldNames));
+    dispatch(lvspFieldFlagSelected(defaultFieldFlags));
   }
 }
 
