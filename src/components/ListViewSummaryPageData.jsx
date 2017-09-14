@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import _ from 'lodash'
-
+import isEqual from 'lodash.isequal';
 import { reactLocalStorage } from 'reactjs-localstorage';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -1168,20 +1168,67 @@ let rcniFieldDDL = null;
   }
 
   componentWillReceiveProps(nextProps) {
-    //console.log("props"); console.log(this.state.fieldNameOptions); console.log(this.props.fieldNameOptions)
-    if (this.state.fieldNameOptions.length == 0 && nextProps.fieldNameOptions.length > 0) {
-      this.setState({ fieldNameOptions: nextProps.fieldNameOptions },()=>this.callBackAfterInputFields());
+          let TabName = this.state.selectedTab.TabName;
+debugger;
+     if (!isEqual(this.props.covYear, nextProps.covYear)) {
+       this.state.covYear[TabName] =nextProps.covYear;
+        this.setState({ covYear:  this.state.covYear });
+    }
+  if (!isEqual(this.props.tradSelected, nextProps.tradSelected)) {
+      this.state.tradSelected[TabName] =nextProps.tradSelected;
+      this.setState({ tradSelected: this.state.tradSelected });
+    }
+    if (!isEqual(this.props.fieldFlagSelected, nextProps.fieldFlagSelected)) {
+            this.state.fieldFlagSelected[TabName] =nextProps.fieldFlagSelected;
+
+      this.setState({ fieldFlagSelected:  this.state.fieldFlagSelected });
+    }
+    if (!isEqual(this.props.recordFlagSelected, nextProps.recordFlagSelected)) {
+                  this.state.recordFlagSelected[TabName] = nextProps.recordFlagSelected
+
+      this.setState({ recordFlagSelected:this.state.recordFlagSelected});
+    }
+    if (!isEqual(this.props.fieldNameSelected, nextProps.fieldNameSelected)) {
+      this.state.fieldNameSelected[TabName] = nextProps.fieldNameSelected
+      this.setState({ fieldNameSelected:  this.state.fieldNameSelected });
+
+    }
+  /*  if (!isEqual(this.props.tableHeaders, nextProps.tableHeaders)) {
+      this.setState({ tableHeaders: nextProps.tableHeaders });
+    }
+    if (!isEqual(this.props.summaryTableData, nextProps.summaryTableData)) {
+      this.setState({ summaryTableData: nextProps.summaryTableData });
+    }*/
+ if (this.state.fieldNameOptions.length == 0 && nextProps.fieldNameOptions.length > 0) {
+      this.setState({ fieldNameOptions: nextProps.fieldNameOptions }, () => {
+        this.callBackAfterInputFields();
+      });
     }
     if (this.state.recordFlagOptions.length == 0 && nextProps.recordFlagOptions.length > 0) {
-      this.setState({ recordFlagOptions: nextProps.recordFlagOptions },()=>this.callBackAfterInputFields());
+      this.setState({ recordFlagOptions: nextProps.recordFlagOptions }, () => {
+        this.callBackAfterInputFields();
+      });
     }
     if (this.state.fieldFlagOptions.length == 0 && nextProps.fieldFlagOptions.length > 0) {
-      this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions },()=>this.callBackAfterInputFields());
+      this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions }, () => {
+        this.callBackAfterInputFields();
+      });
     }
-    this.setState({ fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions },()=>this.callBackAfterInputFields());
-
+//-=----------------------
+/*
+    if (this.state.fieldNameOptions.length == 0 && nextProps.fieldNameOptions.length > 0) {
+      this.setState({ fieldNameOptions: nextProps.fieldNameOptions },()=>{ this.callBackAfterInputFields()});
+    }
+    if (this.state.recordFlagOptions.length == 0 && nextProps.recordFlagOptions.length > 0) {
+      this.setState({ recordFlagOptions: nextProps.recordFlagOptions },()=>{ this.callBackAfterInputFields() });
+    }
+    if (this.state.fieldFlagOptions.length == 0 && nextProps.fieldFlagOptions.length > 0) {
+      this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions },()=>{ this.callBackAfterInputFields() } );
+    }
+*/
 
     // this.setState({ fieldNameOptions: nextProps.fieldNameOptions })
+    this.setState({ fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions });
 
 
     if (this.state.lastDataReceived < nextProps.lastDataReceived) {
@@ -1274,9 +1321,9 @@ let rcniFieldDDL = null;
 
 
 
-              this.props.updateRecordFlagSelected(recordFlagSelected);
+              this.props.updateRecordFlagSelected(toLVSPD.recordFlagSelected);
               this.props.updateStartDate(moment(toLVSPD.startDate));
-              this.props.updateFieldFlagSelected(toLVSPD.flags);
+              this.props.updateFieldFlagSelected(   this.state.fieldFlagSelected[TabName] );
               this.props.updateCovYear(toLVSPD.covYear);
               this.props.updateTradSelected(toLVSPD.tradSelected);
               this.props.updateFieldNameSelected(toLVSPD.fieldNameSelected)
@@ -1288,13 +1335,10 @@ let rcniFieldDDL = null;
                 covYear:this.state.covYear ,
                 tradSelected:  this.state.tradSelected
               }, () => {
-                console.log(recordFlagOptions);
-                console.log(recordFlagSelected);
                 let state = JSON.parse(JSON.stringify(this.state));
                 this.props.handleSubmit({ state });
               })
-            }
-            else {
+            }else {
               let state = JSON.parse(JSON.stringify(this.state));
               this.props.handleSubmit({ state });
             }

@@ -29,7 +29,7 @@ export const RCNO_RCNI_ENTER_AND_EDIT_ERROR_ADMIN_SIDEBARNAME = "Enter and Edit 
 
 
 
-/* 
+/*
 
 export const GET_RECORD_SUMMARY_DETAILS_URL = 'http://wks51b2228:9080/nebert/ui/recordssearchview/getrecordssearch';
 export const GET_FIELD_SUMMARY_DETAILS_URL = 'http://wks51b2228:9080/nebert/ui/recordfieldsumrysearchview/getrecordsfieldsumry';
@@ -61,6 +61,7 @@ export const GET_RCNI_FIELD_NAME_INPUT_URL = 'http://localhost:3000/rcno/getFiel
 export const GET_RCNO_LIST_VIEW_URL= 'http://localhost:3000/rcno/getFieldInfo';
 export const GET_RCNI_LIST_VIEW_URL = 'http://localhost:3000/rcno/getFieldInfo';
 export const GET_SEARCH_VIEW_DESC = 'http://localhost:3000/rcno/getFieldInfo';
+export const GET_LIST_VIEW_SUMMARY_URL = 'http://localhost:3000/rcno/getFieldInfo';
 
 export const POST_Data = 'http://localhost:3000/save/ListView';
 

@@ -12,7 +12,6 @@ export function lvspFieldFlagSelected(state=defaultFieldFlags,action){
 
   switch(action.type){
     case "LVSP_FIELD_FLAG": {
-      debugger;
       return action.fieldFlagSelected
     }
 
@@ -27,7 +26,6 @@ export function lvspStartDate(state = moment().subtract(1, 'month'), action) {
 
     case 'LVSP_START_DATE':
       {
-              debugger;
         return action.startDate;
       }
     default:
