@@ -95,3 +95,20 @@ export function lvspTableData(state = [], action) {
       return state;
   }
 }
+
+
+
+export function lvspTableHeader(state = [], action) {
+  switch (action.type) {
+    case 'LVSP_TABLE_HEADER':
+      {
+        if (action.tableHeader == undefined)
+        {
+          return [];
+        }
+        return action.tableHeader;
+      }
+    default:
+      return state;
+  }
+}

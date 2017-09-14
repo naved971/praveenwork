@@ -65,14 +65,6 @@ export function updateLVSPSelectAllCheckBox(selectAllCheckBox) {
     dispatch(lvspSelectAllCheckBox(selectAllCheckBox));
   }
 }
-export function lvspTableData(tableData) {
-  return {type: 'LVSP_TABLE_DATA', tableData};
-}
-export function updateLVSPTableData(tableData) {
-  return (dispatch) => {
-    dispatch(lvspTableData(tableData));
-  }
-}
 
 export function lvspFieldNameSelected(fieldNameSelected){
   return {type: 'LVSP_FIELD_NAME_SELECTED', fieldNameSelected};
@@ -95,6 +87,30 @@ export function updatelvspRecordFlagSelected(recordFlagSelected){
     dispatch(lvspRecordFlagSelected(recordFlagSelected));
   }
 }
+
+
+
+export function lvspTableHeader(tableHeader){
+  return {  type:'LVSP_TABLE_HEADER', tableHeader};
+}
+
+export function updateLVSPTableHeader(tableHeader){
+  return (dispatch)=>{
+    dispatch(lvspTableHeader(tableHeader))
+  }
+}
+
+
+
+export function lvspTableData(tableData) {
+  return {type: 'LVSP_TABLE_DATA', tableData};
+}
+export function updateLVSPTableData(tableData) {
+  return (dispatch) => {
+    dispatch(lvspTableData(tableData));
+  }
+}
+
 export function resetLVSPState() {
   return (dispatch) => {
     dispatch(lvspCovYear(parseInt(moment().format('YYYY'))));

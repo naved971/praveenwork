@@ -1168,8 +1168,7 @@ let rcniFieldDDL = null;
   }
 
   componentWillReceiveProps(nextProps) {
-          let TabName = this.state.selectedTab.TabName;
-debugger;
+     let TabName = this.state.selectedTab.TabName;
      if (!isEqual(this.props.covYear, nextProps.covYear)) {
        this.state.covYear[TabName] =nextProps.covYear;
         this.setState({ covYear:  this.state.covYear });
@@ -1237,39 +1236,32 @@ debugger;
         this.setState({ showSpinner: false, showTable: false, lastDataReceived: nextProps.lastDataReceived })
       } else {
 
-
         this.setState({
           showSpinner: false,
           showTable: true,
           lastDataReceived: nextProps.lastDataReceived,
-          summaryTableData: nextProps.summaryTableData
-        },()=>this.callBackAfterInputFields());
+        },()=>{
+          this.props.updateTableData(nextProps.summaryTableData);
+          this.setState({          summaryTableData: nextProps.summaryTableData });
+        });
 
-        /*
-        let tableData = nextProps.summaryTable;
-        let tableHeaders = tableData.headerSet;
-        let summaryTableData = [];
-        let rMap = tableData.responseMap;
-        for (let key in rMap) {
-          let row = {
-            flag: key
-          };
-          let rowData = rMap[key];
-          for (let i in rowData) {
-            row[i] = rowData[i];
-          }
-          summaryTableData.push(row);
-        }
-        console.log(summaryTableData);
-        this.setState({
+
+    /*  this.setState({
           showSpinner: false,
           showTable: true,
-          lastDataReceived: nextProps.lastDataReceived
-        }, () => {
-          this.setState({tableHeaders, summaryTableData})
-        })
+          lastDataReceived: nextProps.lastDataReceived,
 
-      */
+
+        }, () => {
+          debugger;
+
+          //this.props.updateTableHeaders(tableHeaders);
+          this.setState({
+             summaryTableData: nextProps.summaryTableData
+             })
+        })*/
+
+
       }
     }
   }
@@ -1294,7 +1286,7 @@ debugger;
             fieldFlagSelected: this.state.fieldFlagSelected,
             recordFlagSelected: this.state.recordFlagSelected,
             fieldNameSelected: this.state.fieldNameSelected,
-            //summaryTableData: this.props.summaryTableData,
+            summaryTableData: this.props.summaryTableData,
           //  summaryTableData: this.props.summaryTableData,
           //  tableHeaders: this.props.tableHeaders
           }, () => {
@@ -1394,6 +1386,8 @@ const mapDispatchToProps = (dispatch)=>{
     updateFieldNameSelected: (fieldNameSelected) => dispatch(listViewSummaryPageDataAction.updateLVSPFieldNameSelected(fieldNameSelected)),
     updateRecordFlagSelected: (recordFlagSelected) => dispatch(listViewSummaryPageDataAction.updatelvspRecordFlagSelected(recordFlagSelected)),
     resetState: () => dispatch(listViewSummaryPageDataAction.resetLVSPState()),
+    updateTableData: (data) => dispatch(listViewSummaryPageDataAction.updateLVSPTableData(data))
+  //  updateTableHeaders: (data) => dispatch(listViewSummaryPageDataAction.updateLVSPTableHeader(data)),
 
 
   }

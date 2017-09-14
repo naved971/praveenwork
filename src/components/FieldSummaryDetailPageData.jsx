@@ -185,7 +185,6 @@ class FieldSummaryDetailPageData extends Component {
         fieldFlagSelected: this.props.fieldFlagSelected,
         recordFlagSelected: this.props.recordFlagSelected,
         fieldNameSelected: this.props.fieldNameSelected,
-        //summaryTableData: this.props.summaryTableData,
         summaryTableData: this.props.summaryTableData,
         tableHeaders: this.props.tableHeaders
       }, () => {
@@ -235,8 +234,8 @@ class FieldSummaryDetailPageData extends Component {
       "fieldFlagSelected": this.state.fieldFlagSelected,
       "recordFlagSelected": this.state.recordFlagSelected,
       "fieldNameSelected":this.state.fieldNameSelected,
-      "summaryTableData": this.state.summaryTableData,
-      "tableHeaders": this.state.tableHeaders
+      "summaryTableData": this.state.summaryTableData
+//      "tableHeaders": this.state.tableHeaders
 
     });
     this

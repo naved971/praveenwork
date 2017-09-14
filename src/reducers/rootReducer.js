@@ -8,7 +8,7 @@ import { fetchReconDataLoading, fetchReconDataFailure, fetchReconData } from './
 //import { fetchBusinessDataLoading, fetchBusinessDataFailure, fetchBusinessViewData } from './businessExceptionReducer';
 import {rsdStartDate, rsdCovYear, rsdTradSelected, rsdSelectAllCheckBox, rsdCheckBoxFlags, rsdTableData} from './recordSummaryDetailsReducer';
 import {fsdStartDate,fsdCovYear,fsdTradSelected,fsdFieldFlagSelected,fsdRecordFlagSelected,fsdFieldNameSelected, fsdTableHeaders} from './fieldSummaryDetailsReducer';
-import {lvspFieldFlagSelected ,lvspStartDate,lvspCovYear,lvspTradSelected, lvspFieldNameSelected,lvspRecordFlagSelected}from "./listViewSummaryPageDataReducer"
+import {lvspFieldFlagSelected ,lvspStartDate,lvspCovYear,lvspTradSelected, lvspFieldNameSelected,lvspRecordFlagSelected , lvspTableData, lvspTableHeader }from "./listViewSummaryPageDataReducer"
 const rootReducer = combineReducers({
     fetchDataLoading,
     fetchFailed,
@@ -37,7 +37,7 @@ const rootReducer = combineReducers({
     rsdTableData,
     fsdStartDate,fsdCovYear,fsdTradSelected,fsdFieldFlagSelected,fsdRecordFlagSelected,fsdFieldNameSelected,fsdTableHeaders,
 
-    lvspFieldFlagSelected, lvspStartDate,lvspCovYear ,lvspFieldNameSelected,lvspRecordFlagSelected,lvspTradSelected
+    lvspFieldFlagSelected, lvspStartDate,lvspCovYear ,lvspFieldNameSelected,lvspRecordFlagSelected,lvspTradSelected, lvspTableData, lvspTableHeader
 })
 export default rootReducer;
 
