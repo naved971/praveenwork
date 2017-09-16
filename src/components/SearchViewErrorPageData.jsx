@@ -143,7 +143,7 @@ class SearchViewErrorPageData extends Component {
   }
 
   handleRowClick(dataIndex,rowIndex,cellIndex, e){
-    e.stopImmediatePropagation();
+    //e.stopImmediatePropagation();
   }
   getInitialState() {
 
@@ -949,8 +949,24 @@ class SearchViewErrorPageData extends Component {
               Error Desc
             </TableHeaderColumn>
             <TableHeaderColumn width='150' dataAlign="center" dataField="submitInventory" dataFormat={this.editFormatter.bind(this,"submitInventory")}>
-              Submit Inventory
-            </TableHeaderColumn >
+                <div className="mainSubmitHover">
+                <div className="SubmitHover">
+                      <ReactHover options={recordFlagHelpHoverOptions}>
+                      <ReactHover.Trigger>
+                      <i className="fa fa-question-circle" aria-hidden="true"></i>
+                      </ReactHover.Trigger>
+                            <ReactHover.Hover className="submithoverText">
+
+                            <h1> Select All </h1>
+                            </ReactHover.Hover>
+                            
+                            </ReactHover>
+              </div >
+              <div className="SubmitCheckbox">
+                        <input type="checkbox" value="Select All Submit Inventory"/>
+              </div>
+              </div>
+              </TableHeaderColumn >
             <TableHeaderColumn width='150'  dataAlign="center" dataField="submitERE" dataFormat={this.editFormatter.bind(this,"submitERE")}>
               Submit ER and E
             </TableHeaderColumn>

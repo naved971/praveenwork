@@ -191,7 +191,6 @@ class FieldSummaryDetailPageData extends Component {
         let state = JSON.parse(JSON.stringify(this.state));
         let toFSD = reactLocalStorage.getObject('toFieldSummaryDetails');
         if (Date.now() - toFSD.time < 30000) {
-          debugger;
           let recordFlagOptions = this.state.recordFlagOptions;
           let recordFlagSelected = [];
           recordFlagOptions.forEach((r, index) => {

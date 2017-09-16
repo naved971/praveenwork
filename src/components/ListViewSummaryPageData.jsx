@@ -492,14 +492,16 @@ class ListViewSummaryPageData extends Component {
   // validate moment object
 
   let currentRef = "fileRunDPicker"+"_"+ currentTabName;
-  const startDate = this.refs[currentRef].refs.input.defaultValue;
-  if (!startDate || startDate.length !== 7) {
+  let isStartDateInitialze  = this.refs[currentRef];
+
+  const startDate =isStartDateInitialze ?  this.refs[currentRef].refs.input.defaultValue : "";
+  if (this.refs[currentRef]  && ( !startDate || startDate.length !== 7) ) {
     pass[currentTabName] = false;
     errStr[currentTabName][0] = "Field Required";
   }
   else {
     let range = moment(startDate, 'MM/YYYY').add(6, 'month');
-    if (!moment(range).isSameOrAfter(moment())) {
+    if (isStartDateInitialze && (!moment(range).isSameOrAfter(moment())) ){
       pass[currentTabName] = false;
       errStr[currentTabName][0] = "Error : Date more than 6 months old";
     }
@@ -1231,7 +1233,7 @@ let rcniFieldDDL = null;
   }
 
   componentWillReceiveProps(nextProps) {
-    debugger;
+  
      let TabName = this.state.selectedTab.TabName;
      if (!isEqual(this.props.covYear, nextProps.covYear)) {
        this.state.covYear[TabName] =nextProps.covYear;

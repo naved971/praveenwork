@@ -1010,7 +1010,23 @@ form div div span {
      padding-top : 0em;
     /* height: 2.0em; */
     margin:0 !important;
-        
+        cursor: pointer;
 }
 
 
+.SubmitCheckbox{
+    display: inline-block;
+      text-align: center;
+      margin-left: -12px;
+  }
+  
+  .SubmitHover{
+      float: left;
+      display: inline-block;
+      color: #3498db;
+  
+  }
+
+  .submithoverText{
+    right: 190px;
+  }

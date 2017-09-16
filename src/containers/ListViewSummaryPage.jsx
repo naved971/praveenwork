@@ -433,7 +433,7 @@ class ListViewSummaryPage extends Component {
                             </div>
                         </Column>
                         <Column medium={3}>
-                            <RcnoRcniSideBar activeKey={'2'} />
+                            <RcnoRcniSideBar activeKey={'3'} />
                         </Column>
                         <Column medium={9} className="record-summary-container">
                             {/* <div
