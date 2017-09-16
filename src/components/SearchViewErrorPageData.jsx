@@ -247,12 +247,13 @@ class SearchViewErrorPageData extends Component {
       `data:text/csv;charset=utf-8,\uFEFF${arrays2csv(data, headers, separator)}`
     )
     );
+
     const selectedRows = cxt.refs.table.state.selectedRowKeys;
     let data = this.state.csvData;
     if (selectedRows.length != this.state.csvData.length - 1 && selectedRows.length != 0) {
       data = this.state.csvData.filter((d, index) => {
         if (index == 0) return d;
-        if (selectedRows.indexOf(d[0]) > -1) {
+        if (selectedRows.indexOf(d[5]) > -1) {
           return d;
         }
       });

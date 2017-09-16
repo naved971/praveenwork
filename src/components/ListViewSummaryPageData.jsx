@@ -318,14 +318,14 @@ class ListViewSummaryPageData extends Component {
     if (selectedRows.length != this.state.csvData.length - 1 && selectedRows.length != 0) {
       data = this.state.csvData.filter((d, index) => {
         if (index == 0) return d;
-        if (selectedRows.indexOf(d[0]) > -1) {
+        if (selectedRows.indexOf(d[5]) > -1) {
           return d;
         }
       });
     }
     const downloadLink = document.createElement("a");
     downloadLink.href = buildURI(data);
-    downloadLink.download = "listViewSummarydata"+Date.now()+".csv";
+    downloadLink.download = "listViewSummarydata_"+Date.now()+".csv";
     downloadLink.click();
   
   }
