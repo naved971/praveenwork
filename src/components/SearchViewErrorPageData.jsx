@@ -136,10 +136,14 @@ class SearchViewErrorPageData extends Component {
       "getItems",
       "editFormatter",
       "handleAdvSearch",
-      "parseTableDataToCSV"
-
+      "parseTableDataToCSV",
+      "handleRowClick"
     ].map(fn => (this[fn] = this[fn].bind(this)));
     //this.addAdvRows();
+  }
+
+  handleRowClick(dataIndex,rowIndex,cellIndex, e){
+    e.stopImmediatePropagation();
   }
   getInitialState() {
 
@@ -168,7 +172,8 @@ class SearchViewErrorPageData extends Component {
         selected: []
       },
       tableOptions: {
-        onExportToCSV: this.onExportToCSV
+        onExportToCSV: this.onExportToCSV,
+        handleRowClick:this.handleRowClick
       },
       summaryTableData: this.props.summaryTableData,
       tableHeaders: [],
@@ -474,13 +479,16 @@ class SearchViewErrorPageData extends Component {
         clsName="errorbuttonDisabled";
         isCheckBoxDiabled = true;
       }
-
-      return (<input disabled={isCheckBoxDiabled} className="submit_inventry" type="checkbox" name="submitInventory" value="Submit Inventory"
-       onChange={(e) => this.props.handleSubmitInventory(e, row)}  />);
+//   onChange={(e) => this.props.handleSubmitInventory(e, row)} 
+      return (
+      <input disabled={isCheckBoxDiabled} className="submit_inventry" type="checkbox" name="submitInventory" value="Submit Inventory"/>);
     }else{
           //return (<input className="button primary  btn-lg btn-color formButton submitERandE" type="button" name="submitERE" value="Submit ER & E" onClick={(e) => this.props.handleSubmitERE(e, row)} />)
-          return  ( <span className="top-header-round-button-submit-inventory  ">
+          return  ( 
+          <span  onClick={(e) => this.props.handleSubmitERE(e, row)} className="top-header-round-button-submit-inventory  ">
           <i className="fa fa-paper-plane" aria-hidden="true"></i>
+    
+          
       </span>)
     }
 
