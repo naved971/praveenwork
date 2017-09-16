@@ -803,6 +803,17 @@ form div div span {
     position: relative;
     margin: 2rem;
 }
+.top-header-round-button-submit-inventory {
+    border-radius: 50%;
+    background-color: #3498db;
+    padding: 0.75rem;
+    color: #fefefe;
+    /* top: 0.1em; */
+    position: relative;
+    margin: 2rem;
+}
+
+
 .top-header-round-button-long:hover {
     background-color: #b3b3b3;
 }

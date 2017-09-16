@@ -135,7 +135,8 @@ class SearchViewErrorPageData extends Component {
       "handleResetButton",
       "getItems",
       "editFormatter",
-      "handleAdvSearch"
+      "handleAdvSearch",
+      "parseTableDataToCSV"
 
     ].map(fn => (this[fn] = this[fn].bind(this)));
     //this.addAdvRows();
@@ -174,10 +175,44 @@ class SearchViewErrorPageData extends Component {
       showTable: false,
       showSpinner: true,
       lastDataReceived: this.props.lastDataReceived,
-      errStr: []
+      errStr: [],
+      csvData:[],
+      isSubmitClicked:false
     };
     return initialState;
   }
+
+  
+  parseTableDataToCSV(headers, data) {
+ 
+    let thRow = [];
+    let csvData = [];
+    headers.forEach((h) => {
+      //h = h.replace(/([A-Z])/g, ' $1').replace(/^./, function(str){ return str.toUpperCase(); })
+      thRow.push(h);
+    });
+
+    csvData.push(thRow);
+    for (let key in data) {
+      let row = [];
+      let flagData = data[key];
+      for (let i = 0; i < thRow.length; i++) {
+        if (flagData[thRow[i]] !== undefined) {
+          row.push(flagData[thRow[i]])
+        }
+        else {
+          row.push('-');
+        }
+      }
+      csvData.push(row);
+    } 
+    this.setState({
+      csvData
+    })
+  }
+
+
+
   onChange(activeKey) {
     this.setState({ activeKey });
   }
@@ -191,18 +226,42 @@ class SearchViewErrorPageData extends Component {
 
 
   onExportToCSV() {
+  
     const selectedRows = cxt.refs.table.state.selectedRowKeys;
     //console.log(selectedRows);
     //console.log(cxt.state.summaryTable);
-    return cxt.state.summaryTable.filter(d => {
+    return cxt.state.summaryTableData.filter(d => {
       if (selectedRows.indexOf(d.flag) > -1) {
         return d;
       }
     });
   }
   handleExport() {
-    this.refs.table.handleExportCSV();
-  }
+   const joiner = ((data, separator = ',') =>
+      data.map((row, index) => row.map((element) => "\"" + element + "\"").join(separator)).join(`\n`)
+    );
+    const arrays2csv = ((data, headers, separator) =>
+      joiner(headers ? [headers, ...data] : data, separator)
+    );
+    const buildURI = ((data, headers, separator) => encodeURI(
+      `data:text/csv;charset=utf-8,\uFEFF${arrays2csv(data, headers, separator)}`
+    )
+    );
+    const selectedRows = cxt.refs.table.state.selectedRowKeys;
+    let data = this.state.csvData;
+    if (selectedRows.length != this.state.csvData.length - 1 && selectedRows.length != 0) {
+      data = this.state.csvData.filter((d, index) => {
+        if (index == 0) return d;
+        if (selectedRows.indexOf(d[0]) > -1) {
+          return d;
+        }
+      });
+    }
+    const downloadLink = document.createElement("a");
+    downloadLink.href = buildURI(data);
+    downloadLink.download = "searchviewerror_"+Date.now()+".csv";
+    downloadLink.click();
+   }
   handleTradPartChange(selected) {
     this.state.tradSelected = selected;
     this.setState({ tradSelected: this.state.tradSelected }, () =>
@@ -351,14 +410,15 @@ class SearchViewErrorPageData extends Component {
     let isValidForm = this.checkValidation();
     if (isValidForm) {
       this.props.handleSubmit({ state });
-      this.setState({ activeKey: ["1"], showSpinner: true, showTable: false });
+      this.setState({ activeKey: ["1"], showSpinner: true, showTable: false , isSubmitClicked:true});
     }
   }
   handleResetButton() {
 
 
-
     var resetFields = {
+      isSubmitClicked:false,
+      inventoryTypeSelected:this.props.defaultInventoryType,
       startDate: moment().subtract(1, "month"),
       covYear: JSON.parse(JSON.stringify(initialState.covYear)),
       tradSelected: JSON.parse(JSON.stringify(initialState.tradSelected)),
@@ -417,7 +477,10 @@ class SearchViewErrorPageData extends Component {
       return (<input disabled={isCheckBoxDiabled} className="submit_inventry" type="checkbox" name="submitInventory" value="Submit Inventory"
        onChange={(e) => this.props.handleSubmitInventory(e, row)}  />);
     }else{
-          return (<input className="button primary  btn-lg btn-color formButton submitERandE" type="button" name="submitERE" value="Submit ER & E" onClick={(e) => this.props.handleSubmitERE(e, row)} />)
+          //return (<input className="button primary  btn-lg btn-color formButton submitERandE" type="button" name="submitERE" value="Submit ER & E" onClick={(e) => this.props.handleSubmitERE(e, row)} />)
+          return  ( <span className="top-header-round-button-submit-inventory  ">
+          <i className="fa fa-paper-plane" aria-hidden="true"></i>
+      </span>)
     }
 
 
@@ -523,6 +586,7 @@ class SearchViewErrorPageData extends Component {
                   >
                     Inventory Type:
                     <Select
+                    clearable={isClearable}
                       value={this.state.inventoryTypeSelected}
                       options={this.props.inventoryTypeOptions}
                       onChange={this.handleInventoryTypeChange}
@@ -949,16 +1013,20 @@ class SearchViewErrorPageData extends Component {
     );
   }
   
-  componentWillReceiveProps(nextProps,nextState) {
-
-    this.setState({
-      errorCategorySelected: nextProps.defaultErrorCategory,
-      errorCodeDescSelected: nextProps.defaultErrorCodeDesc
-    });
-    if(initialState!==undefined){
-        initialState.errorCategorySelected= JSON.parse(JSON.stringify(nextProps.defaultErrorCategory)),
-        initialState.errorCodeDescSelected= JSON.parse(JSON.stringify(nextProps.defaultErrorCodeDesc))
-    }
+  componentWillReceiveProps(nextProps) {
+    
+    
+    if(!this.state.isSubmitClicked){
+    
+      this.setState({
+              errorCategorySelected: nextProps.defaultErrorCategory,
+              errorCodeDescSelected: nextProps.defaultErrorCodeDesc
+            });
+            if(initialState!==undefined){
+                initialState.errorCategorySelected= JSON.parse(JSON.stringify(nextProps.defaultErrorCategory)),
+                initialState.errorCodeDescSelected= JSON.parse(JSON.stringify(nextProps.defaultErrorCodeDesc))
+            }
+  }
 
     if (this.state.lastDataReceived < nextProps.lastDataReceived) {
       if (
@@ -972,11 +1040,18 @@ class SearchViewErrorPageData extends Component {
           lastDataReceived: nextProps.lastDataReceived
         });
       } else {
+
+        let tableHeaders = Object.keys(nextProps.summaryTableData[0]);
+        this.parseTableDataToCSV(tableHeaders, nextProps.summaryTableData);
+
+
+
         this.setState({
           showSpinner: false,
           showTable: true,
           lastDataReceived: nextProps.lastDataReceived,
-          summaryTableData: nextProps.summaryTableData
+          summaryTableData: nextProps.summaryTableData,
+          isSubmitClicked:false
         });
 
       }
