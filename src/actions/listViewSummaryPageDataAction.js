@@ -31,7 +31,7 @@ export function updateLVSPCovYear(covYear) {
   }
 }
 
-export function updateFieldFlagSelected(fieldFlagSelected){
+export function updateLVSPFieldFlagSelected(fieldFlagSelected){
   return (dispatch)=>{
     dispatch(lvspFieldFlagSelected(fieldFlagSelected))
   }
@@ -115,7 +115,7 @@ export function resetLVSPState() {
   return (dispatch) => {
     dispatch(lvspCovYear(parseInt(moment().format('YYYY'))));
     dispatch(lvspStartDate(moment().subtract(1, 'month')));
-    dispatch(lvspTradSelected([0,1,2]));
+    dispatch(lvspTradSelected(defaultTradingPartners));
     dispatch(lvspRecordFlagSelected(defaultRecordFlags));
     dispatch(lvspFieldNameSelected(defaultFieldNames));
     dispatch(lvspFieldFlagSelected(defaultFieldFlags));

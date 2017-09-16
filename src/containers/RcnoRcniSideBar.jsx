@@ -9,13 +9,14 @@ import Collapse, { Panel } from 'rc-collapse';
 import { connect } from 'react-redux';
 import { resetFSDState } from '../actions/fieldSummaryDetailsActions';
 import { resetRSDState } from '../actions/recordSummaryDetailsActions';
+import { resetLVSPState } from '../actions/listViewSummaryPageDataAction';
 class RcnoRcniSideBar extends Component {
     constructor(props) {
         super(props);
         this.state = this.getInitialState();
         this.state = this.getInitialState();
         [
-            'onChange', 'resetRSD', 'resetFSD'
+            'onChange', 'resetRSD', 'resetFSD','resetLVSP'
         ].map(fn => this[fn] = this[fn].bind(this));
     }
     getInitialState() {
@@ -29,6 +30,9 @@ class RcnoRcniSideBar extends Component {
     }
     resetFSD() {
         this.props.resetFSDState();
+    } 
+    resetLVSP() {
+        this.props.resetLVSPState();
     }
     render() {
         return (
@@ -66,7 +70,10 @@ class RcnoRcniSideBar extends Component {
                     </Panel>
                     <Panel header={`List View Page`} key={'3'}>
                         <NavLink className={'sidebar-highlight-link-' + (window.location.pathname == rcnorcni.RCNO_RCNI_LIST_VIEW_PAGE_URL)} to={rcnorcni.RCNO_RCNI_LIST_VIEW_PAGE_URL}>
-                            <i className=" "></i> {rcnorcni.RCNO_RCNI_LIST_VIEW_PAGE_SIDEBARNAME}</NavLink>
+                        <div onClick={this.resetLVSP}>
+                             <i className=" "></i> {rcnorcni.RCNO_RCNI_LIST_VIEW_PAGE_SIDEBARNAME}
+                        </div>
+                        </NavLink>
                         <hr className="hrstyle2" />
                         <NavLink className={'sidebar-highlight-link-' + (window.location.pathname == rcnorcni.RCNO_RCNI_DETAILS_PAGE_URL)} to={rcnorcni.RCNO_RCNI_DETAILS_PAGE_URL}>
                             <i className=" "></i> {rcnorcni.RCNO_RCNI_DETAILS_PAGE_SIDEBARNAME}</NavLink>
@@ -102,7 +109,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         resetRSDState: () => dispatch(resetRSDState()),
-        resetFSDState: () => dispatch(resetFSDState())
+        resetFSDState: () => dispatch(resetFSDState()),
+        resetLVSPState:()=> dispatch(resetLVSPState())
     };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(RcnoRcniSideBar);

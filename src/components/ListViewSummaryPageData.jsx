@@ -207,7 +207,7 @@ class ListViewSummaryPageData extends Component {
         onExportToCSV: this.onExportToCSV
       },
       summaryTableData: this.props.summaryTableData,
-      tableHeaders: [],
+      tableHeaders: this.props.tableHeaders,
       showTable: false,
       showSpinner: true,
       lastDataReceived: this.props.lastDataReceived,
@@ -332,6 +332,10 @@ class ListViewSummaryPageData extends Component {
   handleTradPartChange(selected) {
 
     this.state.tradSelected[this.state.selectedTab.TabName]= selected;
+    
+    this.props.updateTradSelected(this.state.tradSelected[this.state.selectedTab.TabName]);
+
+
     this.setState({ tradSelected:   this.state.tradSelected },()=> this.checkValidation() );
   }
   handleCovYearChange(val) {
@@ -397,10 +401,13 @@ class ListViewSummaryPageData extends Component {
   }
   handleRecordFlagChange(selected) {
     this.state.recordFlagSelected[this.state.selectedTab.TabName]= selected;
+    this.props.updateRecordFlagSelected( this.state.recordFlagSelected[this.state.selectedTab.TabName] );
+    
     this.setState({ recordFlagSelected:  this.state.recordFlagSelected },()=> this.checkValidation());
   }
   handleFieldNameChange(selected) {
     this.state.fieldNameSelected[this.state.selectedTab.TabName]= selected;
+    this.props.updateFieldNameSelected( this.state.fieldNameSelected[this.state.selectedTab.TabName] );
     this.setState({ fieldNameSelected:  this.state.fieldNameSelected },()=> this.checkValidation());
   }
 
@@ -534,7 +541,7 @@ class ListViewSummaryPageData extends Component {
     }
   }
   handleResetButton() {
-
+    this.props.resetState();
     let TabName = this.state.selectedTab.TabName;
     this.state.advCustomFiltersRows[this.state.selectedTab.TabName].length = 1;
 
@@ -1224,66 +1231,58 @@ let rcniFieldDDL = null;
   }
 
   componentWillReceiveProps(nextProps) {
+    debugger;
      let TabName = this.state.selectedTab.TabName;
      if (!isEqual(this.props.covYear, nextProps.covYear)) {
        this.state.covYear[TabName] =nextProps.covYear;
-        this.setState({ covYear:  this.state.covYear });
+        this.setState({ covYear:  this.state.covYear },()=> this.checkValidation());
     }
   if (!isEqual(this.props.tradSelected, nextProps.tradSelected)) {
       this.state.tradSelected[TabName] =nextProps.tradSelected;
-      this.setState({ tradSelected: this.state.tradSelected });
+      this.setState({ tradSelected: this.state.tradSelected },()=> this.checkValidation());
     }
     if (!isEqual(this.props.fieldFlagSelected, nextProps.fieldFlagSelected)) {
             this.state.fieldFlagSelected[TabName] =nextProps.fieldFlagSelected;
 
-      this.setState({ fieldFlagSelected:  this.state.fieldFlagSelected });
+      this.setState({ fieldFlagSelected:  this.state.fieldFlagSelected },()=> this.checkValidation());
     }
     if (!isEqual(this.props.recordFlagSelected, nextProps.recordFlagSelected)) {
                   this.state.recordFlagSelected[TabName] = nextProps.recordFlagSelected
 
-      this.setState({ recordFlagSelected:this.state.recordFlagSelected});
+      this.setState({ recordFlagSelected:this.state.recordFlagSelected},()=> this.checkValidation());
     }
     if (!isEqual(this.props.fieldNameSelected, nextProps.fieldNameSelected)) {
       this.state.fieldNameSelected[TabName] = nextProps.fieldNameSelected
-      this.setState({ fieldNameSelected:  this.state.fieldNameSelected });
+      this.setState({ fieldNameSelected:  this.state.fieldNameSelected },()=> this.checkValidation());
 
     }
-  /*  if (!isEqual(this.props.tableHeaders, nextProps.tableHeaders)) {
+    if (!isEqual(this.props.tableHeaders, nextProps.tableHeaders)) {
       this.setState({ tableHeaders: nextProps.tableHeaders });
     }
     if (!isEqual(this.props.summaryTableData, nextProps.summaryTableData)) {
       this.setState({ summaryTableData: nextProps.summaryTableData });
-    }*/
+    }
+   
  if (this.state.fieldNameOptions.length == 0 && nextProps.fieldNameOptions.length > 0) {
       this.setState({ fieldNameOptions: nextProps.fieldNameOptions }, () => {
         this.callBackAfterInputFields();
+        this.checkValidation();
       });
     }
     if (this.state.recordFlagOptions.length == 0 && nextProps.recordFlagOptions.length > 0) {
       this.setState({ recordFlagOptions: nextProps.recordFlagOptions }, () => {
         this.callBackAfterInputFields();
+        this.checkValidation();
       });
     }
     if (this.state.fieldFlagOptions.length == 0 && nextProps.fieldFlagOptions.length > 0) {
       this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions }, () => {
         this.callBackAfterInputFields();
+        this.checkValidation();
       });
     }
 //-=----------------------
-/*
-    if (this.state.fieldNameOptions.length == 0 && nextProps.fieldNameOptions.length > 0) {
-      this.setState({ fieldNameOptions: nextProps.fieldNameOptions },()=>{ this.callBackAfterInputFields()});
-    }
-    if (this.state.recordFlagOptions.length == 0 && nextProps.recordFlagOptions.length > 0) {
-      this.setState({ recordFlagOptions: nextProps.recordFlagOptions },()=>{ this.callBackAfterInputFields() });
-    }
-    if (this.state.fieldFlagOptions.length == 0 && nextProps.fieldFlagOptions.length > 0) {
-      this.setState({ fieldFlagOptions: nextProps.fieldFlagOptions },()=>{ this.callBackAfterInputFields() } );
-    }
-*/
-
-    // this.setState({ fieldNameOptions: nextProps.fieldNameOptions })
-    this.setState({ fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions });
+  this.setState({ fieldNameAvdCustomOptions: nextProps.fieldNameAvdCustomOptions },()=> this.checkValidation());
 
 
     if (this.state.lastDataReceived < nextProps.lastDataReceived) {
@@ -1301,6 +1300,7 @@ let rcniFieldDDL = null;
           showTable: true,
           lastDataReceived: nextProps.lastDataReceived,
         },()=>{
+          this.props.updateTableHeaders(tableHeaders);
           this.props.updateTableData(nextProps.summaryTableData);
           this.setState({          summaryTableData: nextProps.summaryTableData });
         });
@@ -1347,8 +1347,7 @@ let rcniFieldDDL = null;
             recordFlagSelected: this.state.recordFlagSelected,
             fieldNameSelected: this.state.fieldNameSelected,
             summaryTableData: this.props.summaryTableData,
-          //  summaryTableData: this.props.summaryTableData,
-          //  tableHeaders: this.props.tableHeaders
+            tableHeaders: this.props.tableHeaders
           }, () => {
 
             let state = JSON.parse(JSON.stringify(this.state));
@@ -1368,24 +1367,26 @@ let rcniFieldDDL = null;
               this.state.recordFlagSelected[TabName]= toLVSPD.recordFlagSelected;
               this.state.covYear[TabName]=toLVSPD.covYear;
               this.state.tradSelected[TabName]= toLVSPD.tradSelected;
-
+              this.state.fieldNameSelected[TabName]= toLVSPD.fieldNameSelected;
+              
               this.state.startDate[TabName]= moment(toLVSPD.startDate);
+           
 
 
-
-              this.props.updateRecordFlagSelected(toLVSPD.recordFlagSelected);
-              this.props.updateStartDate(moment(toLVSPD.startDate));
+              this.props.updateRecordFlagSelected( this.state.recordFlagSelected[TabName] );
+              this.props.updateStartDate(this.state.startDate[TabName]);
               this.props.updateFieldFlagSelected(   this.state.fieldFlagSelected[TabName] );
-              this.props.updateCovYear(toLVSPD.covYear);
-              this.props.updateTradSelected(toLVSPD.tradSelected);
-              this.props.updateFieldNameSelected(toLVSPD.fieldNameSelected)
+              this.props.updateCovYear(this.state.covYear[TabName]);
+              this.props.updateTradSelected(this.state.tradSelected[TabName]);
+              this.props.updateFieldNameSelected( this.state.fieldNameSelected[TabName])
 
               this.setState({
                 fieldFlagSelected:this.state.fieldFlagSelected,
                 recordFlagSelected:this.state.recordFlagSelected,
                 startDate:  this.state.startDate,
                 covYear:this.state.covYear ,
-                tradSelected:  this.state.tradSelected
+                tradSelected:  this.state.tradSelected,
+                fieldNameSelected:this.state.fieldNameSelected
               }, () => {
                 let state = JSON.parse(JSON.stringify(this.state));
                 this.props.handleSubmit({ state });
@@ -1440,14 +1441,14 @@ const mapStateToProps = (state)=>{
 const mapDispatchToProps = (dispatch)=>{
   return {
     updateStartDate : (stateDate)=> dispatch(listViewSummaryPageDataAction.updateLVSPStartDate(stateDate)),
-    updateFieldFlagSelected:(fieldFlagSelected)=> dispatch(listViewSummaryPageDataAction.updateFieldFlagSelected(fieldFlagSelected)),
+    updateFieldFlagSelected:(fieldFlagSelected)=> dispatch(listViewSummaryPageDataAction.updateLVSPFieldFlagSelected(fieldFlagSelected)),
     updateCovYear: (covYear) => dispatch(listViewSummaryPageDataAction.updateLVSPCovYear(covYear)),
     updateTradSelected: (tradSelected) => dispatch(listViewSummaryPageDataAction.updateLVSPTradSelected(tradSelected)),
     updateFieldNameSelected: (fieldNameSelected) => dispatch(listViewSummaryPageDataAction.updateLVSPFieldNameSelected(fieldNameSelected)),
     updateRecordFlagSelected: (recordFlagSelected) => dispatch(listViewSummaryPageDataAction.updatelvspRecordFlagSelected(recordFlagSelected)),
     resetState: () => dispatch(listViewSummaryPageDataAction.resetLVSPState()),
-    updateTableData: (data) => dispatch(listViewSummaryPageDataAction.updateLVSPTableData(data))
-  //  updateTableHeaders: (data) => dispatch(listViewSummaryPageDataAction.updateLVSPTableHeader(data)),
+    updateTableData: (data) => dispatch(listViewSummaryPageDataAction.updateLVSPTableData(data)),
+   updateTableHeaders: (data) => dispatch(listViewSummaryPageDataAction.updateLVSPTableHeader(data)),
 
 
   }
