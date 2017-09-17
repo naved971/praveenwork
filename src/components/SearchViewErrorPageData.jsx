@@ -143,8 +143,8 @@ class SearchViewErrorPageData extends Component {
   }
 
   handleRowClick(dataIndex,rowIndex,cellIndex, e){
-    //e.stopImmediatePropagation();
-  }
+   //e.stopImmediatePropagation();
+    }
   getInitialState() {
 
     let initialState = {
@@ -168,12 +168,12 @@ class SearchViewErrorPageData extends Component {
       },
       selectRowProp: {
         mode: "checkbox",
-        clickToSelect: true,
+        clickToSelect: false,
         selected: []
       },
       tableOptions: {
-        onExportToCSV: this.onExportToCSV,
-        handleRowClick:this.handleRowClick
+        onExportToCSV: this.onExportToCSV
+        //handleRowClick:this.handleRowClick
       },
       summaryTableData: this.props.summaryTableData,
       tableHeaders: [],
