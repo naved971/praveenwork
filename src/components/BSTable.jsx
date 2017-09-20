@@ -25,7 +25,4 @@ class BSTable extends Component {
         }
       }
 }
-Header.propTypes = {
-    userName: PropTypes.string
-};
-export default Header;
+export default BSTable;

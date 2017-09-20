@@ -277,7 +277,9 @@ function addProducts(quantity) {
       }
     }
   }
-class RcnoandRcniDetailsPage extends Component {
+  addProducts(5);
+
+  class RcnoandRcniDetailsPage extends Component {
   render() {
     return (
       <App>
@@ -324,7 +326,7 @@ class RcnoandRcniDetailsPage extends Component {
               <RcnoRcniSideBar />
             </Column>
             <Column medium={9} className="record-summary-container">
-              <RcnoandRcniListDetailsPageData gridInfo={gridInfo} />
+              <RcnoandRcniListDetailsPageData gridInfo={productss} />
             </Column>
           </Row>
         </Row>
